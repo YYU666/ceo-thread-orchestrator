@@ -1,0 +1,111 @@
+# CEO Thread Orchestrator
+
+CEO Thread Orchestrator is a Codex plugin for people who want Codex to manage a project like a small product team, not just answer one task at a time.
+
+It turns the current Codex thread into a CEO/PM/architect lane. That lane keeps the broad context, makes decisions, designs the team shape, routes work to specialist lanes, and checks evidence before accepting results.
+
+## Why This Exists
+
+Modern Codex can work across threads, worktrees, automations, subagents, local files, and project memory. That is powerful, but it also creates a coordination problem:
+
+- Which thread should do the work?
+- When should Codex reuse an existing thread instead of creating a new one?
+- How much context should move between threads?
+- Who decides whether a worker report is good enough?
+- Where should project memory live after the chat scrolls away?
+
+CEO Thread Orchestrator gives Codex a practical operating model for those questions.
+
+## Core Idea
+
+Use one high-reasoning CEO lane and several bounded specialist lanes.
+
+The CEO lane owns:
+
+- project scope and tradeoffs
+- architecture decisions
+- task decomposition
+- staffing and thread reuse
+- memory bootstrap packets
+- cross-thread relay
+- review and acceptance decisions
+- short user-facing reports
+
+Specialist lanes own bounded work:
+
+- implementation
+- review and QA
+- UX and product critique
+- market or research scans
+- project knowledge and memory hygiene
+
+The CEO lane remains accountable. A worker report is evidence, not proof.
+
+## Dynamic Thread Scaling
+
+The plugin treats new threads as a capacity decision, not a reflex.
+
+For ordinary coding tasks, it prefers one reusable implementation lane. That code lane keeps doing code work and accumulates useful local context.
+
+It adds another code lane only when:
+
+- the new work can run in parallel
+- the write-set does not overlap
+- the work can be verified independently
+- the added speed is worth the merge and review cost
+
+When requirements change mid-task, the CEO lane rebuilds the whole task graph first. It then decides whether to continue the current lane, queue the new work, add a reviewer, create an independent specialist lane, or supersede existing work.
+
+## Memory Model
+
+The plugin treats memory as explicit infrastructure.
+
+Its default stack is:
+
+1. project instructions and canonical local memory files
+2. optional Zhixia or `.codex-knowledge/` retrieval when available
+3. active thread reports and relay packets
+4. decision logs, bug memory, handoff logs, and generated docs
+
+New or revived threads receive a compact memory packet. They should not be expected to infer project history from hidden chat context.
+
+## Safety Boundaries
+
+CEO Thread Orchestrator is deliberately cautious.
+
+- It does not assume every Codex host has thread tools.
+- It does not silently create persistent threads when the active tool contract requires explicit authorization.
+- It does not treat automations or queued tasks as running unless there is live evidence.
+- It does not install or switch memory systems just because one exists.
+- It does not let multiple workers edit the same write-set at the same time.
+- It keeps expensive model lanes for high-risk reasoning, not routine work.
+
+## Who It Is For
+
+This plugin is useful for:
+
+- solo builders managing large Codex projects
+- product teams using multiple Codex threads
+- people who want stronger project memory and handoff discipline
+- teams experimenting with agent orchestration
+- non-programmers who want Codex to act more like a project lead
+
+## What It Is Not
+
+It is not a replacement for judgment, tests, or project ownership.
+
+It is also not a promise that every Codex environment can create or manage threads. The skill always follows the active tool contract. If a host does not expose thread tools, the CEO lane should still plan, document, and route work through the mechanisms that are available.
+
+## Example Workflow
+
+1. A user gives product feedback or a bug report.
+2. The CEO lane normalizes it into a task card.
+3. The CEO lane searches for reusable specialist threads.
+4. One implementation lane receives bounded work.
+5. A review lane checks high-risk changes when needed.
+6. The CEO lane inspects evidence and decides accept, revise, block, or supersede.
+7. Stable learning goes back into memory, decisions, bug notes, or docs.
+
+## Status
+
+This is an experimental community plugin. It is meant to evolve with Codex thread tooling and with real project practice.

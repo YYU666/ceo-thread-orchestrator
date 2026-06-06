@@ -4,6 +4,11 @@ CEO Thread Orchestrator is a community Codex plugin that packages a project-mana
 
 The skill helps Codex coordinate specialist lanes, reuse thread context, bootstrap memory, route work to reviewers, and decide when new threads are actually worth the coordination cost.
 
+## Introduction
+
+- [English introduction](docs/INTRODUCTION.md)
+- [中文介绍](docs/INTRODUCTION.zh-CN.md)
+
 ## What It Does
 
 - Keeps the current Codex thread as the high-reasoning CEO lane.
