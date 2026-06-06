@@ -28,6 +28,8 @@ ceo-thread-orchestrator/
         └── references/
 ```
 
+Repository: <https://github.com/YYU666/ceo-thread-orchestrator>
+
 If your Codex environment supports plugin installation from local or GitHub repositories, install this repository as a plugin. If you only use raw skills, copy `skills/ceo-thread-orchestrator/` into your Codex skills directory.
 
 ## Example Prompts
