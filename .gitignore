@@ -1,0 +1,24 @@
+.DS_Store
+Thumbs.db
+
+# Local editor and environment files
+.env
+.env.*
+*.local
+.vscode/
+.idea/
+
+# Logs and generated artifacts
+*.log
+tmp/
+temp/
+dist/
+build/
+
+# Project/user memory exports should not be published by accident
+.codex-knowledge/
+state/
+workflow/output/
+workflow/state/
+completion_ledger.json
+task_pool.json

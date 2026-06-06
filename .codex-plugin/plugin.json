@@ -1,0 +1,34 @@
+{
+  "name": "ceo-thread-orchestrator",
+  "version": "0.1.0",
+  "description": "A Codex CEO/PM orchestration skill for coordinating specialist threads, memory, reviews, and dynamic task lanes.",
+  "author": {
+    "name": "ceo-thread-orchestrator contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "skills",
+    "orchestration",
+    "threads",
+    "project-management",
+    "memory"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CEO Thread Orchestrator",
+    "shortDescription": "CEO-style Codex orchestration across expert lanes.",
+    "longDescription": "Coordinate Codex work as a CEO/PM/architect: keep one high-reasoning decision lane, reuse specialist implementation/review/knowledge lanes, bootstrap memory deliberately, and scale threads only when the task graph justifies it.",
+    "developerName": "ceo-thread-orchestrator contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use CEO Thread Orchestrator for this project.",
+      "Split this work into reusable expert lanes.",
+      "Review the team structure and memory plan."
+    ]
+  }
+}
