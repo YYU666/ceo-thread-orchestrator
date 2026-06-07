@@ -32,6 +32,7 @@ At the start of substantial work:
    - Check whether model selection is exposed by the available tool. If not, describe the intended lane without pretending to set it.
    - Check whether browser, knowledge-base, local shell, external worker, or configured task-pool tools are available before assigning work that depends on them.
    - Check whether a project memory skill applies, especially `zhixia-local-docs` when `.codex-knowledge/` exists.
+   - Check whether the user or project defines a model allow-list, ban-list, or avoid-list. Treat explicit model/version bans as hard constraints in every lane and task card.
    - Search for existing specialist threads before creating new ones. Thread history is useful project memory, especially for repeated UI, desktop, Canvas, backend, ops, QA, market, or art-direction work.
 5. Classify the request:
    - strategy/product/market: CEO handles directly, with browsing for current external facts.
@@ -144,6 +145,7 @@ Relevant decisions:
 Relevant bug-memory patterns:
 Active workstreams / avoid collisions:
 Authoritative files:
+Model policy / avoid-list:
 Stale or do-not-use context:
 Thread role and write-set:
 Return memory updates:
@@ -299,7 +301,9 @@ When model choice is unavailable in the current tool surface, state the intended
 
 Honor project-specific model policy across all reused threads, new threads, and automations. If the user or project bans a model family because of reliability or cost risk, repeat that ban in every task card and do not rely on archived outputs from that family.
 
-If the current thread tool exposes models similar to `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.3-codex`, and `gpt-5.2`, a practical default is:
+Resolve model eligibility before choosing lane strength: first apply the user/project allow-list, ban-list, or avoid-list; then check which models the current tool surface actually exposes; then choose the best cost/quality lane. If a local policy says to avoid a specific model or version family, such as a `5.3` family, exclude it from CEO, implementation, review, QA, market, and knowledge lanes unless the user explicitly overrides that policy for the current task.
+
+If the current thread tool exposes models similar to `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, and `gpt-5.2`, a practical default is:
 
 - CEO critical reasoning: `gpt-5.5` or best available, high/xhigh thinking.
 - Implementation: the strongest project-approved coding model, or a stronger general model when architecture-heavy.
@@ -326,6 +330,7 @@ Depends on / parallel with:
 Acceptance criteria:
 Required verification:
 Cost/model lane:
+Model policy / avoid-list:
 Autonomy level:
 Thread reuse note:
 Report back with:
