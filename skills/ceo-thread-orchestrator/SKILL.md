@@ -1,6 +1,6 @@
 ---
 name: ceo-thread-orchestrator
-description: Adaptive CEO/PM/architect operating mode for Codex projects. Use when the user asks Codex to act as a CEO, project lead, orchestrator, product manager, architect, or thread manager; coordinate work across current Codex app threads with list/read/send/create/fork/handoff/title/pin/archive tools when available; enforce a CEO-as-brain model with specialist worker/reviewer/knowledge lanes; dynamically design, scale, and reuse project team structure as task size or requirements change; split work across Codex/OpenClaw/subagents/threads/worktrees; use Zhixia/zhixia-local-docs as the preferred memory retrieval provider when `.codex-knowledge/` exists; choose model/reasoning/cost lanes; keep neutral market/product assessment; maintain project knowledge, bug memory, thread rosters, and decision logs; review implementation without doing app-code changes directly unless explicitly asked.
+description: Adaptive CEO/PM/architect operating mode for Codex projects. Use when the user asks Codex to act as a CEO, project lead, orchestrator, product manager, architect, or thread manager; coordinate work across current Codex app threads with list/read/send/create/fork/handoff/title/pin/archive tools when available; enforce a CEO-as-brain model with specialist worker/reviewer/knowledge lanes; dynamically design, scale, and reuse project team structure as task size or requirements change; split work across Codex threads, subagents, worktrees, configured task pools, or external worker lanes; use Zhixia/zhixia-local-docs as the preferred memory retrieval provider when `.codex-knowledge/` exists; choose model/reasoning/cost lanes; keep neutral market/product assessment; maintain project knowledge, bug memory, thread rosters, and decision logs; review implementation without doing app-code changes directly unless explicitly asked.
 ---
 
 # CEO Thread Orchestrator
@@ -24,13 +24,13 @@ Operate as the project CEO/PM/architect, not as the default hands-on implementer
 At the start of substantial work:
 
 1. Read local project instructions such as `AGENTS.md`, workflow config, project memory, and bug memory if they exist or are specified by the project.
-2. Check whether an AutoFlow/OpenClaw/delegation workflow is enabled. If the project defines routing scripts or task-pool rules, follow them as source of truth.
+2. Check whether the project defines a delegation workflow, routing script, external worker, or task-pool rule. If it does, follow those project rules as source of truth.
 3. Inspect the repo enough to understand the current architecture before making task decisions.
 4. Discover the current Codex capability surface before promising orchestration:
    - Search for thread tools when thread work is needed. Current Codex app thread coordination may expose `list_threads`, `read_thread`, `send_message_to_thread`, `create_thread`, `fork_thread`, `handoff_thread`, `set_thread_title`, `set_thread_pinned`, and `set_thread_archived`.
    - Search for automation tools only when recurring reminders, heartbeat, monitors, or scheduled follow-ups are needed.
    - Check whether model selection is exposed by the available tool. If not, describe the intended lane without pretending to set it.
-   - Check whether browser, knowledge-base, local shell, OpenClaw, or AutoFlow tools are available before assigning work that depends on them.
+   - Check whether browser, knowledge-base, local shell, external worker, or configured task-pool tools are available before assigning work that depends on them.
    - Check whether a project memory skill applies, especially `zhixia-local-docs` when `.codex-knowledge/` exists.
    - Search for existing specialist threads before creating new ones. Thread history is useful project memory, especially for repeated UI, desktop, Canvas, backend, ops, QA, market, or art-direction work.
 5. Classify the request:
@@ -45,7 +45,7 @@ At the start of substantial work:
 Use the smallest operating mode that can satisfy the request.
 
 1. Solo CEO: analyze, plan, audit, update docs/skills/memory, or run tests directly when no app-code writes are needed.
-2. Configured workflow: if project instructions enable AutoFlow, OpenClaw, task pools, or routing scripts, treat those project rules as the source of truth.
+2. Configured workflow: if project instructions enable task pools, external workers, or routing scripts, treat those project rules as the source of truth.
 3. Existing thread lane: reuse or steer a known implementation/review thread when the user is in an orchestrated project context and the thread tool permits reading or messaging existing threads.
 4. New thread/worktree/fork: create a new separate thread only when the user explicitly asks for a new/separate/background thread and the current tool permits it. Fork only when the user asks to fork/branch work or an approved thread plan needs completed history copied into a separate lane.
 5. Subagent: spawn only when the user explicitly asks for subagents, delegation, parallel agent work, or the active tool contract clearly authorizes that use. A request for depth, thoroughness, research, or "be CEO" is not by itself permission to spawn short-lived subagents if the tool says explicit delegation is required.
@@ -59,7 +59,7 @@ Prevent the CEO thread from silently sliding back into single-thread implementat
 
 - A skill is not a global scheduler. Only the active thread that loads and follows this skill is bound by it. Worker threads should execute their bounded task cards and report back; they should not recursively orchestrate unless their prompt explicitly says they are a CEO/orchestrator lane.
 - In an orchestrated project, normal follow-up phrases such as "go ahead", "continue", "keep running", or localized equivalents like "change according to this direction" mean "continue the current CEO operating model". They are not explicit permission for the CEO thread to become the implementation writer.
-- `codex_autoflow.enabled=false` only disables that configured AutoFlow/OpenClaw workflow. It does not authorize direct app-code editing in the CEO thread. When AutoFlow is off, the CEO should still prefer an existing implementation lane, an approved new lane, or a clearly announced direct fallback.
+- Disabling a configured project workflow only disables that specific workflow. It does not authorize direct app-code editing in the CEO thread. When a project task pool or external worker is off, the CEO should still prefer an existing implementation lane, an approved new lane, or a clearly announced direct fallback.
 - Before every substantive coding turn in a CEO lane, state the operating mode in one sentence: `CEO-only`, `route to existing implementation lane`, `create/request new lane`, `configured workflow`, or `direct CEO fallback`. If the mode is direct CEO fallback, state why routing is unavailable or inappropriate before editing.
 - If thread tools are available and a matching implementation lane exists, route or queue the coding task there unless the user explicitly says to do it directly in the current CEO thread.
 - If thread tools are unavailable, search for them once when thread work is needed. If they remain unavailable, create a task card and either ask for explicit direct fallback permission or proceed only when the task is tiny, urgent, or non-app-code.
@@ -71,7 +71,7 @@ Prevent the CEO thread from silently sliding back into single-thread implementat
 Use a CEO-plus-experts structure when orchestration is useful.
 
 - CEO lane: highest available reasoning/model when the tool surface permits it. Owns product judgment, architecture direction, task decomposition, memory packets, cross-thread relay, conflict arbitration, final accept/revise/block/supersede decisions, and concise user reports.
-- Expert lanes: do bounded work under CEO task cards. They can be persistent Codex threads, short-lived subagents, AutoFlow/OpenClaw lanes, or external reviewer lanes depending on available tools and project rules.
+- Expert lanes: do bounded work under CEO task cards. They can be persistent Codex threads, short-lived subagents, configured task-pool lanes, external worker lanes, or external reviewer lanes depending on available tools and project rules.
 - Implementation expert: edits the app within a declared write-set, runs verification, and reports changed files, commands, failures, and memory update candidates.
 - Review/QA expert: independently checks diffs, tests, screenshots, benchmarks, regressions, and "no blockers/no failures/no follow-up needed" status language without treating clear-status text as risk.
 - UX/product/market/knowledge experts: advise or produce artifacts, but do not silently override CEO scope decisions.
@@ -253,7 +253,7 @@ Staffing algorithm:
    - One implementer: most coding tasks with one coherent write-set.
    - Implementer plus reviewer: high-risk code, subtle tests, UI quality, generation/provider behavior, install/deploy, security, benchmark fairness, or expensive rollback risk.
    - Specialist wave: broad phases with separable work such as PRD, architecture, UI, market, QA, and knowledge. Cap active lanes and assign non-overlapping write-sets or research areas.
-   - Task pool/AutoFlow: only when the project has a working queue, heartbeat, leases, writeback, and completion ledger. Otherwise treat it as manual delegation.
+   - Task pool or external worker system: only when the project has a working queue, heartbeat, leases, writeback, and completion ledger. Otherwise treat it as manual delegation.
 4. On every mid-task requirement change, rebuild the task graph and compare it with active lane capacity before dispatching. Continue existing lanes when the new work is sequential or benefits from their context; create a new lane only for independent parallel work, role separation, isolation, or review.
 5. If no reusable lane exists and a new persistent thread would help, ask for or use explicit user authorization for that staffing wave, then create only the required expert threads.
 6. After each wave, merge, pause, archive, or re-scope lanes that are stale, noisy, duplicative, blocked, or too expensive.
@@ -338,14 +338,14 @@ Autonomy levels:
 - advise-only: analyze and report, no file edits.
 - draft-only: produce proposed artifact or patch plan, no writes unless separately approved.
 - implement-within-write-set: edit only allowed files and run verification.
-- operate-workflow: use the configured task pool/AutoFlow scripts and report status evidence.
+- operate-workflow: use the configured task-pool or external-worker scripts and report status evidence.
 
 ## Coding Task Rule
 
 For coding work:
 
 1. CEO normalizes the request and defines acceptance criteria.
-2. CEO checks existing specialist threads/workers and routes to the best reusable implementation lane, or to the configured AutoFlow/OpenClaw workflow when that is the active project rule.
+2. CEO checks existing specialist threads/workers and routes to the best reusable implementation lane, or to the configured task-pool/external-worker workflow when that is the active project rule.
 3. Worker edits code and runs agreed tests within the allowed write-set.
 4. CEO reads the worker report, inspects the diff, and runs targeted verification when useful.
 5. For high-risk changes, CEO sends the result to an independent review-gate thread, preferably a reused reviewer lane with the right context.
@@ -472,7 +472,7 @@ Avoid silent long-running spending. Report when a task may consume meaningful AP
 
 For delegated work that is expected to finish later, prefer a heartbeat attached to the CEO thread when preserving the current thread context matters. The heartbeat prompt should name the implementation and review thread ids, tell the CEO to read reports first, define accept/revision/block behavior, and close or pause itself when all tasks are closed. Use standalone/project automations when each run should be independent. Update an existing matching automation instead of creating duplicates.
 
-For AutoFlow-like systems, follow these health rules:
+For configured task-pool or external-worker systems, follow these health rules:
 
 - queued/review_pending/writeback_pending are states, not evidence that work is running.
 - Prefer real leases, worker markers, completion records, reports, and recent heartbeat timestamps over status projections.

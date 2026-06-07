@@ -12,7 +12,7 @@ Use this reference only when preparing `ceo-thread-orchestrator` for public dist
 
 - Remove private project names, local absolute paths, private model ids, personal workflow names, secrets, and private repository references.
 - Keep Zhixia optional. Do not publish `.codex-knowledge/`, user memory files, thread ids, worktree ids, completion ledgers, or private worker reports.
-- State capability boundaries plainly: thread tools, model overrides, automations, subagents, worktrees, OpenClaw/AutoFlow, and knowledge providers are optional and tool-contract dependent.
+- State capability boundaries plainly: thread tools, model overrides, automations, subagents, worktrees, external worker systems, task pools, and knowledge providers are optional and tool-contract dependent.
 - Require explicit authorization for new persistent threads, automations, subagents, spending-heavy model lanes, and worktree creation when the active tool contract requires it.
 - Include public examples that show CEO-only, one code lane, code plus review, and dynamic rebalancing after a mid-task requirement change.
 - Provide a compatibility note for Codex app, Codex CLI, and other Agent Skills hosts. Mark any Codex-app-only behavior such as thread read/send/create/handoff.

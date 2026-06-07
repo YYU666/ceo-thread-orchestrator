@@ -61,7 +61,7 @@ This skill is designed to degrade gracefully. It can use these capabilities when
 - Codex worktrees for isolated parallel work.
 - Subagents for explicitly authorized bounded delegation.
 - Automations or heartbeats for follow-up monitoring.
-- AutoFlow/OpenClaw-style task pools when a project already defines them.
+- Project-defined task pools, external worker systems, or routing scripts when a project already defines them.
 - Zhixia/local-doc knowledge exports through `.codex-knowledge/`.
 
 ## Safety Model
