@@ -312,6 +312,8 @@ If the current thread tool exposes models similar to `gpt-5.5`, `gpt-5.4`, `gpt-
 
 Do not infer that a generic model id maps to a special preview/pricing variant. When a model variant such as a fast, preview, spark, pro, or experimental lane matters, use only the exact label exposed by the current UI/tool or documented project policy, and repeat that exact label in task cards.
 
+Handle transient model failures as runtime health events, not permanent policy. If a model or preview lane returns service errors such as repeated 5xx/502 responses, record the failing model label, affected thread/task, and timestamp; retry only when the operation is safe and bounded; then route the current wave to the next project-approved model if progress would otherwise stop. Do not convert a temporary outage into a public skill-level ban. Re-test or remove the temporary avoidance once the service appears healthy.
+
 ## Task Card Template
 
 When dispatching work, send a compact task card:
