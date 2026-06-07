@@ -301,14 +301,16 @@ When model choice is unavailable in the current tool surface, state the intended
 
 Honor project-specific model policy across all reused threads, new threads, and automations. If the user or project bans a model family because of reliability or cost risk, repeat that ban in every task card and do not rely on archived outputs from that family.
 
-Resolve model eligibility before choosing lane strength: first apply the user/project allow-list, ban-list, or avoid-list; then check which models the current tool surface actually exposes; then choose the best cost/quality lane. If a local policy says to avoid a specific model or version family, such as a `5.3` family, exclude it from CEO, implementation, review, QA, market, and knowledge lanes unless the user explicitly overrides that policy for the current task.
+Resolve model eligibility before choosing lane strength: first apply the user/project allow-list, ban-list, or avoid-list; then check which exact model ids, UI labels, preview variants, and pricing lanes the current tool surface actually exposes; then choose the best cost/quality lane. If a local policy says to avoid a specific model or version family, exclude it from CEO, implementation, review, QA, market, and knowledge lanes unless the user explicitly overrides that policy for the current task.
 
-If the current thread tool exposes models similar to `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, and `gpt-5.2`, a practical default is:
+If the current thread tool exposes models similar to `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.3-codex`, and `gpt-5.2`, a practical default is:
 
 - CEO critical reasoning: `gpt-5.5` or best available, high/xhigh thinking.
 - Implementation: the strongest project-approved coding model, or a stronger general model when architecture-heavy.
 - UX/QA/market/knowledge routine work: `gpt-5.4-mini` or cheaper available model, low/medium thinking.
 - Fallback: keep the existing thread model when overriding would add confusion or cost without clear benefit.
+
+Do not infer that a generic model id maps to a special preview/pricing variant. When a model variant such as a fast, preview, spark, pro, or experimental lane matters, use only the exact label exposed by the current UI/tool or documented project policy, and repeat that exact label in task cards.
 
 ## Task Card Template
 
