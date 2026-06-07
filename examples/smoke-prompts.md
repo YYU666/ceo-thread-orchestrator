@@ -26,6 +26,14 @@ Use CEO Thread Orchestrator for a risky UI change. Plan implementation plus inde
 
 Expected behavior: Codex should propose an implementer plus reviewer pattern and keep CEO as final acceptance gate.
 
+## Follow-Up Does Not Mean Direct CEO Coding
+
+```text
+Use CEO Thread Orchestrator. We already have a reusable implementation lane for this project. Here is a product fix. Go ahead and change it according to this direction.
+```
+
+Expected behavior: Codex should state the operating mode, route or queue the task to the existing implementation lane when tools allow it, and not treat the follow-up wording as permission for the CEO thread to directly edit app code.
+
 ## Mid-Task Rebalancing
 
 ```text

@@ -70,6 +70,10 @@ The skill treats new threads as capacity decisions, not a reflex. For ordinary c
 
 Worker reports are evidence, not proof. The CEO lane still inspects meaningful artifacts before accepting work.
 
+The CEO lane should not silently fall back into app-code implementation just because the user says "continue" or "go ahead". Those follow-ups mean "continue the current orchestration mode". Direct CEO implementation should be announced as a fallback and used only when the user explicitly asks for current-thread execution, the work is non-app-code, or no routing path is available.
+
+After installing or updating the plugin, restart or refresh Codex if old threads appear to use stale behavior. Existing long-running threads may still carry older context, so start a fresh CEO thread for the most reliable test.
+
 ## Validation
 
 For local development, validate the packaged skill with your Codex skill validator:
