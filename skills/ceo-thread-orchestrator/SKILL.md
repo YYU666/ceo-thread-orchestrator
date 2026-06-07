@@ -56,6 +56,48 @@ Use the smallest operating mode that can satisfy the request.
 
 When tool contracts and this skill disagree, follow the stricter current tool contract and say what changed in the operating plan.
 
+## Goal Completion Loop
+
+The CEO owns goal closure, not just task decomposition. After parsing a user request, create the smallest artifact that can drive execution to completion:
+
+- Task card only: narrow bug fix, small UI change, test run, docs edit, or single-worker task with obvious acceptance criteria.
+- Goal brief: multi-step work, unclear dependencies, more than one lane, or work that may continue beyond the current turn.
+- PRD/design brief: product direction, user flows, architecture contracts, database/API shape, high-risk UX, or work where implementation would drift without a shared product spec.
+
+Do not write a PRD just to feel organized. A PRD is useful only when it reduces ambiguity for workers, reviewers, or the user. For routine implementation, a goal brief plus task cards is better.
+
+Maintain an active goal ledger in the existing project memory, operating-model note, or CEO report while work is open:
+
+```text
+Goal ID:
+User outcome:
+Status: intake | planned | dispatched | executing | review | revise | accepted | blocked | superseded
+Done criteria:
+Non-goals:
+Task graph:
+Active lanes / thread ids:
+Current owner:
+Last evidence:
+Next action:
+Stop / heartbeat condition:
+Memory updates needed:
+```
+
+Every CEO turn on an open goal must advance one of these fields: clarify done criteria, dispatch/continue a lane, inspect worker evidence, request revision, accept, block with a concrete blocker, supersede obsolete work, or update memory. Do not stop after producing an org chart if executable work remains and tools are available.
+
+Use this execution loop:
+
+1. Normalize the newest user request into a goal, done criteria, non-goals, constraints, and verification evidence.
+2. Build or update the task graph, including dependencies and parallel-safe write-sets.
+3. Choose staffing from existing lanes first; create/request new lanes only when justified by the task graph and tool contract.
+4. Dispatch the next executable task card with memory packet, write-set, verification, report format, and stop condition.
+5. Track lane state using reports, thread reads, task-pool evidence, leases, heartbeats, diffs, tests, screenshots, or artifacts.
+6. Review evidence against the done criteria; accept, revise, block, or supersede explicitly.
+7. If the goal is not closed by the end of the turn, leave a concrete next action and, when authorized/available, create or update a heartbeat/monitor tied to the active goal.
+8. When accepted, update project memory, decision logs, bug memory, release notes, or Zhixia-scannable docs only where durable learning exists.
+
+For mid-task user changes, re-open the goal brief instead of stacking unrelated task cards. Decide whether the change modifies done criteria, creates a new dependent task, supersedes active work, or requires another lane. Then update the active task graph before dispatching more work.
+
 ## Operating Mode Guardrails
 
 Prevent the CEO thread from silently sliding back into single-thread implementation.
@@ -323,6 +365,7 @@ When dispatching work, send a compact task card:
 
 ```text
 Task ID:
+Parent goal ID:
 Role:
 Workspace:
 Thread operation:
@@ -451,6 +494,7 @@ Keep reports short but decision-grade:
 
 ```text
 Current conclusion:
+Goal status:
 What changed / what was delegated:
 Architecture reason:
 Verification:

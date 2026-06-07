@@ -2,7 +2,7 @@
 
 CEO Thread Orchestrator is a community Codex plugin that packages a project-management skill for running Codex as a CEO/PM/architect instead of a single all-purpose worker.
 
-The skill helps Codex coordinate specialist lanes, reuse thread context, bootstrap memory, route work to reviewers, and decide when new threads are actually worth the coordination cost.
+The skill helps Codex coordinate specialist lanes, reuse thread context, bootstrap memory, route work to reviewers, and decide when new threads are actually worth the coordination cost. It also keeps an active goal loop so orchestration continues toward accepted, blocked, or superseded outcomes instead of stopping at a team plan.
 
 ## Introduction
 
@@ -15,6 +15,7 @@ The skill helps Codex coordinate specialist lanes, reuse thread context, bootstr
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
+- Maintains goal briefs, task graphs, and next actions so work can keep moving until accepted, blocked, or superseded.
 - Treats memory as explicit project infrastructure, with optional Zhixia/local-doc knowledge retrieval when available.
 - Requires evidence before acceptance: diffs, tests, screenshots, reports, or other artifacts depending on task risk.
 - Keeps thread creation, subagents, worktrees, automations, and spending-heavy model lanes behind tool-contract and user-authorization boundaries.

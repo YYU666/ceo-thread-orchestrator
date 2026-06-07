@@ -42,6 +42,14 @@ Use CEO Thread Orchestrator. We started with one code task, but now I added a se
 
 Expected behavior: Codex should re-evaluate the whole task graph, prefer reuse when sequential, and add a second lane only for independent parallel work with non-overlapping write-sets.
 
+## Goal Closure Loop
+
+```text
+Use CEO Thread Orchestrator to manage this project goal until it is accepted, blocked, or superseded. Draft the smallest useful goal brief, create the next executable task card, and report the active goal status and next action. Do not stop at a team plan.
+```
+
+Expected behavior: Codex should define done criteria, task graph, active owner/lane, evidence needed, next action, and a closure state instead of only describing roles.
+
 ## Memory Bootstrap
 
 ```text
