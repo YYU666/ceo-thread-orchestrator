@@ -1,69 +1,143 @@
 # CEO Thread Orchestrator
 
-CEO Thread Orchestrator is a community Codex plugin that packages a project-management skill for running Codex as a CEO/PM/architect instead of a single all-purpose worker.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/YYU666/ceo-thread-orchestrator)](https://github.com/YYU666/ceo-thread-orchestrator/releases)
+[![GitHub stars](https://img.shields.io/github/stars/YYU666/ceo-thread-orchestrator?style=social)](https://github.com/YYU666/ceo-thread-orchestrator/stargazers)
 
-The skill helps Codex coordinate specialist lanes, reuse thread context, bootstrap memory, route work to reviewers, and decide when new threads are actually worth the coordination cost. It also keeps an active goal loop so orchestration continues toward accepted, blocked, or superseded outcomes instead of stopping at a team plan.
+Turn Codex from a single coding thread into a CEO-led project workspace.
 
-## Introduction
+CEO Thread Orchestrator is an experimental Codex plugin/skill that helps one high-reasoning CEO thread coordinate specialist implementation, review, QA, product, market, and knowledge lanes. It is built for the new Codex app world where threads, worktrees, automations, skills, and local knowledge bases can work together, but only if someone keeps the goal, memory, and evidence straight.
 
-- [English introduction](docs/INTRODUCTION.md)
-- [中文介绍](docs/INTRODUCTION.zh-CN.md)
+## Why This Exists
+
+As Codex gains thread coordination and richer local tooling, complex projects can fail in new ways:
+
+- one thread silently becomes an all-purpose worker;
+- new threads are created too eagerly and lose context;
+- old specialist threads are not reused;
+- worker reports are accepted without evidence;
+- follow-up requirements create scattered task cards instead of one updated goal;
+- project memory stays trapped in chat history.
+
+This skill gives Codex an operating model for those problems: one CEO brain, reusable expert lanes, explicit memory packets, evidence-based acceptance, and a goal loop that continues until work is accepted, blocked, or superseded.
+
+## Quick Start
+
+Install this repository as a Codex plugin if your Codex environment supports plugin installation from local or GitHub repositories. If you only use raw skills, copy `skills/ceo-thread-orchestrator/` into your Codex skills directory.
+
+Then start a fresh Codex thread and try:
+
+```text
+Use CEO Thread Orchestrator to manage this project goal until it is accepted, blocked, or superseded. Draft the smallest useful goal brief, create the next executable task card, and report the active goal status and next action. Do not stop at a team plan.
+```
+
+For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](examples/smoke-prompts.md).
 
 ## What It Does
 
 - Keeps the current Codex thread as the high-reasoning CEO lane.
+- Creates the smallest useful execution artifact: task card, goal brief, or PRD/design brief.
+- Maintains a goal ledger with done criteria, task graph, active owner, evidence, next action, and closure state.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
-- Maintains goal briefs, task graphs, and next actions so work can keep moving until accepted, blocked, or superseded.
-- Treats memory as explicit project infrastructure, with optional Zhixia/local-doc knowledge retrieval when available.
+- Bootstraps new or reused threads with compact memory packets.
+- Uses Zhixia/local-doc knowledge exports through `.codex-knowledge/` when available.
 - Requires evidence before acceptance: diffs, tests, screenshots, reports, or other artifacts depending on task risk.
 - Keeps thread creation, subagents, worktrees, automations, and spending-heavy model lanes behind tool-contract and user-authorization boundaries.
 
-## Install
+## Before And After
 
-This repository is structured as a Codex plugin:
-
-```text
-ceo-thread-orchestrator/
-├── .codex-plugin/plugin.json
-└── skills/
-    └── ceo-thread-orchestrator/
-        ├── SKILL.md
-        ├── agents/openai.yaml
-        └── references/
-```
-
-Repository: <https://github.com/YYU666/ceo-thread-orchestrator>
-
-If your Codex environment supports plugin installation from local or GitHub repositories, install this repository as a plugin. If you only use raw skills, copy `skills/ceo-thread-orchestrator/` into your Codex skills directory.
-
-## Example Prompts
+Without this skill:
 
 ```text
-Use CEO Thread Orchestrator to manage this project as CEO/PM.
+User: Go ahead.
+Codex: I will directly edit the UI in this thread.
 ```
+
+With this skill:
 
 ```text
-We have a feature request and two bug reports. Build a team plan, reuse existing threads if possible, and only create new lanes if the write-sets can run in parallel.
+Operating mode: route to existing implementation lane.
+Goal status: dispatched.
+Done criteria: UI renders correctly, tests pass, screenshot checked.
+Next action: worker implements within the write-set, CEO reviews evidence, then accepts or requests revision.
 ```
+
+## Operating Model
+
+The CEO lane owns:
+
+- scope and product judgment;
+- architecture tradeoffs;
+- task graph and staffing;
+- memory routing;
+- cross-thread relay;
+- model/cost policy;
+- review and acceptance decisions;
+- concise user reporting.
+
+Specialist lanes own bounded work:
+
+- implementation;
+- independent review and QA;
+- UI/UX critique;
+- market or competitor research;
+- knowledge, memory, and documentation cleanup.
+
+The CEO should not become a permanent all-purpose implementer. Direct CEO coding is reserved for tiny tasks, docs/skill/memory edits, explicit direct-current-thread requests, or emergency unblocks.
+
+## Goal Completion Loop
+
+The skill does not stop at "here is a team plan." For open goals, the CEO maintains:
 
 ```text
-Review the current team structure, memory plan, and decision ledger. Tell me whether this project needs fewer or more specialist threads.
+Goal ID:
+User outcome:
+Status: intake | planned | dispatched | executing | review | revise | accepted | blocked | superseded
+Done criteria:
+Task graph:
+Active lanes / thread ids:
+Current owner:
+Last evidence:
+Next action:
+Stop / heartbeat condition:
+Memory updates needed:
 ```
 
-More smoke prompts are in `examples/smoke-prompts.md`.
+Each CEO turn should advance the goal by clarifying done criteria, dispatching work, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
 
 ## Optional Integrations
 
-This skill is designed to degrade gracefully. It can use these capabilities when available, but does not require all of them:
+This skill degrades gracefully. It can use these capabilities when available, but does not require all of them:
 
 - Codex app thread tools such as list/read/send/create/fork/handoff.
 - Codex worktrees for isolated parallel work.
 - Subagents for explicitly authorized bounded delegation.
 - Automations or heartbeats for follow-up monitoring.
-- Project-defined task pools, external worker systems, or routing scripts when a project already defines them.
+- Project-defined task pools, external worker systems, or routing scripts.
 - Zhixia/local-doc knowledge exports through `.codex-knowledge/`.
+
+## Repository Structure
+
+```text
+ceo-thread-orchestrator/
+├── .codex-plugin/plugin.json
+├── skills/
+│   └── ceo-thread-orchestrator/
+│       ├── SKILL.md
+│       ├── agents/openai.yaml
+│       └── references/
+├── examples/
+└── docs/
+```
+
+## Documentation
+
+- [English introduction](docs/INTRODUCTION.md)
+- [中文介绍](docs/INTRODUCTION.zh-CN.md)
+- [Smoke prompts](examples/smoke-prompts.md)
+- [Open-source readiness checklist](skills/ceo-thread-orchestrator/references/open-source-readiness.md)
 
 ## Safety Model
 
@@ -71,13 +145,11 @@ The skill treats new threads as capacity decisions, not a reflex. For ordinary c
 
 Worker reports are evidence, not proof. The CEO lane still inspects meaningful artifacts before accepting work.
 
-The CEO lane should not silently fall back into app-code implementation just because the user says "continue" or "go ahead". Those follow-ups mean "continue the current orchestration mode". Direct CEO implementation should be announced as a fallback and used only when the user explicitly asks for current-thread execution, the work is non-app-code, or no routing path is available.
-
 After installing or updating the plugin, restart or refresh Codex if old threads appear to use stale behavior. Existing long-running threads may still carry older context, so start a fresh CEO thread for the most reliable test.
 
 ## Validation
 
-For local development, validate the packaged skill with your Codex skill validator:
+For local development, validate the packaged skill:
 
 ```powershell
 python <path-to-skill-creator>/scripts/quick_validate.py .\skills\ceo-thread-orchestrator
@@ -89,10 +161,22 @@ If you have the Codex plugin validator available, also validate the plugin root:
 python <path-to-plugin-creator>/scripts/validate_plugin.py .
 ```
 
-## License
+## Contributing
 
-MIT. See `LICENSE`.
+Issues and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing changes.
+
+Useful contributions include:
+
+- real-world smoke test reports;
+- clearer task-card or goal-loop behavior;
+- safer thread/review routing patterns;
+- memory-provider integration notes;
+- examples for Codex projects with different tool surfaces.
 
 ## Status
 
 This is an experimental community plugin. Codex thread tooling, model routing, worktrees, subagents, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

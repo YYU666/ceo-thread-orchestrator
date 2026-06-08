@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Smoke prompts
+    url: https://github.com/YYU666/ceo-thread-orchestrator/blob/main/examples/smoke-prompts.md
+    about: Try these prompts before reporting behavior issues.
+  - name: Chinese introduction
+    url: https://github.com/YYU666/ceo-thread-orchestrator/blob/main/docs/INTRODUCTION.zh-CN.md
+    about: Chinese overview of the project and operating model.

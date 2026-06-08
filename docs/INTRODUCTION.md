@@ -56,6 +56,24 @@ It adds another code lane only when:
 
 When requirements change mid-task, the CEO lane rebuilds the whole task graph first. It then decides whether to continue the current lane, queue the new work, add a reviewer, create an independent specialist lane, or supersede existing work.
 
+## Goal Completion Loop
+
+The plugin is not meant to stop at "here is a team plan."
+
+For work that spans more than one step, the CEO lane keeps a lightweight goal brief:
+
+- user outcome
+- done criteria
+- non-goals
+- task graph
+- active lanes and thread ids
+- current owner
+- last evidence
+- next action
+- closure state: accepted, blocked, or superseded
+
+Each CEO turn should move the goal forward by dispatching work, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
+
 ## Memory Model
 
 The plugin treats memory as explicit infrastructure.
@@ -99,12 +117,13 @@ It is also not a promise that every Codex environment can create or manage threa
 ## Example Workflow
 
 1. A user gives product feedback or a bug report.
-2. The CEO lane normalizes it into a task card.
-3. The CEO lane searches for reusable specialist threads.
-4. One implementation lane receives bounded work.
-5. A review lane checks high-risk changes when needed.
-6. The CEO lane inspects evidence and decides accept, revise, block, or supersede.
-7. Stable learning goes back into memory, decisions, bug notes, or docs.
+2. The CEO lane normalizes it into a goal brief or task card.
+3. The CEO lane defines done criteria and a task graph.
+4. The CEO lane searches for reusable specialist threads.
+5. One implementation lane receives bounded work.
+6. A review lane checks high-risk changes when needed.
+7. The CEO lane inspects evidence and decides accept, revise, block, or supersede.
+8. Stable learning goes back into memory, decisions, bug notes, or docs.
 
 ## Status
 

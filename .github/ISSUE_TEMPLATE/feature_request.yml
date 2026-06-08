@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest an orchestration, memory, or documentation improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or project-management problem should this solve?
+      placeholder: Example: CEO stops after a team plan instead of tracking the goal to closure.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: What should the skill do differently?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Goal completion loop
+        - Thread routing
+        - New thread memory bootstrap
+        - Knowledge provider integration
+        - Review or QA gate
+        - Model or cost policy
+        - Smoke prompts
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example prompt or scenario
+      description: Add a sanitized prompt or workflow where this would help.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This proposal is generic and not tied to a private local workflow.
+        - label: This proposal would be useful across more than one Codex project.

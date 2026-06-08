@@ -1,0 +1,60 @@
+name: Behavior bug
+description: Report unexpected CEO Thread Orchestrator behavior.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a behavior issue. Please remove secrets, private paths, and unsanitized chat transcripts before submitting.
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt or task
+      description: What prompt or workflow triggered the behavior?
+      placeholder: Paste a sanitized prompt or a short summary.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should the CEO skill have done?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What did Codex do instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Goal completion loop
+        - Direct CEO fallback
+        - Thread reuse or creation
+        - Memory bootstrap
+        - Review gate
+        - Model or cost routing
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: tool_surface
+    attributes:
+      label: Available Codex tools
+      description: Which capabilities were available?
+      placeholder: Thread tools, worktrees, subagents, automations, browser, local shell, knowledge base, etc.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I tested in a fresh thread or after reinstall/restart when possible.
+        - label: I removed private paths, secrets, and private workflow names.
