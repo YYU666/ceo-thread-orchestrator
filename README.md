@@ -43,6 +43,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Dynamically adjusts thread count when task size or requirements change.
 - Bootstraps new or reused threads with compact memory packets.
 - Adds code quality gates to prevent broad speculative rewrites, hidden behavior changes, and repeated low-signal patch attempts.
+- Detects doom-loop symptoms and prefers rollback, fresh bounded task cards, or independent review over larger speculative diffs.
 - Uses Zhixia/local-doc knowledge exports through `.codex-knowledge/` when available.
 - Requires evidence before acceptance: diffs, tests, screenshots, reports, or other artifacts depending on task risk.
 - Keeps thread creation, subagents, worktrees, automations, and spending-heavy model lanes behind tool-contract and user-authorization boundaries.
@@ -93,11 +94,13 @@ The CEO should not become a permanent all-purpose implementer. Direct CEO coding
 For implementation work, the CEO defines a change budget before dispatch:
 
 - intended files or modules;
+- architecture, framework, API, and persistence invariants;
+- official/current reference docs for unfamiliar APIs;
 - behavior that must remain unchanged;
 - verification evidence required for acceptance;
-- rollback or stop condition when a fix starts spreading.
+- rollback baseline or stop condition when a fix starts spreading.
 
-Workers are expected to inspect local conventions, make focused changes, avoid speculative rewrites, preserve contracts, and report root cause plus verification. Repeated failed fixes should trigger re-analysis or review/debug routing instead of larger patches.
+Workers are expected to inspect local conventions, make focused changes, avoid duplicate logic, tight coupling, magic numbers, weak names, and speculative rewrites, preserve contracts and failure paths, run available static checks, and report root cause plus verification. Repeated failed fixes should trigger re-analysis, rollback planning, or review/debug routing instead of larger patches.
 
 ## Goal Completion Loop
 

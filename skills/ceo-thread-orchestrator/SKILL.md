@@ -374,6 +374,9 @@ Memory packet:
 Goal:
 Why this matters:
 Relevant files/docs:
+Architecture invariants:
+Reference docs required:
+Rollback baseline:
 Allowed write-set:
 Do not touch:
 Depends on / parallel with:
@@ -412,24 +415,30 @@ Keep implementation scope tight. Avoid unrelated refactors, dependency churn, or
 
 ## Code Quality Gate
 
-Prevent "vibe coding decay": code that appears to satisfy the prompt while making the project harder to maintain.
+Prevent "vibe coding decay": code that appears to satisfy the prompt while making the project harder to understand, test, or safely change later.
 
 Before dispatching or doing implementation work, define a change budget:
 
 - intended files or modules;
 - max scope of acceptable edits;
+- architecture, framework, API, persistence, and naming invariants that must not drift;
+- official/current docs or local reference files the worker must consult for unfamiliar APIs;
 - behavior that must remain unchanged;
 - tests, screenshots, smoke checks, or type/lint checks required for acceptance;
-- rollback or stop condition if the fix starts spreading.
+- rollback baseline and stop condition if the fix starts spreading.
 
 Implementation workers must:
 
 - inspect the existing architecture and local conventions before editing;
 - make the smallest behavior-preserving change that satisfies the task;
+- keep one coherent generation/editing unit at a time; for large work, land one function, component, route, or module slice, verify it, then continue;
 - avoid broad rewrites, dependency churn, generated boilerplate dumps, speculative abstractions, and style-only refactors;
+- avoid copy-paste logic, unnecessary tight coupling, unclear names, unexplained magic numbers, and hidden single-use shortcuts;
 - avoid masking errors with catch-all fallbacks, disabled tests, relaxed types, or removed assertions;
+- preserve or improve error handling, validation, boundary checks, and failure paths touched by the change;
 - keep public APIs, data contracts, persistence semantics, and user-visible copy stable unless the task explicitly changes them;
 - stop and report when the real root cause contradicts the task card instead of forcing a patch that only silences symptoms;
+- run a short self-review pass before reporting: name duplicated logic, coupling risk, readability issues, behavior-preservation evidence, and any refactor intentionally deferred;
 - update or add focused tests when the risk justifies it.
 
 The CEO review should check more than "does it run":
@@ -438,11 +447,16 @@ The CEO review should check more than "does it run":
 - the root cause is named, not just the symptom;
 - new code follows nearby patterns and does not duplicate an existing helper;
 - edge cases and failure paths are preserved;
-- tests or smoke checks cover the changed behavior;
+- tests or smoke checks cover the changed behavior, preferably through user-visible behavior for UI/workflow changes and focused unit tests for critical business logic;
+- static checks, lint, type checks, or format checks were run when the project has them;
 - no unrelated cleanup, formatting churn, dependency changes, or hidden product decisions were bundled in;
 - any residual risk is explicit enough for a later reviewer or user to understand.
 
 If a worker needs multiple attempts on the same bug, require a short root-cause re-analysis before another patch. After two failed implementation attempts, stop expanding the diff and route to a review/debug lane or ask for a narrower reproduction.
+
+When a lane enters a doom loop, prefer reset over patching on top of a polluted state. Doom-loop signs include repeated contradictory fixes, increasing diff size without new evidence, framework or data-contract drift, test weakening, or "fixes" that only move the symptom. Identify the last stable baseline, preserve useful findings in memory, and propose rollback or a fresh bounded task card. Do not run destructive rollback commands without user/project authorization.
+
+For high-risk changes, the reviewer should be independent and read-only when the tool surface allows it. Start from the task card, diff, tests, and relevant docs instead of the implementation thread's long conversation history, then report accept/revise/block evidence.
 
 Direct CEO coding is allowed only for:
 

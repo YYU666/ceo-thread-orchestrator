@@ -34,6 +34,22 @@ Use CEO Thread Orchestrator for a bug fix that has already failed twice. Do not 
 
 Expected behavior: Codex should define a change budget, require root-cause analysis before patching, avoid broad rewrites, and route to review/debug instead of allowing repeated speculative edits.
 
+## Doom Loop Recovery
+
+```text
+Use CEO Thread Orchestrator. A worker has tried three fixes for the same login bug, touched auth, routing, and persistence files, and tests are still failing. Decide the next CEO action without writing code.
+```
+
+Expected behavior: Codex should identify doom-loop signals, name the last stable baseline or evidence needed to find it, preserve useful findings, and propose rollback or a fresh bounded task card without running destructive commands.
+
+## Maintainability Gate
+
+```text
+Use CEO Thread Orchestrator for a feature request. Draft the implementation task card so the worker must preserve the current tech stack, avoid duplicate logic and magic numbers, consult official docs for unknown APIs, run project static checks, and report a self-review before completion.
+```
+
+Expected behavior: Codex should include architecture invariants, reference docs, rollback baseline, change budget, static checks, and self-review requirements in the task card.
+
 ## Follow-Up Does Not Mean Direct CEO Coding
 
 ```text

@@ -1,6 +1,6 @@
 {
   "name": "ceo-thread-orchestrator",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "description": "A Codex CEO/PM orchestration skill for coordinating specialist threads, memory, reviews, and dynamic task lanes.",
   "author": {
     "name": "ceo-thread-orchestrator contributors"

@@ -56,6 +56,12 @@ It adds another code lane only when:
 
 When requirements change mid-task, the CEO lane rebuilds the whole task graph first. It then decides whether to continue the current lane, queue the new work, add a reviewer, create an independent specialist lane, or supersede existing work.
 
+## Code Quality Guardrails
+
+The plugin treats AI-written code as fast but unfinished work. Before dispatching implementation, the CEO lane defines architecture invariants, reference docs, a rollback baseline, a narrow write-set, and verification evidence.
+
+Workers should avoid tech-stack drift, duplicate logic, tight coupling, magic numbers, weak names, missing boundary checks, and broad speculative rewrites. If repeated fixes make the code worse, the CEO should stop the loop, preserve useful findings, and choose rollback planning, a fresh bounded task card, or independent read-only review.
+
 ## Goal Completion Loop
 
 The plugin is not meant to stop at "here is a team plan."

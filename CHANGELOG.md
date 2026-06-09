@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.2 - Doom Loop Guardrails
+
+- Added task-card fields for architecture invariants, required reference docs, and rollback baseline.
+- Strengthened the code quality gate against doom loops, tech-stack drift, copy-paste logic, weak naming, magic numbers, missing boundary checks, and one-shot code.
+- Added worker self-review, static-check expectations, and independent read-only review guidance for high-risk changes.
+- Added smoke prompts for doom-loop recovery and maintainability gates.
+
 ## v0.2.1 - Code Quality Gate
 
 - Added code quality gates to reduce broad speculative rewrites and repeated low-signal patch attempts.
