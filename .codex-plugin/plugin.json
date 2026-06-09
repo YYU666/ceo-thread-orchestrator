@@ -1,7 +1,7 @@
 {
   "name": "ceo-thread-orchestrator",
-  "version": "0.2.3",
-  "description": "CEO Flow: a Codex CEO/PM orchestration skill for coordinating specialist threads, memory, reviews, and dynamic task lanes.",
+  "version": "0.2.4",
+  "description": "CEO Flow: a Codex CEO/PM orchestration skill for turning PRDs into lightweight Core Team execution with result harvest, specialist threads, memory, reviews, and dynamic task lanes.",
   "author": {
     "name": "ceo-thread-orchestrator contributors"
   },
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "CEO Flow",
     "shortDescription": "CEO-style Codex workflow across expert lanes.",
-    "longDescription": "Coordinate Codex work as a CEO/PM/architect: keep one high-reasoning decision lane, reuse specialist implementation/review/knowledge lanes, maintain lightweight team rosters and evidence memory cards, bootstrap knowledge deliberately, and scale threads only when the task graph justifies it.",
+    "longDescription": "Coordinate Codex work as a CEO/PM/architect: keep one high-reasoning decision lane, treat the PRD/task-graph thread as CEO by default, route accepted plans through a lightweight Core Team of implementation/review/product/knowledge roles, harvest worker results and dispatch the next unblocked tasks, reuse specialist lanes, maintain team rosters and evidence memory cards, bootstrap knowledge deliberately, and scale threads only when the task graph justifies it.",
     "developerName": "ceo-thread-orchestrator contributors",
     "category": "Productivity",
     "capabilities": [
@@ -29,6 +29,7 @@
     ],
     "defaultPrompt": [
       "Use CEO Flow for this project.",
+      "Execute this PRD with the CEO Flow Core Team.",
       "Split this work into reusable expert lanes.",
       "Review the team structure and memory plan."
     ]

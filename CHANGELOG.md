@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.2.4 - PRD Core Team Execution
+
+- Added a default Core Team role map for CEO, implementation, review/QA, product/UX, knowledge/memory, and research/docs work.
+- Clarified that the thread owning an accepted PRD, design brief, or task graph is the CEO thread by default.
+- Added a PRD-to-execution gate: after the user asks to execute an accepted plan, CEO Flow should leave CEO-only planning and route work through reusable or requested expert lanes.
+- Added a CEO harvest loop so the CEO collects worker results, classifies lane status, sends revisions or next tasks, and keeps routine in-scope approvals inside the CEO lane.
+- Kept the Core Team model lightweight: roles are not permanent threads, and they do not create automatic queues, supervisor loops, or background workers.
+- Added smoke prompts for PRD-to-Core-Team execution and CEO harvest behavior.
+
 ## v0.2.3 - CEO Flow
 
 - Added CEO Flow as the short public display name while keeping `ceo-thread-orchestrator` as the compatible package and skill id.

@@ -6,7 +6,7 @@
 
 Turn Codex from a single coding thread into a CEO-led project workspace.
 
-CEO Flow is the short public name for the `ceo-thread-orchestrator` Codex plugin/skill. It helps one high-reasoning CEO thread coordinate specialist implementation, review, QA, product, market, and knowledge lanes. It is built for the new Codex app world where threads, worktrees, automations, skills, and local knowledge bases can work together, but only if someone keeps the goal, memory, and evidence straight.
+CEO Flow is the short public name for the `ceo-thread-orchestrator` Codex plugin/skill. It helps one high-reasoning CEO thread coordinate specialist implementation, review, QA, product, market, and knowledge lanes. When the CEO thread owns a PRD or task graph and the user asks to execute, CEO Flow uses a lightweight Core Team role map to route the work instead of staying in CEO-only planning. It is built for the new Codex app world where threads, worktrees, automations, skills, and local knowledge bases can work together, but only if someone keeps the goal, memory, and evidence straight.
 
 ## Why This Exists
 
@@ -37,7 +37,9 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 
 - Keeps the current Codex thread as the high-reasoning CEO lane.
 - Creates the smallest useful execution artifact: task card, goal brief, or PRD/design brief.
+- Treats the PRD/design/task-graph thread as the CEO thread by default, then switches to Core Team execution after the plan is accepted.
 - Maintains a goal ledger with done criteria, task graph, active owner, evidence, next action, and closure state.
+- Runs a CEO harvest loop after dispatch: collect worker results, classify evidence, request revisions, and send the next unblocked task until the project lands.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
@@ -91,6 +93,35 @@ Specialist lanes own bounded work:
 
 The CEO should not become a permanent all-purpose implementer. Direct CEO coding is reserved for tiny tasks, docs/skill/memory edits, explicit direct-current-thread requests, or emergency unblocks.
 
+## Default Core Team
+
+CEO Flow has a default company-style role map:
+
+```text
+CEO / PM / Architect
+Implementation Expert
+Review / QA Expert
+Product / UX Expert
+Knowledge / Memory Expert
+Research / Docs Expert
+```
+
+Roles are not permanent threads. They become visible specialist lanes only when the task graph needs them, the active Codex tools allow them, and the user or project has authorized execution.
+
+The default PRD path is:
+
+1. The PRD/design/task-graph thread becomes the CEO thread.
+2. After the plan is accepted or the user says to execute, CEO leaves CEO-only planning.
+3. CEO maps the next execution wave onto the Core Team roles.
+4. CEO reuses existing visible expert lanes first.
+5. If a needed lane does not exist, CEO creates or requests the smallest useful visible lane with a task card, write-set, verification, and stop condition.
+6. CEO harvests worker results on a cadence, reviews evidence, and decides `accept | revise | block | supersede`.
+7. CEO sends the next unblocked task or revision until the goal lands or has a real external blocker.
+
+The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back.
+
+Worker lanes should not ask the user for routine approvals inside an accepted PRD or task graph. They report questions and blockers to the CEO lane. The CEO can approve normal in-scope sequencing, file choices inside the allowed write-set, test selection, and bounded revisions. The user is needed only for out-of-scope changes, credentials, spending beyond the agreed budget, destructive actions, or product/business decisions that change the accepted goal.
+
 ## Code Quality Gate
 
 For implementation work, the CEO defines a change budget before dispatch:
@@ -124,6 +155,8 @@ Memory updates needed:
 
 Each CEO turn should advance the goal by clarifying done criteria, dispatching work, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
 
+After dispatch, the CEO should keep collecting results. A completed worker report is not the end of management; it is the next harvest point. The CEO reads the evidence, updates the task graph, and either accepts, requests revision, routes review, or sends the next task.
+
 ## Team Roster And Evidence Cards
 
 CEO Flow borrows the useful parts of larger agent-team systems without requiring an automatic workflow. A project may keep a small roster of reusable lanes:
@@ -150,7 +183,7 @@ Confidence:
 Status:
 ```
 
-These records are advisory. They help the CEO reuse the right lane and remember proven patterns, but they do not create background workers, automatic queues, or autoscaling by themselves.
+These records are advisory. They help the CEO reuse the right lane and remember proven patterns, but they do not create background workers, automatic queues, autoscaling, or supervisor loops by themselves.
 
 ## Optional Integrations
 

@@ -2,7 +2,7 @@
 
 CEO Flow is a Codex plugin for people who want Codex to manage a project like a small product team, not just answer one task at a time. The package is still named `ceo-thread-orchestrator` for compatibility, but CEO Flow is the short public name.
 
-It turns the current Codex thread into a CEO/PM/architect lane. That lane keeps the broad context, makes decisions, designs the team shape, routes work to specialist lanes, and checks evidence before accepting results.
+It turns the current Codex thread into a CEO/PM/architect lane. That lane keeps the broad context, makes decisions, designs the team shape, routes work to specialist lanes, and checks evidence before accepting results. When that CEO thread owns an accepted PRD or task graph, the next execution request should move into a lightweight Core Team execution wave instead of staying in CEO-only planning.
 
 ## Why This Exists
 
@@ -43,6 +43,23 @@ Specialist lanes own bounded work:
 
 The CEO lane remains accountable. A worker report is evidence, not proof.
 
+## Default Core Team
+
+CEO Flow has a default company-style role map:
+
+- CEO / PM / Architect
+- Implementation Expert
+- Review / QA Expert
+- Product / UX Expert
+- Knowledge / Memory Expert
+- Research / Docs Expert
+
+This is not a permanent org chart and it is not an automatic workflow engine. Roles become visible specialist lanes only when the task graph needs them, current tools allow them, and the user or project authorizes execution.
+
+The normal PRD path is: the PRD thread is the CEO thread; once the PRD or task graph is accepted and the user asks to execute, the CEO maps work onto the smallest useful Core Team. Most projects start with CEO plus one implementation lane. High-risk or user-facing work adds review/QA. Product/UX, knowledge, and research lanes appear only when their evidence is needed.
+
+After dispatch, the CEO keeps harvesting results. It reads worker reports, checks evidence, classifies lanes as accepted, revise, blocked, superseded, still running, or stale, then sends the next unblocked task. Worker lanes should report routine in-scope questions to the CEO, not the user. The user is needed only when the decision changes the accepted PRD, exceeds the write-set or budget, needs credentials, touches destructive operations, or changes product direction.
+
 ## Dynamic Thread Scaling
 
 The plugin treats new threads as a capacity decision, not a reflex.
@@ -80,7 +97,7 @@ For work that spans more than one step, the CEO lane keeps a lightweight goal br
 - next action
 - closure state: accepted, blocked, or superseded
 
-Each CEO turn should move the goal forward by dispatching work, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
+Each CEO turn should move the goal forward by dispatching work, harvesting worker results, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
 
 ## Memory Model
 

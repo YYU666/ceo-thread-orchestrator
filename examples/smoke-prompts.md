@@ -34,6 +34,14 @@ Use CEO Flow for a risky UI change. Plan implementation plus independent review.
 
 Expected behavior: Codex should propose an implementer plus reviewer pattern and keep CEO as final acceptance gate.
 
+## PRD To Core Team Execution
+
+```text
+Use CEO Flow. This CEO thread has already produced an accepted PRD with three implementation tasks, one UI review task, and one memory update task. The user now says: "Start executing the PRD." Do not edit files in this smoke test. Decide the execution mode, map tasks onto the default Core Team roles, and say which visible expert lanes should be reused, created, or requested.
+```
+
+Expected behavior: Codex should not remain in CEO-only planning. It should treat the PRD thread as the CEO lane, launch a Core Team execution wave, default to one implementation lane plus review when risk justifies it, add product/UX or knowledge only when needed, and avoid automatic queues or background supervisor behavior.
+
 ## Code Quality Gate
 
 ```text
@@ -81,6 +89,14 @@ Use CEO Flow to manage this project goal until it is accepted, blocked, or super
 ```
 
 Expected behavior: Codex should define done criteria, task graph, active owner/lane, evidence needed, next action, and a closure state instead of only describing roles.
+
+## CEO Harvest Loop
+
+```text
+Use CEO Flow. The CEO has already dispatched three implementation tasks from an accepted PRD. One worker reports success with tests, one asks whether it may make a small in-scope file-level choice, and one is stale. Do not edit files or create threads in this smoke test. Harvest the results, decide accept/revise/block/stale for each lane, answer the in-scope worker question as CEO without asking the user, and dispatch the next unblocked task.
+```
+
+Expected behavior: Codex should collect evidence, classify lane states, keep routine in-scope approvals inside the CEO lane, avoid asking the user unless the task exceeds the accepted PRD or needs credentials/spending/destructive actions, and continue the execution wave toward landed work.
 
 ## Memory Bootstrap
 
