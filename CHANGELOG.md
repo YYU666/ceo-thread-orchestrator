@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.1 - Code Quality Gate
+
+- Added code quality gates to reduce broad speculative rewrites and repeated low-signal patch attempts.
+- Added change budget and quality-gate reporting fields to implementation task cards.
+- Added a smoke prompt for failed bug-fix loops that need root-cause re-analysis.
+
 ## v0.2.0 - Goal Completion Loop
 
 - Added a goal completion loop so CEO orchestration continues toward accepted, blocked, or superseded outcomes.

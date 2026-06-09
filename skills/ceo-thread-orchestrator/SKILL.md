@@ -379,6 +379,7 @@ Do not touch:
 Depends on / parallel with:
 Acceptance criteria:
 Required verification:
+Change budget / quality gates:
 Cost/model lane:
 Model policy / avoid-list:
 Autonomy level:
@@ -386,7 +387,7 @@ Thread reuse note:
 Report back with:
 ```
 
-For implementation tasks, require the worker to report changed files, tests run, failures, residual risks, exact commands, and whether any user/project memory should be updated.
+For implementation tasks, require the worker to report changed files, tests run, failures, residual risks, exact commands, quality-gate status, and whether any user/project memory should be updated.
 
 Autonomy levels:
 
@@ -408,6 +409,40 @@ For coding work:
 7. If tasks remain active beyond the current turn, CEO creates or updates a heartbeat/monitor with the reused thread ids, cadence, stop condition, and next action.
 
 Keep implementation scope tight. Avoid unrelated refactors, dependency churn, or UI redesigns unless they are part of the task.
+
+## Code Quality Gate
+
+Prevent "vibe coding decay": code that appears to satisfy the prompt while making the project harder to maintain.
+
+Before dispatching or doing implementation work, define a change budget:
+
+- intended files or modules;
+- max scope of acceptable edits;
+- behavior that must remain unchanged;
+- tests, screenshots, smoke checks, or type/lint checks required for acceptance;
+- rollback or stop condition if the fix starts spreading.
+
+Implementation workers must:
+
+- inspect the existing architecture and local conventions before editing;
+- make the smallest behavior-preserving change that satisfies the task;
+- avoid broad rewrites, dependency churn, generated boilerplate dumps, speculative abstractions, and style-only refactors;
+- avoid masking errors with catch-all fallbacks, disabled tests, relaxed types, or removed assertions;
+- keep public APIs, data contracts, persistence semantics, and user-visible copy stable unless the task explicitly changes them;
+- stop and report when the real root cause contradicts the task card instead of forcing a patch that only silences symptoms;
+- update or add focused tests when the risk justifies it.
+
+The CEO review should check more than "does it run":
+
+- diff size and touched files match the change budget;
+- the root cause is named, not just the symptom;
+- new code follows nearby patterns and does not duplicate an existing helper;
+- edge cases and failure paths are preserved;
+- tests or smoke checks cover the changed behavior;
+- no unrelated cleanup, formatting churn, dependency changes, or hidden product decisions were bundled in;
+- any residual risk is explicit enough for a later reviewer or user to understand.
+
+If a worker needs multiple attempts on the same bug, require a short root-cause re-analysis before another patch. After two failed implementation attempts, stop expanding the diff and route to a review/debug lane or ask for a narrower reproduction.
 
 Direct CEO coding is allowed only for:
 

@@ -26,6 +26,14 @@ Use CEO Thread Orchestrator for a risky UI change. Plan implementation plus inde
 
 Expected behavior: Codex should propose an implementer plus reviewer pattern and keep CEO as final acceptance gate.
 
+## Code Quality Gate
+
+```text
+Use CEO Thread Orchestrator for a bug fix that has already failed twice. Do not expand the diff. Create a task card that forces root-cause re-analysis, a tight write-set, focused verification, and a stop condition before another implementation attempt.
+```
+
+Expected behavior: Codex should define a change budget, require root-cause analysis before patching, avoid broad rewrites, and route to review/debug instead of allowing repeated speculative edits.
+
 ## Follow-Up Does Not Mean Direct CEO Coding
 
 ```text
