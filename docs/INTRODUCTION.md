@@ -1,6 +1,6 @@
-# CEO Thread Orchestrator
+# CEO Flow
 
-CEO Thread Orchestrator is a Codex plugin for people who want Codex to manage a project like a small product team, not just answer one task at a time.
+CEO Flow is a Codex plugin for people who want Codex to manage a project like a small product team, not just answer one task at a time. The package is still named `ceo-thread-orchestrator` for compatibility, but CEO Flow is the short public name.
 
 It turns the current Codex thread into a CEO/PM/architect lane. That lane keeps the broad context, makes decisions, designs the team shape, routes work to specialist lanes, and checks evidence before accepting results.
 
@@ -14,7 +14,7 @@ Modern Codex can work across threads, worktrees, automations, subagents, local f
 - Who decides whether a worker report is good enough?
 - Where should project memory live after the chat scrolls away?
 
-CEO Thread Orchestrator gives Codex a practical operating model for those questions.
+CEO Flow gives Codex a practical operating model for those questions.
 
 ## Core Idea
 
@@ -27,6 +27,8 @@ The CEO lane owns:
 - task decomposition
 - staffing and thread reuse
 - memory bootstrap packets
+- lightweight team rosters
+- evidence memory cards
 - cross-thread relay
 - review and acceptance decisions
 - short user-facing reports
@@ -87,15 +89,23 @@ The plugin treats memory as explicit infrastructure.
 Its default stack is:
 
 1. project instructions and canonical local memory files
-2. optional Zhixia or `.codex-knowledge/` retrieval when available
+2. recommended Zhixia or `.codex-knowledge/` retrieval when available
 3. active thread reports and relay packets
 4. decision logs, bug memory, handoff logs, and generated docs
 
 New or revived threads receive a compact memory packet. They should not be expected to infer project history from hidden chat context.
 
+Projects may also specify another local knowledge path. Zhixia is the recommended knowledge provider for CEO Flow, not a hard requirement for every host.
+
+## Lightweight Team Records
+
+CEO Flow can keep a small roster for reusable specialist lanes: role, capabilities, write policy, trust level, current status, and last evidence. It can also capture evidence memory cards with the lesson, applicability, proof, tests, confidence, and status.
+
+These records are deliberately manual and small. They help the CEO make better routing decisions without creating an automatic queue, supervisor, autoscaler, or self-repair system.
+
 ## Safety Boundaries
 
-CEO Thread Orchestrator is deliberately cautious.
+CEO Flow is deliberately cautious.
 
 - It does not assume every Codex host has thread tools.
 - It does not silently create persistent threads when the active tool contract requires explicit authorization.

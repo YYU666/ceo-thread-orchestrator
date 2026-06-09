@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.3 - CEO Flow
+
+- Added CEO Flow as the short public display name while keeping `ceo-thread-orchestrator` as the compatible package and skill id.
+- Added a lightweight team registry template for reusable lanes with role, capabilities, write policy, trust level, status, and last evidence.
+- Added evidence memory card guidance so reusable lessons are promoted only when backed by concrete proof.
+- Clarified Zhixia / `.codex-knowledge/` as the recommended CEO Flow knowledge provider while allowing projects to specify another local knowledge path.
+- Updated smoke prompts for roster, evidence-memory, and CEO Flow alias behavior.
+
 ## v0.2.2 - Doom Loop Guardrails
 
 - Added task-card fields for architecture invariants, required reference docs, and rollback baseline.

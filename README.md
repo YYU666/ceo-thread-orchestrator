@@ -1,4 +1,4 @@
-# CEO Thread Orchestrator
+# CEO Flow
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/YYU666/ceo-thread-orchestrator)](https://github.com/YYU666/ceo-thread-orchestrator/releases)
@@ -6,7 +6,7 @@
 
 Turn Codex from a single coding thread into a CEO-led project workspace.
 
-CEO Thread Orchestrator is an experimental Codex plugin/skill that helps one high-reasoning CEO thread coordinate specialist implementation, review, QA, product, market, and knowledge lanes. It is built for the new Codex app world where threads, worktrees, automations, skills, and local knowledge bases can work together, but only if someone keeps the goal, memory, and evidence straight.
+CEO Flow is the short public name for the `ceo-thread-orchestrator` Codex plugin/skill. It helps one high-reasoning CEO thread coordinate specialist implementation, review, QA, product, market, and knowledge lanes. It is built for the new Codex app world where threads, worktrees, automations, skills, and local knowledge bases can work together, but only if someone keeps the goal, memory, and evidence straight.
 
 ## Why This Exists
 
@@ -28,7 +28,7 @@ Install this repository as a Codex plugin if your Codex environment supports plu
 Then start a fresh Codex thread and try:
 
 ```text
-Use CEO Thread Orchestrator to manage this project goal until it is accepted, blocked, or superseded. Draft the smallest useful goal brief, create the next executable task card, and report the active goal status and next action. Do not stop at a team plan.
+Use CEO Flow to manage this project goal until it is accepted, blocked, or superseded. Draft the smallest useful goal brief, create the next executable task card, and report the active goal status and next action. Do not stop at a team plan.
 ```
 
 For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](examples/smoke-prompts.md).
@@ -42,9 +42,11 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
 - Bootstraps new or reused threads with compact memory packets.
+- Maintains a lightweight team roster with role, capability, write policy, trust level, status, and last evidence.
+- Captures evidence memory cards before promoting reusable lessons into durable project knowledge.
 - Adds code quality gates to prevent broad speculative rewrites, hidden behavior changes, and repeated low-signal patch attempts.
 - Detects doom-loop symptoms and prefers rollback, fresh bounded task cards, or independent review over larger speculative diffs.
-- Uses Zhixia/local-doc knowledge exports through `.codex-knowledge/` when available.
+- Recommends Zhixia/local-doc knowledge exports through `.codex-knowledge/` when available, while allowing projects to specify another local knowledge path.
 - Requires evidence before acceptance: diffs, tests, screenshots, reports, or other artifacts depending on task risk.
 - Keeps thread creation, subagents, worktrees, automations, and spending-heavy model lanes behind tool-contract and user-authorization boundaries.
 
@@ -122,6 +124,34 @@ Memory updates needed:
 
 Each CEO turn should advance the goal by clarifying done criteria, dispatching work, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
 
+## Team Roster And Evidence Cards
+
+CEO Flow borrows the useful parts of larger agent-team systems without requiring an automatic workflow. A project may keep a small roster of reusable lanes:
+
+```text
+Lane ID:
+Role:
+Capabilities:
+Write policy:
+Trust level:
+Current status:
+Last evidence:
+```
+
+It may also keep evidence memory cards for reusable lessons:
+
+```text
+Lesson:
+Applies to:
+Do not apply to:
+Evidence:
+Tests or artifacts:
+Confidence:
+Status:
+```
+
+These records are advisory. They help the CEO reuse the right lane and remember proven patterns, but they do not create background workers, automatic queues, or autoscaling by themselves.
+
 ## Optional Integrations
 
 This skill degrades gracefully. It can use these capabilities when available, but does not require all of them:
@@ -131,7 +161,7 @@ This skill degrades gracefully. It can use these capabilities when available, bu
 - Subagents for explicitly authorized bounded delegation.
 - Automations or heartbeats for follow-up monitoring.
 - Project-defined task pools, external worker systems, or routing scripts.
-- Zhixia/local-doc knowledge exports through `.codex-knowledge/`.
+- Zhixia/local-doc knowledge exports through `.codex-knowledge/`, or another local knowledge path chosen by the project.
 
 ## Repository Structure
 

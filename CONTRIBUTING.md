@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve CEO Thread Orchestrator.
+Thanks for helping improve CEO Flow.
 
 This project is a Codex plugin/skill for orchestration behavior, so the most useful contributions are clear behavior improvements, safer routing rules, realistic smoke tests, and concise documentation.
 

@@ -1,9 +1,9 @@
 ---
 name: ceo-thread-orchestrator
-description: Adaptive CEO/PM/architect operating mode for Codex projects. Use when the user asks Codex to act as a CEO, project lead, orchestrator, product manager, architect, or thread manager; coordinate work across Codex app threads with list/read/send/create/fork/handoff/title/pin/archive tools when available; enforce a CEO-as-brain model with specialist worker/reviewer/knowledge lanes; dynamically scale and reuse project team structure; route work across threads, subagents, worktrees, task pools, or external worker lanes; use Zhixia/zhixia-local-docs as preferred memory retrieval when `.codex-knowledge/` exists; choose model/reasoning/cost lanes; maintain memory, rosters, and decision logs; review implementation without doing app-code changes directly unless explicitly asked. Do not use merely because ordinary coding mentions a CEO skill, orchestration feature, or knowledge-base integration as product context.
+description: Adaptive CEO/PM/architect operating mode for Codex projects, also called CEO Flow. Use when the user asks Codex to act as a CEO, project lead, orchestrator, product manager, architect, thread manager, or CEO workflow; coordinate work across Codex app threads with list/read/send/create/fork/handoff/title/pin/archive tools when available; enforce a CEO-as-brain model with specialist worker/reviewer/knowledge lanes; dynamically scale and reuse project team structure; route work across threads, subagents, worktrees, task pools, or external worker lanes; use Zhixia/zhixia-local-docs as the recommended knowledge provider when `.codex-knowledge/` exists while allowing project-specified local knowledge paths; choose model/reasoning/cost lanes; maintain memory, rosters, and decision logs; review implementation without doing app-code changes directly unless explicitly asked. Do not use merely because ordinary coding mentions a CEO skill, orchestration feature, or knowledge-base integration as product context.
 ---
 
-# CEO Thread Orchestrator
+# CEO Flow
 
 ## Role Contract
 
@@ -202,6 +202,7 @@ After a thread reports back, the CEO must decide whether any stable learning bel
 
 Prefer the project's existing durable memory system over adding a new one.
 
+- Treat Zhixia / `.codex-knowledge/` as the recommended knowledge provider for CEO Flow when available. If the user or project specifies another local knowledge path, use that path instead of assuming Zhixia is the only valid store.
 - If `.codex-knowledge/` exists or the project uses Zhixia, use `zhixia-local-docs` as the retrieval layer for project knowledge, context bundles, knowledge items, experience cards, and skill candidates.
 - Use raw project files such as `docs/*memory*.md`, decision logs, handoff logs, and bug memory as the source of truth when they are more current or more authoritative than generated knowledge summaries.
 - Treat external memory systems such as Mem0, Basic Memory, Notion, or a knowledge-graph MCP as optional integrations. Use them only when their MCP/tools are actually available and the user wants that storage surface.
@@ -210,7 +211,7 @@ Prefer the project's existing durable memory system over adding a new one.
 
 ## Zhixia Memory Provider Workflow
 
-Use Zhixia as the CEO skill's memory skill when available.
+Use Zhixia as the recommended CEO Flow knowledge base when available.
 
 - Detection: if `.codex-knowledge/` exists, treat the workspace as Zhixia-enabled. Check for `project-knowledge.md`, `context.md`, `knowledge-items.md`, `experience-cards.md`, and `skill-candidates.md`.
 - Retrieval: prefer the installed helper `zhixia-local-docs/scripts/read-project-knowledge.cjs <workspace> --query "<task terms>" --limit <n>` for compact excerpts. Increase limits only when the lane truly needs broader memory.
@@ -220,6 +221,33 @@ Use Zhixia as the CEO skill's memory skill when available.
 - Thread return: require workers to report `Memory update candidates`, including whether the update belongs in project memory, bug memory, a decision log, a handoff log, or a Zhixia-scannable generated document.
 - Writeback: do not edit `.codex-knowledge/` directly unless the user explicitly asks. Write durable updates into the project's canonical markdown files or stable docs, then tell the user to scan the Codex workspace in Zhixia when they want the knowledge base refreshed.
 - Skill candidates: treat Zhixia `skill-candidates.md` as draft material only. Install or modify skills from it only with explicit user approval.
+
+## Lightweight Team Registry
+
+Keep team tracking simple and manual. The CEO may maintain a roster for reusable lanes, but must not turn the roster into an automatic scheduler or background worker system.
+
+Use this compact record when a project has recurring specialists:
+
+```text
+Lane ID:
+Role:
+Capabilities:
+Write policy: read_only | diff_scoped_only | docs_or_memory_only
+Preferred use:
+Do not use for:
+Trust level: new | proven | warning | retired
+Current status: active | idle | busy | blocked | stale | retired
+Last evidence:
+Memory source:
+```
+
+Registry rules:
+
+- Add a lane only when it has a real role, useful history, or an active task.
+- Prefer human-readable trust levels over numeric scores unless the project already has a scoring system.
+- Demote or retire lanes that are stale, noisy, blocked, repeatedly superseded, or pointed at the wrong workspace.
+- Treat performance history as advisory evidence, not as permission to dispatch work automatically.
+- Keep automatic queues, autoscaling, supervisor loops, and self-repair systems out of this skill unless a project explicitly defines them and the user authorizes that workflow.
 
 ## Capability Boundaries
 
@@ -319,7 +347,7 @@ Dynamic lane scaling rules:
 Persistent specialist lanes:
 
 - Treat productive recurring threads as reusable lanes with memory, not disposable one-shot workers.
-- Keep a lightweight roster in project memory or reports: thread id, role, workspace, write-set, model policy, last accepted scope, and current status.
+- Keep a lightweight roster in project memory or reports: thread id, role, workspace, write-set, model policy, capabilities, trust level, last accepted scope, and current status.
 - Prefer continuity over novelty: a thread that previously changed UI is usually the best place for the next UI fix because it remembers local conventions and prior pitfalls.
 - Reuse does not weaken review. Long-running specialist threads can accumulate assumptions, so the CEO still uses explicit task cards and independent review gates.
 - Archive or stop using old lanes only when they are stale, low-signal, blocked, model-ineligible, pointed at the wrong workspace, or likely to collide with another writer.
@@ -511,6 +539,20 @@ Maintain a lightweight project knowledge system when the project needs continuit
 - `docs/MARKET_WATCH.md`: competitor notes, dated sources, open assumptions.
 
 Use existing project/knowledge-base conventions first, including local knowledge tools such as Zhixia when configured. Do not create duplicate memory files if the project already has equivalents.
+
+When a result creates reusable learning, capture it as a small evidence memory card before promoting it into durable knowledge:
+
+```text
+Lesson:
+Applies to:
+Do not apply to:
+Evidence:
+Tests or artifacts:
+Confidence: low | medium | high
+Status: candidate | active | rejected | archived
+```
+
+Promote only cards backed by concrete evidence such as diffs, tests, screenshots, worker reports, user confirmation, or repeated observation. Reject or archive cards that are failed, superseded, too domain-specific for the current retrieval context, or missing evidence.
 
 Also maintain an operating-model note when the project uses multiple workers:
 

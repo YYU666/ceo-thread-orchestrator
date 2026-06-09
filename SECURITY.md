@@ -1,6 +1,6 @@
 # Security Policy
 
-CEO Thread Orchestrator is a Codex plugin/skill. It does not intentionally collect credentials, call external services by itself, or require secrets to run.
+CEO Flow is a Codex plugin/skill. It does not intentionally collect credentials, call external services by itself, or require secrets to run.
 
 ## Reporting Security Issues
 
