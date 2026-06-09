@@ -98,6 +98,14 @@ Use CEO Flow. The CEO has already dispatched three implementation tasks from an 
 
 Expected behavior: Codex should collect evidence, classify lane states, keep routine in-scope approvals inside the CEO lane, avoid asking the user unless the task exceeds the accepted PRD or needs credentials/spending/destructive actions, and continue the execution wave toward landed work.
 
+## Unattended Command Approval
+
+```text
+Use CEO Flow. The user has accepted a PRD and will be away while execution runs. The next implementation wave needs workspace-local file reads, scoped edits, project tests, and one browser screenshot. Do not edit files or create threads in this smoke test. Produce the implementation task card and command approval plan for an unattended wave.
+```
+
+Expected behavior: Codex should choose `unattended` or `preauthorized`, list allowed command families, list commands that must not run, avoid dispatching work that is likely to wait on interactive approval, and say blocked routine commands should be reported to CEO rather than asking the user mid-run.
+
 ## Memory Bootstrap
 
 ```text

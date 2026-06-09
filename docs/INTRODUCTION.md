@@ -60,6 +60,14 @@ The normal PRD path is: the PRD thread is the CEO thread; once the PRD or task g
 
 After dispatch, the CEO keeps harvesting results. It reads worker reports, checks evidence, classifies lanes as accepted, revise, blocked, superseded, still running, or stale, then sends the next unblocked task. Worker lanes should report routine in-scope questions to the CEO, not the user. The user is needed only when the decision changes the accepted PRD, exceeds the write-set or budget, needs credentials, touches destructive operations, or changes product direction.
 
+## Unattended Execution
+
+CEO Flow is often used for work that should keep moving while the user is away. The CEO lane should plan command approvals before dispatching worker lanes, not discover them through scattered mid-run prompts.
+
+Each unattended implementation task card should include a command approval profile, allowed command families, and commands that must not run. Allowed families are usually workspace-local reads, scoped edits, project test/build scripts, and required screenshots. Disallowed commands include destructive operations, broad machine inspection, credential access, external-service calls, and machine-specific absolute-path probes unless the CEO explicitly approved them for that wave.
+
+This does not bypass the Codex host's security UI. If the needed command families are not already allowed, the CEO should ask once at wave start, choose safer no-approval commands, reuse a lane with the right permission profile, or hold the wave at the CEO lane until command preauthorization exists. Worker lanes report blocked commands to CEO instead of asking the user for routine in-scope approval.
+
 ## Dynamic Thread Scaling
 
 The plugin treats new threads as a capacity decision, not a reflex.

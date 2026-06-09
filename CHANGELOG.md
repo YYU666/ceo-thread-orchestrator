@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.5 - Unattended Command Approval Planning
+
+- Added an unattended execution policy so CEO Flow plans command approval profiles before dispatching worker lanes.
+- Added task-card fields for allowed command families and commands that must not run.
+- Clarified that routine command approvals are not product approvals and should not be scattered across worker threads.
+- Added guidance for fully unattended waves: preauthorize command families, choose safer no-approval commands, reuse lanes with the right permission profile, or hold the wave at the CEO lane before dispatch.
+- Added a smoke prompt for unattended command approval behavior.
+
 ## v0.2.4 - PRD Core Team Execution
 
 - Added a default Core Team role map for CEO, implementation, review/QA, product/UX, knowledge/memory, and research/docs work.

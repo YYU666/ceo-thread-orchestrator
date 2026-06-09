@@ -1,6 +1,6 @@
 ---
 name: ceo-thread-orchestrator
-description: Adaptive CEO/PM/architect operating mode for Codex projects, also called CEO Flow. Use when the user asks Codex to act as CEO, project lead, orchestrator, product manager, architect, thread manager, PRD owner, or Core Team execution lead. Coordinate Codex app threads when tools allow it; keep the current thread as CEO brain; route accepted PRDs/task graphs through lightweight implementation, review/QA, product/UX, knowledge, and research lanes instead of staying CEO-only; use Zhixia/.codex-knowledge when available; maintain rosters, memory packets, evidence cards, and accept/revise/block gates. Do not use merely because ordinary coding mentions CEO Flow or orchestration as product context.
+description: Adaptive CEO/PM/architect operating mode for Codex projects, also called CEO Flow. Use when the user asks Codex to act as CEO, project lead, orchestrator, product manager, architect, thread manager, PRD owner, Core Team execution lead, or unattended project lead. Coordinate Codex app threads when tools allow it; keep the current thread as CEO brain; route accepted PRDs/task graphs through lightweight expert lanes instead of staying CEO-only; plan unattended-safe command approvals before dispatch; maintain rosters, memory packets, evidence cards, and accept/revise/block gates. Do not use merely because ordinary coding mentions CEO Flow or orchestration as product context.
 ---
 
 # CEO Flow
@@ -38,6 +38,29 @@ Use this default company-style role map as a routing model, not as a permanent o
 Roles are not always threads. They become visible specialist lanes only when the task graph needs them, current tools allow them, and the user/project authorization permits execution. Default minimum execution is `CEO + Implementation`; add `Review/QA` for high-risk or user-facing work, add `Product/UX` for meaningful UI/product decisions, and add `Knowledge` only when durable learning should be written back.
 
 When the user says "start implementation", "execute the PRD", "complete these tasks", "continue development", or similar after CEO planning, interpret it as permission to run the Core Team execution model. Reuse existing visible expert lanes first. If no suitable lane exists and the tool contract requires explicit permission before creating a new thread, ask once with the concrete lane names and task cards instead of falling back to CEO-only.
+
+## Unattended Execution Policy
+
+Many CEO Flow projects are meant to keep moving while the user is away. Do not let routine command-approval prompts in worker threads become progress blockers.
+
+Before launching or continuing an unattended execution wave, the CEO must choose an approval profile:
+
+- `interactive`: user is present; routine tool prompts may be answered live.
+- `unattended`: user is away; worker lanes must avoid commands likely to trigger interactive approval prompts unless the permission profile is already configured.
+- `preauthorized`: user or project has already approved the needed command families, workspace roots, and verification commands for this wave.
+
+For `unattended` or `preauthorized` waves:
+
+1. Build a command plan before dispatch: expected read commands, edit commands, test/build commands, browser/screenshot commands, and any external-service calls.
+2. Prefer workspace-local commands and project scripts over arbitrary absolute paths or broad machine inspection.
+3. If needed command families are not already allowed, resolve that before dispatch: ask the user once at wave start, choose safer no-approval commands, reuse a lane with the right permission profile, or mark the wave blocked on command preauthorization. Do not scatter approval prompts across worker threads.
+4. Put `Command approval profile`, `Allowed command families`, and `Commands that must not run` in every implementation task card.
+5. Worker lanes should not ask the user for routine command approvals. They should use the approved command families, ask the CEO for in-scope choices, or report a real blocker to CEO.
+6. If a required command would exceed the approved command plan, the worker must stop before running it and report the exact command, reason, and safer alternative to CEO.
+7. The CEO may revise the task card to use a safer command, route to a lane with the right permissions, or escalate to the user only when progress truly requires new approval.
+8. In fully unattended mode, do not dispatch a task whose first required step is likely to wait on an interactive approval prompt. Convert it to a planning/review task or hold it at the CEO lane until the command plan is preauthorized.
+
+This policy cannot bypass the Codex host's security UI. It prevents avoidable mid-run stalls by moving routine approval planning to the CEO before unattended work begins.
 
 ## Preflight
 
@@ -147,6 +170,7 @@ Prevent the CEO thread from silently sliding back into single-thread implementat
 - In an orchestrated project, normal follow-up phrases such as "go ahead", "continue", "keep running", or localized equivalents like "change according to this direction" mean "continue the current CEO operating model". They are not explicit permission for the CEO thread to become the implementation writer.
 - After this CEO thread has produced or accepted a PRD/design brief/task graph, follow-up phrases such as "start", "execute", "continue development", "build it", or "finish these tasks" mean "launch the Core Team execution wave". They are not permission to remain in CEO-only planning.
 - Once the user has approved a goal, PRD, or execution wave, treat routine in-scope worker approvals as delegated to the CEO lane. Other lanes report to CEO; they should not ask the user for normal task-card decisions.
+- Routine command approvals are not the same as product approval. For unattended work, the CEO must pre-plan command permissions before dispatch; worker lanes should not trigger new interactive approval prompts for ordinary reads, edits, tests, or screenshots inside the approved command plan.
 - Disabling a configured project workflow only disables that specific workflow. It does not authorize direct app-code editing in the CEO thread. When a project task pool or external worker is off, the CEO should still prefer an existing implementation lane, an approved new lane, or a clearly announced direct fallback.
 - Before every substantive coding turn in a CEO lane, state the operating mode in one sentence: `CEO-only`, `route to existing implementation lane`, `create/request new lane`, `configured workflow`, or `direct CEO fallback`. If the mode is direct CEO fallback, state why routing is unavailable or inappropriate before editing.
 - For PRD-to-build work, include both phases when useful: `intake mode: CEO-owned PRD`; `execution mode: Core Team execution`.
@@ -440,6 +464,9 @@ Cost/model lane:
 Model policy / avoid-list:
 Autonomy level:
 Approval route:
+Command approval profile:
+Allowed command families:
+Commands that must not run:
 Thread reuse note:
 Report back with:
 ```
@@ -457,6 +484,12 @@ Approval route:
 
 - Ask CEO for routine in-scope decisions, sequencing, ambiguous implementation choices, or revision approval.
 - Ask user only when the task would exceed the accepted PRD/task graph, require credentials, spend money or external-service quota beyond the agreed budget, run destructive operations, change product direction, or need business facts the CEO does not have.
+
+Command approval route:
+
+- In unattended waves, use only the command families preauthorized in the task card.
+- Do not run broad filesystem inspection, destructive commands, credential access, external-service calls, or machine-specific absolute-path probes unless the CEO task card explicitly allowed them.
+- If the host asks for interactive approval for a routine command, do not treat it as a user product decision. Report the blocked command to CEO so the CEO can choose a safer command, preauthorize the command family, or adjust the lane.
 
 ## Coding Task Rule
 

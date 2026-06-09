@@ -40,6 +40,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Treats the PRD/design/task-graph thread as the CEO thread by default, then switches to Core Team execution after the plan is accepted.
 - Maintains a goal ledger with done criteria, task graph, active owner, evidence, next action, and closure state.
 - Runs a CEO harvest loop after dispatch: collect worker results, classify evidence, request revisions, and send the next unblocked task until the project lands.
+- Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
@@ -121,6 +122,18 @@ The default PRD path is:
 The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back.
 
 Worker lanes should not ask the user for routine approvals inside an accepted PRD or task graph. They report questions and blockers to the CEO lane. The CEO can approve normal in-scope sequencing, file choices inside the allowed write-set, test selection, and bounded revisions. The user is needed only for out-of-scope changes, credentials, spending beyond the agreed budget, destructive actions, or product/business decisions that change the accepted goal.
+
+## Unattended Execution
+
+Many CEO Flow projects are meant to keep moving while the user is away. Before dispatching an unattended execution wave, the CEO should choose one command approval profile:
+
+- `interactive`: the user is present and can answer routine tool prompts.
+- `unattended`: the user is away, so workers must avoid commands likely to trigger interactive approvals.
+- `preauthorized`: the needed command families, workspace roots, and verification commands are already approved for this wave.
+
+Implementation task cards should name the allowed command families, such as project-local file reads, scoped edits, package-manager test commands, builds, or browser screenshots. They should also name commands that must not run, such as destructive operations, broad machine inspection, credential access, external-service calls, or absolute-path probes outside the approved workspace.
+
+This does not bypass the Codex host's security UI. If command families are not already allowed, the CEO should resolve that before dispatch by asking once at wave start, choosing safer no-approval commands, reusing a lane with the right permission profile, or holding the wave at the CEO lane until command preauthorization exists. Worker lanes should report blocked commands to the CEO instead of asking the user for routine in-scope approval mid-run.
 
 ## Code Quality Gate
 
