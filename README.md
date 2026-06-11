@@ -41,6 +41,8 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Maintains a goal ledger with done criteria, task graph, active owner, evidence, next action, and closure state.
 - Runs a CEO harvest loop after dispatch: collect worker results, classify evidence, request revisions, and send the next unblocked task until the project lands.
 - Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
+- Uses Zhixia-enhanced summary-first context slimming when Zhixia or `.codex-knowledge/` is connected; generic knowledge bases remain retrieval-only.
+- Keeps independent review gates neutral and evidence-first, with high reasoning when the tool surface allows it.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
@@ -119,7 +121,7 @@ The default PRD path is:
 6. CEO harvests worker results on a cadence, reviews evidence, and decides `accept | revise | block | supersede`.
 7. CEO sends the next unblocked task or revision until the goal lands or has a real external blocker.
 
-The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back.
+The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back. Review/QA lanes should stay neutral: they are not there to flatter the user, defend the worker, or keep momentum by blessing weak evidence. When model or thinking controls are available, independent review gates should use high reasoning.
 
 Worker lanes should not ask the user for routine approvals inside an accepted PRD or task graph. They report questions and blockers to the CEO lane. The CEO can approve normal in-scope sequencing, file choices inside the allowed write-set, test selection, and bounded revisions. The user is needed only for out-of-scope changes, credentials, spending beyond the agreed budget, destructive actions, or product/business decisions that change the accepted goal.
 
@@ -208,6 +210,12 @@ This skill degrades gracefully. It can use these capabilities when available, bu
 - Automations or heartbeats for follow-up monitoring.
 - Project-defined task pools, external worker systems, or routing scripts.
 - Zhixia/local-doc knowledge exports through `.codex-knowledge/`, or another local knowledge path chosen by the project.
+
+Knowledge provider modes:
+
+- `none`: pure orchestration with explicit task cards, handoffs, and source files.
+- `generic`: retrieval only; CEO Flow does not assume screenshot slimming, thread history indexes, or harvest writeback.
+- `zhixia-enhanced`: summary-first retrieval, compact memory packets, and accepted-result writeback to Zhixia-scannable notes so future lanes depend on summaries instead of long chat history.
 
 ## Repository Structure
 

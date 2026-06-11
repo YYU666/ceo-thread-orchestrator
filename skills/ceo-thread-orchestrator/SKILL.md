@@ -30,7 +30,7 @@ Use this default company-style role map as a routing model, not as a permanent o
 
 - CEO / PM / Architect: owns PRD, task graph, architecture boundaries, staffing, evidence review, and final `accept | revise | block | supersede`.
 - Implementation Expert: owns app-code implementation inside a declared write-set and reports changed files, commands, tests, failures, and risks.
-- Review / QA Expert: independently checks diffs, tests, screenshots, regressions, and PRD alignment; stays read-only unless explicitly reassigned.
+- Review / QA Expert: independently checks diffs, tests, screenshots, regressions, and PRD alignment with a neutral, non-flattering posture; stays read-only unless explicitly reassigned; use high reasoning/thinking when the tool surface allows it.
 - Product / UX Expert: helps with user flows, UI structure, interaction quality, copy, screenshots, and design-system fit when product or UI risk is material.
 - Knowledge / Memory Expert: promotes accepted lessons into project memory, bug memory, decision logs, or Zhixia-scannable docs after evidence exists.
 - Research / Docs Expert: checks current external facts, official docs, APIs, benchmarks, market, or policy only when the task needs fresh source-backed context.
@@ -266,6 +266,10 @@ After a thread reports back, the CEO must decide whether any stable learning bel
 
 Prefer the project's existing durable memory system over adding a new one.
 
+- Classify the knowledge provider mode before relying on memory: `none`, `generic`, or `zhixia-enhanced`.
+- `none`: use CEO Flow as a pure orchestration skill with explicit task cards, handoffs, and local source files.
+- `generic`: use the knowledge base for retrieval only; do not assume it can slim history, manage screenshots, or maintain Codex thread indexes.
+- `zhixia-enhanced`: when the project is connected to Zhixia or `.codex-knowledge/`, use summary-first retrieval, compact memory packets, and harvest writeback to reduce thread history, token use, and repeated context copying.
 - Treat Zhixia / `.codex-knowledge/` as the recommended knowledge provider for CEO Flow when available. If the user or project specifies another local knowledge path, use that path instead of assuming Zhixia is the only valid store.
 - If `.codex-knowledge/` exists or the project uses Zhixia, use `zhixia-local-docs` as the retrieval layer for project knowledge, context bundles, knowledge items, experience cards, and skill candidates.
 - Use raw project files such as `docs/*memory*.md`, decision logs, handoff logs, and bug memory as the source of truth when they are more current or more authoritative than generated knowledge summaries.
@@ -279,11 +283,12 @@ Use Zhixia as the recommended CEO Flow knowledge base when available.
 
 - Detection: if `.codex-knowledge/` exists, treat the workspace as Zhixia-enabled. Check for `project-knowledge.md`, `context.md`, `knowledge-items.md`, `experience-cards.md`, and `skill-candidates.md`.
 - Retrieval: prefer the installed helper `zhixia-local-docs/scripts/read-project-knowledge.cjs <workspace> --query "<task terms>" --limit <n>` for compact excerpts. Increase limits only when the lane truly needs broader memory.
+- Context slimming: in `zhixia-enhanced` mode, use Zhixia summaries and indexes before raw chat history, broad repo scans, raw session files, or image-heavy evidence. Read raw history only when the compact summary is missing, stale, contradicted, or insufficient for the task.
 - Authority: Zhixia summaries are retrieval aids. Canonical project files, decision logs, bug memory, handoff logs, source code, test output, and worker reports remain stronger evidence when they disagree.
 - Freshness: if `.codex-knowledge` is older than the canonical memory files or the current task changed durable context, mark Zhixia output as possibly stale and read the canonical files directly.
 - New thread startup: include the Zhixia query, compact excerpts, and source paths in the memory packet. Do not send the full generated knowledge base unless the target thread explicitly needs it.
 - Thread return: require workers to report `Memory update candidates`, including whether the update belongs in project memory, bug memory, a decision log, a handoff log, or a Zhixia-scannable generated document.
-- Writeback: do not edit `.codex-knowledge/` directly unless the user explicitly asks. Write durable updates into the project's canonical markdown files or stable docs, then tell the user to scan the Codex workspace in Zhixia when they want the knowledge base refreshed.
+- Writeback: do not edit `.codex-knowledge/` directly unless the user explicitly asks. Write durable updates into the project's canonical markdown files or stable docs, then tell the user to scan the Codex workspace in Zhixia when they want the knowledge base refreshed. In `zhixia-enhanced` mode, accepted harvest results should become compact Zhixia-scannable notes so future lanes depend on summaries instead of long chat context.
 - Skill candidates: treat Zhixia `skill-candidates.md` as draft material only. Install or modify skills from it only with explicit user approval.
 
 ## Lightweight Team Registry
@@ -415,6 +420,7 @@ Allocate reasoning/model strength by risk, not ego.
 
 - CEO/architecture/high-stakes acceptance: highest available reasoning/model.
 - Core implementation or tricky debugging: strong coding model, medium/high reasoning.
+- Independent review/QA gates: high reasoning by default when the review can accept, reject, or materially change user-facing work; use cheaper lanes only for low-risk summaries or mechanical checks.
 - Routine UI copy, docs cleanup, simple QA summaries, knowledge indexing: cheaper model and low/medium reasoning.
 - Market scans: moderate model; spend more only for investor-grade analysis or current data synthesis.
 - Bulk repetitive work: use scripts, local tools, or cheaper workers where quality risk is low.
@@ -429,6 +435,7 @@ If the current thread tool exposes models similar to `gpt-5.5`, `gpt-5.4`, `gpt-
 
 - CEO critical reasoning: `gpt-5.5` or best available, high/xhigh thinking.
 - Implementation: the strongest project-approved coding model, or a stronger general model when architecture-heavy.
+- Review/QA gate: project-approved strong model with high thinking/reasoning when available; reviewer prompts must ask for evidence, risks, regressions, and counterarguments, not reassurance.
 - UX/QA/market/knowledge routine work: `gpt-5.4-mini` or cheaper available model, low/medium thinking.
 - Fallback: keep the existing thread model when overriding would add confusion or cost without clear benefit.
 
@@ -462,6 +469,8 @@ Required verification:
 Change budget / quality gates:
 Cost/model lane:
 Model policy / avoid-list:
+Knowledge provider mode:
+Context / history budget:
 Autonomy level:
 Approval route:
 Command approval profile:
@@ -576,6 +585,13 @@ Before telling the user work is ready, check:
 - Does the current team structure still fit, or should lanes be merged, paused, split, or re-scoped?
 
 If evidence is weak, say so. Do not convert uncertainty into confidence for presentation value.
+
+Review posture:
+
+- Keep review neutral and evidence-first. The reviewer is not an advocate for the worker, the CEO, or the user's preferred answer.
+- Do not flatter the user, bless weak work to keep momentum, or hide risk behind positive wording.
+- Prefer concrete findings, missed acceptance criteria, regression risk, unclear evidence, and test gaps over general praise.
+- Use high reasoning/thinking for independent review gates when the tool exposes that control; if model/thinking cannot be set, state the intended review strength in the task card.
 
 Use an explicit CEO decision after reviewing worker output:
 

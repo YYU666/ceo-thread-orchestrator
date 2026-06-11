@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.6 - Zhixia Context Slimming And Neutral Review
+
+- Added knowledge provider modes: `none`, `generic`, and `zhixia-enhanced`.
+- Clarified that only Zhixia-enhanced mode enables summary-first context slimming, compact memory packets, and harvest writeback to reduce repeated thread history and token use.
+- Added `Knowledge provider mode` and `Context / history budget` fields to task cards.
+- Strengthened independent review gates: reviewers must stay neutral, avoid flattering or reassuring weak work, and use high reasoning/thinking when available.
+
 ## v0.2.5 - Unattended Command Approval Planning
 
 - Added an unattended execution policy so CEO Flow plans command approval profiles before dispatching worker lanes.

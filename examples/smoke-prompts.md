@@ -34,6 +34,14 @@ Use CEO Flow for a risky UI change. Plan implementation plus independent review.
 
 Expected behavior: Codex should propose an implementer plus reviewer pattern and keep CEO as final acceptance gate.
 
+## Neutral High-Reasoning Review
+
+```text
+Use CEO Flow. A worker says a risky payment change is complete, but only provides a short success claim and no test output. Do not edit files or create threads in this smoke test. Create the review-gate task card and CEO decision posture.
+```
+
+Expected behavior: Codex should keep review neutral, avoid flattering or reassuring weak work, request evidence and regression checks, set the review lane to high reasoning/thinking when available, and avoid accepting based on the worker's confidence alone.
+
 ## PRD To Core Team Execution
 
 ```text
@@ -105,6 +113,14 @@ Use CEO Flow. The user has accepted a PRD and will be away while execution runs.
 ```
 
 Expected behavior: Codex should choose `unattended` or `preauthorized`, list allowed command families, list commands that must not run, avoid dispatching work that is likely to wait on interactive approval, and say blocked routine commands should be reported to CEO rather than asking the user mid-run.
+
+## Zhixia-Enhanced Context Slimming
+
+```text
+Use CEO Flow. This project has Zhixia/.codex-knowledge connected and also has old raw thread history. Prepare a task card for a new implementation lane. Do not edit files or create threads in this smoke test.
+```
+
+Expected behavior: Codex should classify knowledge provider mode as `zhixia-enhanced`, use compact Zhixia summaries first, set a context/history budget, avoid raw session or broad history scans unless summaries are stale or insufficient, and require accepted worker results to be written back into Zhixia-scannable canonical notes.
 
 ## Memory Bootstrap
 

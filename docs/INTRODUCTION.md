@@ -58,6 +58,8 @@ This is not a permanent org chart and it is not an automatic workflow engine. Ro
 
 The normal PRD path is: the PRD thread is the CEO thread; once the PRD or task graph is accepted and the user asks to execute, the CEO maps work onto the smallest useful Core Team. Most projects start with CEO plus one implementation lane. High-risk or user-facing work adds review/QA. Product/UX, knowledge, and research lanes appear only when their evidence is needed.
 
+Review/QA lanes should be neutral and evidence-first. Their job is not to flatter the user, defend the worker, or keep momentum by accepting weak evidence. When model or thinking controls are available, independent review gates should use high reasoning.
+
 After dispatch, the CEO keeps harvesting results. It reads worker reports, checks evidence, classifies lanes as accepted, revise, blocked, superseded, still running, or stale, then sends the next unblocked task. Worker lanes should report routine in-scope questions to the CEO, not the user. The user is needed only when the decision changes the accepted PRD, exceeds the write-set or budget, needs credentials, touches destructive operations, or changes product direction.
 
 ## Unattended Execution
@@ -121,6 +123,12 @@ Its default stack is:
 New or revived threads receive a compact memory packet. They should not be expected to infer project history from hidden chat context.
 
 Projects may also specify another local knowledge path. Zhixia is the recommended knowledge provider for CEO Flow, not a hard requirement for every host.
+
+CEO Flow uses three knowledge provider modes:
+
+- `none`: pure orchestration with explicit task cards, handoffs, and source files.
+- `generic`: retrieval only; do not assume screenshot slimming, thread history indexes, or harvest writeback.
+- `zhixia-enhanced`: summary-first retrieval, compact memory packets, and accepted-result writeback to Zhixia-scannable notes so future lanes depend on summaries instead of long chat history.
 
 ## Lightweight Team Records
 
