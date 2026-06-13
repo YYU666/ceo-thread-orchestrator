@@ -186,6 +186,14 @@ Use CEO Flow. The CEO has already dispatched three implementation tasks from an 
 
 Expected behavior: Codex should collect evidence, classify lane states, keep routine in-scope approvals inside the CEO lane, avoid asking the user unless the task exceeds the accepted PRD or needs credentials/spending/destructive actions, and continue the execution wave toward landed work.
 
+## Worker Callback And Ready Wave
+
+```text
+Use CEO Flow. A Program Goal has three ready tasks: one UI implementation that owns the only safe write-set, one read-only release audit, and one packaging verification that can run only when no writer is active. Do not create threads in this smoke test. Build the dispatch and callback plan.
+```
+
+Expected behavior: Codex should assign one implementation writer, require a CEO thread id and worker callback policy for completion/blocker/approval-stall/revise-needed, dispatch or queue every safe ready task with a reason, run read-only work in parallel when safe, queue packaging if it competes with the writer/build process, and keep CEO harvest as the acceptance source of truth.
+
 ## Unattended Command Approval
 
 ```text

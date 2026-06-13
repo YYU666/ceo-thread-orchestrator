@@ -124,6 +124,31 @@ Relay sequence:
 
 Do not use thread messaging as a hidden autonomous chat room. CEO remains accountable for context crossing thread boundaries.
 
+## Worker Callback Contract
+
+Worker callback is an optional acceleration path, not a replacement for CEO harvest. Use it when a project cannot safely run many implementation lanes, when only one visible worker is active, or when quick CEO feedback matters more than broad parallelism.
+
+Every implementation or review task card should state:
+
+```text
+CEO thread id:
+Callback events: completion | blocker | approval_stall | revise_needed
+Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
+Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
+CEO harvest fallback:
+```
+
+Worker callback rules:
+
+1. The worker writes its normal final report in its own lane.
+2. If thread messaging is available and the task card includes a CEO thread id, the worker also sends a compact callback to the CEO on completion, blocker, approval stall, or revise-needed.
+3. If thread messaging is unavailable, the worker reports `CALLBACK_UNAVAILABLE` in its own lane and relies on CEO harvest.
+4. The callback must not include long chat history, raw session content, full knowledge bases, or broad logs.
+5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
+6. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
+
+For broad parallel projects, CEO harvest remains primary. Callback is a useful signal, but the CEO must still read/inspect evidence before accepting work.
+
 ## Capability Boundaries
 
 - A new thread is a separate conversation, not a guaranteed autonomous employee.
@@ -131,6 +156,7 @@ Do not use thread messaging as a hidden autonomous chat room. CEO remains accoun
 - Subagents are short-lived scouts unless the user/tool contract says otherwise.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
+- Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
 - Worker reports are evidence, not proof.
 - Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
 - Memory is not automatic unless a maintained memory provider or writeback routine exists.

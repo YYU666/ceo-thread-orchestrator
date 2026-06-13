@@ -43,9 +43,10 @@ Follow this path before reading deeper policy:
 8. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
 9. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
 10. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-11. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-12. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
-13. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+11. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
+12. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+13. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
+14. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -167,6 +168,7 @@ Allowed worktrees / sibling roots:
 Workspace verification:
 Lane ID / planned title:
 Thread operation:
+CEO thread id / callback policy:
 Memory packet:
 Goal:
 Relevant files/docs:
@@ -200,6 +202,8 @@ After an accepted PRD/task graph, actively look for safe parallelism. Dispatch t
 
 Do not parallelize tasks that touch the same files, share unclear architecture, compete for one local server/database, depend on the same migration/generated artifact, need unplanned command approvals, or create more merge/review cost than time saved.
 
+If a Program Goal `Next execution wave` has multiple ready independent tasks, dispatch, reuse, or explicitly queue every safe parallel task. Do not select only one workstream unless dependencies, write-set conflict, shared process conflict, approval limits, missing thread tools, or harvest capacity make the rest blocked or serial. Record every ready-but-undispatched task with its reason and next harvest action.
+
 Use a wave plan:
 
 ```text
@@ -216,6 +220,8 @@ Stop condition:
 ```
 
 Default lane count: 0 new lanes for CEO-only work; 1 implementation lane for one coherent write-set; 2 lanes for implementation plus review or two independent write-sets; 3-5 active experts only for broad separable phases.
+
+For projects that cannot safely run multiple writer lanes, prefer one implementation lane plus worker callback to CEO, and run parallel read-only lanes such as review, release audit, docs/status audit, or packaging verification only when they do not compete with the active writer or shared build process.
 
 ## Thread And Workspace Rules
 
@@ -282,6 +288,8 @@ The CEO owns result collection and closure:
 Escalate to the user only for out-of-scope changes, destructive actions, credentials, spending, legal/security/product-direction decisions, missing business facts, or changed done criteria.
 
 Do not final after dispatching implementation or review lanes unless at least one harvest mechanism is active or explicitly documented: heartbeat automation, concrete next harvest time, or immediate synchronous harvest in the same turn.
+
+If a lane is `waitingOnApproval`, harvest it immediately. If the requested action is within the task card's approval profile, allowed command families, and write-set, CEO should approve or send a continuation without asking the user. If the task card omitted approval details, revise and redispatch the task card. Escalate only for out-of-scope, destructive, credentials, spending, legal/security, external account, or changed goal decisions.
 
 ## Quality And Review Gate
 
