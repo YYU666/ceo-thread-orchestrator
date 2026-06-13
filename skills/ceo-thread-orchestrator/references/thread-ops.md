@@ -79,6 +79,23 @@ Task cards must include `Workspace`, `Canonical project root`, `Allowed worktree
 
 When a user says a project lives in one folder, treat that as stronger than inferred thread history or old Codex saved-project locations.
 
+## Unsaved Source Repo Host Lane
+
+Some Codex hosts can create threads only inside saved projects. If the user's canonical source repo is not a saved project, do not silently switch implementation to a scratch or generated folder.
+
+Use this fallback only when the user wants lane execution and no correct saved project target is available:
+
+1. Create or reuse a host lane in the closest approved CEO/shell project.
+2. State that the host workspace is not the canonical source repo.
+3. Put the canonical source repo in `Canonical project root`.
+4. Set `Allowed write-set` to absolute paths under that canonical source repo only.
+5. Add `Do not touch` for the host project files unless they are explicitly part of the task.
+6. Require the worker to run a workspace check before edits and stop with `workspace_mismatch` if the absolute canonical root is unavailable or differs from the task card.
+7. Use absolute paths in every edit, command, and report.
+8. Set a harvest mechanism before final reporting: heartbeat, concrete next harvest time, or immediate synchronous harvest.
+
+This is a bridge for tool limitations, not permission to let project roots drift. If the host lane cannot safely access the canonical repo, keep it read-only and ask the user to open or save the correct project.
+
 ## Relay Packet
 
 When routing between threads, use a compact relay packet instead of raw logs:
@@ -113,6 +130,7 @@ Do not use thread messaging as a hidden autonomous chat room. CEO remains accoun
 - Existing thread steering requires explicit read/send operations.
 - Subagents are short-lived scouts unless the user/tool contract says otherwise.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
+- Dispatch is not complete until the CEO records how results will be harvested.
 - Worker reports are evidence, not proof.
 - Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
 - Memory is not automatic unless a maintained memory provider or writeback routine exists.

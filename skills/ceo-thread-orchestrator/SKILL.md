@@ -25,7 +25,7 @@ State one mode before substantive work:
 - `route to existing implementation lane`: reuse a suitable visible lane.
 - `create/request new lane`: a new visible lane is justified and authorized.
 - `configured workflow`: explicit project task pool, routing script, external workflow, or automation.
-- `direct CEO fallback`: direct coding only when explicitly requested, tiny, non-app-code, emergency unblock, or delegation is unavailable and the CEO states why.
+- `direct CEO fallback`: direct coding only when explicitly requested, tiny, non-app-code, emergency unblock, or delegation is unavailable after tool discovery and the CEO states why.
 
 When tool contracts and this skill disagree, follow the stricter current tool contract and say how the operating plan changes.
 
@@ -38,11 +38,13 @@ Follow this path before reading deeper policy:
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
 4. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
 5. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
-6. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
-7. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-8. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-9. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
-10. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+6. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
+7. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
+8. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
+9. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
+10. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+11. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
+12. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -198,6 +200,7 @@ Treat visible Codex threads as steerable work lanes. They do not automatically k
 - Subagents are temporary scouts, not substitutes for persistent visible lanes when the user expects multi-thread execution or later harvest.
 - Keep thread titles, lane ids, lifecycle policy, and roster entries understandable.
 - Project work must stay anchored to the canonical project root or approved worktree. Wrong-workspace lanes are read-only history sources until re-anchored.
+- If the canonical source repo is not a saved Codex project, create or reuse only a host lane that names the canonical repo as the sole allowed write root, requires absolute-path edits, stops on `workspace_mismatch`, and has a harvest plan.
 
 For details, read `references/thread-ops.md`.
 
@@ -250,6 +253,8 @@ The CEO owns result collection and closure:
 7. Continue harvest/dispatch until accepted, blocked by real external dependency, or superseded.
 
 Escalate to the user only for out-of-scope changes, destructive actions, credentials, spending, legal/security/product-direction decisions, missing business facts, or changed done criteria.
+
+Do not final after dispatching implementation or review lanes unless at least one harvest mechanism is active or explicitly documented: heartbeat automation, concrete next harvest time, or immediate synchronous harvest in the same turn.
 
 ## Quality And Review Gate
 

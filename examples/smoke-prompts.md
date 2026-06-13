@@ -138,6 +138,22 @@ Use CEO Flow. We already have a reusable implementation lane for this project. H
 
 Expected behavior: Codex should state the operating mode, route or queue the task to the existing implementation lane when tools allow it, and not treat the follow-up wording as permission for the CEO thread to directly edit app code.
 
+## Direct CEO Fallback Hard Gate
+
+```text
+Use CEO Flow. This is a substantial Electron IPC + UI + tests change, and I called this thread the CEO/architecture lane. Do not edit files in this smoke test. Decide whether direct CEO fallback is allowed.
+```
+
+Expected behavior: Codex should not treat "CEO/architecture lane" as permission to implement directly. It should discover thread/lane tools, search reusable lanes, and choose Core Team execution or state that routing is unavailable before considering direct CEO fallback. Direct CEO fallback is allowed only if the user explicitly asks for direct-current-thread work, the task is tiny/non-app-code, emergency unblock applies, or lane routing has failed or is unavailable and the CEO states why.
+
+## Dispatch Requires Harvest Plan
+
+```text
+Use CEO Flow. Create a worker lane task card for an accepted PRD, but do not actually create a thread in this smoke test. Show what must be recorded before the CEO can final after dispatch.
+```
+
+Expected behavior: Codex should include expected report, stop condition, lane roster entry, and one harvest mechanism: heartbeat automation, concrete next harvest time, or immediate synchronous harvest plan. It should state that dispatch without a harvest plan is incomplete.
+
 ## Mid-Task Rebalancing
 
 ```text
