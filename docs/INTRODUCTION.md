@@ -107,6 +107,8 @@ For work that spans more than one step, the CEO lane keeps a lightweight goal br
 - next action
 - closure state: accepted, blocked, or superseded
 
+Substantial planning and review outputs should be delivered as project documents, not only as chat text. PRDs, goal briefs, task graphs, task-card packs, review plans, audit reports, acceptance reports, and handoff packets should be saved in the project's agreed docs or knowledge-writeback location. The chat response should summarize the result, link the document, and call out only decisions, top findings, or risks that need attention.
+
 Each CEO turn should move the goal forward by dispatching work, harvesting worker results, checking evidence, requesting revision, accepting, blocking, superseding, or updating durable memory.
 
 ## Memory Model
@@ -124,11 +126,28 @@ New or revived threads receive a compact memory packet. They should not be expec
 
 Projects may also specify another local knowledge path. Zhixia is the recommended knowledge provider for CEO Flow, not a hard requirement for every host.
 
-CEO Flow uses three knowledge provider modes:
+CEO Flow uses this memory layer as a runtime context governor. New threads and worker packets should receive compact task context, Zhixia excerpts, source refs, and narrow Guardian evidence only when relevant. They should not receive full CEO chats, full `.codex-knowledge` dumps, long implementation transcripts, or raw sessions by default. If the user wants to keep using an old thread, CEO Flow should check Zhixia/Guardian history cards and compact receipts before recommending a fresh-thread handoff.
+
+CEO Flow uses five knowledge provider modes:
 
 - `none`: pure orchestration with explicit task cards, handoffs, and source files.
-- `generic`: retrieval only; do not assume screenshot slimming, thread history indexes, or harvest writeback.
-- `zhixia-enhanced`: summary-first retrieval, compact memory packets, and accepted-result writeback to Zhixia-scannable notes so future lanes depend on summaries instead of long chat history.
+- `project-memory`: canonical local memory docs such as project memory, decisions, handoffs, and bug memory.
+- `zhixia-local-docs`: summary-first current project context from Zhixia or `.codex-knowledge/`.
+- `guardian-history`: old Codex sessions, paused-task discovery, history evidence, health summaries, and restore dry-runs.
+- `hybrid`: Zhixia for current project knowledge plus Guardian for old thread history and paused-task recovery.
+
+## Compatibility Matrix
+
+| Host capability | CEO Flow behavior |
+|---|---|
+| No thread tools | Works as a planning, task-card, document-first review, and acceptance discipline. It must not pretend to create worker lanes. |
+| Manual copy/paste lanes only | Writes task cards, memory packets, and review reports as documents for manual relay. |
+| Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when authorized. |
+| No model selection controls | States the intended model/reasoning lane without pretending to set unavailable controls. |
+| No automations or heartbeats | Leaves a concrete next harvest action instead of creating a monitor. |
+| No Zhixia or Guardian | Runs with explicit task cards, source files, worker reports, and project memory docs. |
+| Zhixia available | Uses summary-first current project context and writes accepted learning into canonical docs or Zhixia-scannable artifacts. |
+| Guardian available | Uses old-thread history and restore evidence read-only by default; selected-thread compaction requires explicit user trigger and receipt; restore remains dry-run unless explicitly approved. |
 
 ## Lightweight Team Records
 
@@ -146,6 +165,8 @@ CEO Flow is deliberately cautious.
 - It does not install or switch memory systems just because one exists.
 - It does not let multiple workers edit the same write-set at the same time.
 - It keeps expensive model lanes for high-risk reasoning, not routine work.
+- It does not treat Guardian as Windows Task Scheduler, automatic log cleanup, process-manager pruning, or a default raw-session reader.
+- It does not force a new thread when the user explicitly wants old-thread optimization; it distinguishes same-thread reopen, old-thread compaction, and fresh-thread handoff.
 
 ## Who It Is For
 

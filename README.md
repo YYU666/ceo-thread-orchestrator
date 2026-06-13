@@ -37,11 +37,13 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 
 - Keeps the current Codex thread as the high-reasoning CEO lane.
 - Creates the smallest useful execution artifact: task card, goal brief, or PRD/design brief.
+- Delivers substantial PRDs, task graphs, task-card packs, audit/review reports, acceptance reports, and handoff packets as project documents, with chat limited to summary, links, risks, and decisions needed.
 - Treats the PRD/design/task-graph thread as the CEO thread by default, then switches to Core Team execution after the plan is accepted.
 - Maintains a goal ledger with done criteria, task graph, active owner, evidence, next action, and closure state.
 - Runs a CEO harvest loop after dispatch: collect worker results, classify evidence, request revisions, and send the next unblocked task until the project lands.
 - Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
-- Uses Zhixia-enhanced summary-first context slimming when Zhixia or `.codex-knowledge/` is connected; generic knowledge bases remain retrieval-only.
+- Uses provider-specific memory modes: project memory for canonical docs, Zhixia local docs for current project context, and Guardian history for old Codex sessions or paused-task recovery.
+- Acts as a runtime context governor: dispatch compact task packets, prefer Zhixia summaries and source refs, avoid long chat transcripts/raw sessions by default, and use Guardian health/history for pressure/evidence plus explicitly authorized old-thread optimization receipts.
 - Keeps independent review gates neutral and evidence-first, with high reasoning when the tool surface allows it.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
@@ -121,7 +123,7 @@ The default PRD path is:
 6. CEO harvests worker results on a cadence, reviews evidence, and decides `accept | revise | block | supersede`.
 7. CEO sends the next unblocked task or revision until the goal lands or has a real external blocker.
 
-The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back. Review/QA lanes should stay neutral: they are not there to flatter the user, defend the worker, or keep momentum by blessing weak evidence. When model or thinking controls are available, independent review gates should use high reasoning.
+The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back. Review/QA lanes should stay neutral: they are not there to flatter the user, defend the worker, or keep momentum by blessing weak evidence. When model or thinking controls are available, independent review gates should use high reasoning. Substantial review results should be saved as documents; chat should show only the decision, link, top risks, and next owner.
 
 Worker lanes should not ask the user for routine approvals inside an accepted PRD or task graph. They report questions and blockers to the CEO lane. The CEO can approve normal in-scope sequencing, file choices inside the allowed write-set, test selection, and bounded revisions. The user is needed only for out-of-scope changes, credentials, spending beyond the agreed budget, destructive actions, or product/business decisions that change the accepted goal.
 
@@ -214,8 +216,40 @@ This skill degrades gracefully. It can use these capabilities when available, bu
 Knowledge provider modes:
 
 - `none`: pure orchestration with explicit task cards, handoffs, and source files.
-- `generic`: retrieval only; CEO Flow does not assume screenshot slimming, thread history indexes, or harvest writeback.
-- `zhixia-enhanced`: summary-first retrieval, compact memory packets, and accepted-result writeback to Zhixia-scannable notes so future lanes depend on summaries instead of long chat history.
+- `project-memory`: canonical local memory docs such as project memory, decisions, handoffs, and bug memory.
+- `zhixia-local-docs`: summary-first current project context from Zhixia or `.codex-knowledge/`.
+- `guardian-history`: old Codex sessions, paused-task discovery, history evidence, health summaries, and restore dry-runs.
+- `hybrid`: Zhixia for current project knowledge plus Guardian for old thread history and paused-task recovery.
+
+## Compatibility Matrix
+
+| Host capability | CEO Flow behavior |
+|---|---|
+| No thread tools | Works as a planning, task-card, document-first review, and acceptance discipline. It must not pretend to create worker lanes. |
+| Manual copy/paste lanes only | Writes task cards, memory packets, and review reports as documents so a user can relay them manually. |
+| Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when the tool contract and user/project authorization allow it. |
+| No model selection controls | States the intended model/reasoning lane, then uses the closest available mechanism without pretending to set unavailable controls. |
+| No automations or heartbeats | Leaves a concrete next harvest action in the report instead of creating a monitor. |
+| No Zhixia or Guardian | Runs as a normal CEO Flow skill with explicit task cards, source files, worker reports, and project memory docs. |
+| Zhixia available | Uses summary-first current project context and writes accepted learning into canonical docs or Zhixia-scannable artifacts. |
+| Guardian available | Uses old-thread history and restore evidence read-only by default; selected-thread compaction is allowed only after explicit user trigger and safety receipt; restore remains dry-run unless the user explicitly approves actual restore. |
+
+Zhixia and Guardian are optional integrations, not prerequisites for the core skill.
+
+## Guardian Command Status
+
+Implemented agent-facing Guardian commands depend on the local Guardian deployment. The current integration contract treats these as implemented in the MVP when Guardian is installed:
+
+- `report -Json`
+- `search-history -Query ... -Limit ... -Json`
+- `get-thread-context -ThreadId ... -TokenBudget ... -Json`
+- `get-project-history -ProjectPath ... -Limit ... -Json`
+- `export-zhixia -SinceDays ... -Json`
+- `restore -ThreadId ... -DryRun -Json`
+
+Planned commands must not be advertised as available until the local Guardian implementation supports them. In particular, `write-memory-candidate` is planned as an adapter only; canonical memory ownership remains with Zhixia or the active CEO memory provider.
+
+Guardian integration is not Windows Task Scheduler, automatic log cleanup, or process-manager pruning. `clean-logs` and `prune-process-manager` remain manual/explicitly authorized maintenance commands and are outside default CEO Flow runtime behavior. When a user explicitly wants to keep using an old thread, CEO Flow should check Zhixia/Guardian history cards and compact receipts before recommending a fresh-thread handoff.
 
 ## Repository Structure
 
@@ -227,6 +261,11 @@ ceo-thread-orchestrator/
 │       ├── SKILL.md
 │       ├── agents/openai.yaml
 │       └── references/
+│           ├── thread-ops.md
+│           ├── parallel-waves.md
+│           ├── context-memory.md
+│           ├── quality-gate.md
+│           └── open-source-readiness.md
 ├── examples/
 └── docs/
 ```
@@ -235,6 +274,10 @@ ceo-thread-orchestrator/
 
 - [English introduction](docs/INTRODUCTION.md)
 - [中文介绍](docs/INTRODUCTION.zh-CN.md)
+- [CEO Flow Guardian integration](docs/CEO_FLOW_GUARDIAN_INTEGRATION.md)
+- [Runtime Context Governor revision report](docs/CEO_FLOW_RUNTIME_CONTEXT_GOVERNOR_REPORT_2026-06-11.md)
+- [Code-producing smoke report](docs/CEO_FLOW_CODE_SMOKE_REPORT_2026-06-11.md)
+- [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
 - [Smoke prompts](examples/smoke-prompts.md)
 - [Open-source readiness checklist](skills/ceo-thread-orchestrator/references/open-source-readiness.md)
 
@@ -244,7 +287,7 @@ The skill treats new threads as capacity decisions, not a reflex. For ordinary c
 
 Worker reports are evidence, not proof. The CEO lane still inspects meaningful artifacts before accepting work.
 
-After installing or updating the plugin, restart or refresh Codex if old threads appear to use stale behavior. Existing long-running threads may still carry older context, so start a fresh CEO thread for the most reliable test.
+After installing or updating the plugin, restart or refresh Codex if old threads appear to use stale behavior. Existing long-running threads may still carry older hot context; after an explicit old-thread compaction, reopening the same thread means rereading its slimmed session body, not creating a new thread.
 
 ## Validation
 
@@ -259,6 +302,14 @@ If you have the Codex plugin validator available, also validate the plugin root:
 ```powershell
 python <path-to-plugin-creator>/scripts/validate_plugin.py .
 ```
+
+Before publishing a release, save evidence for:
+
+- skill validator output;
+- plugin validator output;
+- privacy/path scan output;
+- Guardian JSON smoke when the release claims Guardian integration;
+- one real code-producing CEO -> implementation -> review -> CEO accept/revise smoke on a disposable project.
 
 ## Contributing
 

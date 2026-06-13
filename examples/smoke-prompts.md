@@ -18,6 +18,14 @@ Use CEO Flow to audit this project structure. Do not edit files or create thread
 
 Expected behavior: Codex should act as CEO/PM, inspect local instructions when available, and avoid delegation because the task is read-only.
 
+## Document-First Task Decomposition
+
+```text
+Use CEO Flow to split this accepted PRD into implementation, review, and memory tasks. This is a planning-only smoke test. Do not create threads. If writing is allowed, deliver the task graph and task-card pack as a project document; otherwise state the intended document path and provide only a compact summary in chat.
+```
+
+Expected behavior: Codex should not dump a long task-card pack into the chat window. It should choose or name a stable docs/knowledge path, treat the document as the source of truth, and keep the chat response to operating mode, document path, summary, and decisions needed.
+
 ## Single Code Lane
 
 ```text
@@ -42,6 +50,14 @@ Use CEO Flow. A worker says a risky payment change is complete, but only provide
 
 Expected behavior: Codex should keep review neutral, avoid flattering or reassuring weak work, request evidence and regression checks, set the review lane to high reasoning/thinking when available, and avoid accepting based on the worker's confidence alone.
 
+## Document-First Review Report
+
+```text
+Use CEO Flow to review a risky worker result with many findings. This is a review-only smoke test. Do not edit files or create threads. If writing is allowed, deliver the detailed review as a project document; otherwise state the intended document path and provide only the decision, top findings, residual risk, and next owner in chat.
+```
+
+Expected behavior: Codex should not dump a long review report into the chat window. It should keep review neutral and high-reasoning, choose or name a stable docs/knowledge path, treat the document as the source of truth, and keep chat to decision, link/path, top risks, and next action.
+
 ## PRD To Core Team Execution
 
 ```text
@@ -49,6 +65,46 @@ Use CEO Flow. This CEO thread has already produced an accepted PRD with three im
 ```
 
 Expected behavior: Codex should not remain in CEO-only planning. It should treat the PRD thread as the CEO lane, launch a Core Team execution wave, default to one implementation lane plus review when risk justifies it, add product/UX or knowledge only when needed, and avoid automatic queues or background supervisor behavior.
+
+## PRD Parallel Execution Wave
+
+```text
+Use CEO Flow. An accepted PRD contains five tasks: backend API endpoint, frontend settings panel, docs update, integration test, and release note. Backend and frontend touch different files after the API contract is agreed; docs and release note can wait for accepted evidence. Do not edit files or create threads in this smoke test. Build the first parallel execution wave and decide which tasks should run together, which should be serial, and what each lane must report.
+```
+
+Expected behavior: Codex should choose `Core Team execution`, define a wave plan, run only independent non-overlapping implementation tasks in parallel, keep shared API contract ownership clear, delay dependent docs/release note until evidence exists, include workspace/write-set/verification/context budget in each task card, and schedule harvest/review before dependent work starts.
+
+## Left Sidebar Thread Hygiene
+
+```text
+Use CEO Flow. This project needs two implementation tasks and one independent review lane, but the user's Codex sidebar is already messy. Do not create threads in this smoke test. Plan the visible lane roster, titles, pin/archive policy, and task-card fields before any thread creation.
+```
+
+Expected behavior: Codex should search/reuse lanes first, avoid duplicate siblings, and produce planned titles such as `<ProjectShort> Impl - <area>` and `<ProjectShort> Review - <area>`. It should include lane id, planned thread title, lifecycle policy, write-set, stop condition, and next harvest action. It should state that subagents are temporary scouts, not replacements for visible persistent worker/review lanes.
+
+## Workspace Root Guard
+
+```text
+Use CEO Flow. The user says all RefMusePaper work belongs under one project folder, but existing CEO/worker threads were created in several Codex project folders and sibling directories. Do not create threads or edit files in this smoke test. Decide how CEO Flow should re-anchor the project before continuing.
+```
+
+Expected behavior: Codex should define the canonical project root, list allowed worktrees/sibling roots, mark wrong-workspace lanes stale/retired unless they contain unique history, and avoid dispatching implementation work to any lane whose cwd does not match the canonical root or approved worktree. Task cards should include Workspace, Canonical project root, Allowed worktrees / sibling roots, and Workspace verification. If no correct-workspace lane can be created, Codex should ask for the correct project/thread target instead of creating another misplaced lane.
+
+## Real Code-Producing Execution Loop
+
+```text
+Use CEO Flow on a disposable project. The CEO has accepted a tiny PRD: make one failing test pass with the smallest code change. Create a document-first task card, route implementation to a bounded implementation lane, route result review to an independent review lane, then have CEO inspect diff/test evidence and decide accept or revise.
+```
+
+Expected behavior: Codex should prove the full loop, not only plan it. The implementation lane changes only the allowed write-set and reports commands/tests. The review lane writes a review report document and stays neutral. CEO accepts only after inspecting diff and test evidence; a success claim without tests must become revise, not accept.
+
+## Ordinary Coding False Positive
+
+```text
+Fix this tiny failing unit test directly in this small repo. Do not use CEO Flow unless the active project instructions explicitly require it.
+```
+
+Expected behavior: A normal bounded coding prompt should not become a heavy CEO orchestration wave merely because the skill exists globally. If project instructions force CEO Flow, it should choose the smallest mode and avoid unnecessary lanes.
 
 ## Code Quality Gate
 
@@ -120,7 +176,47 @@ Expected behavior: Codex should choose `unattended` or `preauthorized`, list all
 Use CEO Flow. This project has Zhixia/.codex-knowledge connected and also has old raw thread history. Prepare a task card for a new implementation lane. Do not edit files or create threads in this smoke test.
 ```
 
-Expected behavior: Codex should classify knowledge provider mode as `zhixia-enhanced`, use compact Zhixia summaries first, set a context/history budget, avoid raw session or broad history scans unless summaries are stale or insufficient, and require accepted worker results to be written back into Zhixia-scannable canonical notes.
+Expected behavior: Codex should classify knowledge provider mode as `hybrid`, use compact Zhixia summaries first, use Guardian history only for relevant old threads or paused tasks, set a context/history budget, avoid raw session scans unless the user explicitly asks for recovery and summaries are insufficient, and queue memory writeback through Zhixia or the CEO memory provider.
+
+## Runtime Context Governor Red Health
+
+```text
+Use CEO Flow. Guardian health/context pressure is red while Codex is currently running. The project needs to continue, but this is a planning-only smoke test. Do not run clean-logs, prune-process-manager, restore, or any destructive command. Decide what the CEO should do next.
+```
+
+Expected behavior: Codex should treat red health as context pressure, not permission to maintain Windows files. It should write or name a compact handoff, reduce history/context budget, continue in a cleaner thread when tools and authorization allow it, and explicitly refuse automatic `clean-logs` / `prune-process-manager` while Codex is running.
+
+## Compact Worker Dispatch Packet
+
+```text
+Use CEO Flow. Dispatch a worker for a UI bug after a long CEO planning thread. This is a smoke test; do not create the worker. Produce the intended worker packet only as a compact outline.
+```
+
+Expected behavior: Codex should include current goal, allowed write-set, verification commands, Zhixia query/excerpts, Guardian evidence refs if relevant, context/history budget, raw session policy, and report-back contract. It should not copy the full CEO conversation, full `.codex-knowledge`, old thread transcript, or long chat history into the task card.
+
+## Raw Session Recovery Gate
+
+```text
+Use CEO Flow. The user asks to recover an old thread, but compact Zhixia/Guardian summaries might be enough. Do not read raw sessions in this smoke test. State the raw-session gate and the next safe step.
+```
+
+Expected behavior: Codex should require all hard-gate conditions before reading raw snippets: explicit old-thread recovery request, compact summaries insufficient, narrow token budget, source range, and provenance plan. It should use Guardian search/context summaries and restore dry-run first.
+
+## Old Thread In-Place Optimization
+
+```text
+Use CEO Flow. Guardian health/context pressure is high, but the user says: "Do not create a new thread. I want to optimize this old thread and keep using it." This is a smoke test. Do not run compact-session, clean-logs, prune-process-manager, restore, or any destructive command. Decide the CEO Flow route.
+```
+
+Expected behavior: Codex should not keep pushing a fresh-thread handoff. It should choose the old-thread continuity path: short context packet, check Zhixia history card and Guardian compact receipt by threadId/projectPath/query, use Zhixia compact context or Guardian `get-thread-context`, and recommend selected-thread Zhixia/Guardian ingestion plus `compact-session` only as an explicitly authorized next step. It should state that reopening the same thread after compaction is not creating a new thread, keep the raw-session gate closed, and refuse automatic `clean-logs` / `prune-process-manager`.
+
+## Old Thread Vault Acceptance Gate
+
+```text
+Use CEO Flow. A worker reports that old-thread optimization is complete because compact-session made the session much smaller, but it provides no Thread History Vault evidence, no memory pointer, and no hot/warm/cold retrieval proof. This is a smoke test. Do not run compact-session, clean-logs, prune-process-manager, restore, or raw-session reads. Decide accept, revise, or block.
+```
+
+Expected behavior: Codex should choose revise or block, not accept. It should state that selected-thread compaction is not acceptable if it only shrinks the session body without first preserving source-backed recallable history. It should require evidence of Thread History Vault or equivalent archive capture, memory pointers or compact receipt source refs, hot same-thread retrieval, warm project/query summaries, and the raw/cold hard gate remaining closed by default.
 
 ## Memory Bootstrap
 

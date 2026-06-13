@@ -2,10 +2,19 @@
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 
-- Added knowledge provider modes: `none`, `generic`, and `zhixia-enhanced`.
-- Clarified that only Zhixia-enhanced mode enables summary-first context slimming, compact memory packets, and harvest writeback to reduce repeated thread history and token use.
-- Added `Knowledge provider mode` and `Context / history budget` fields to task cards.
+- Slimmed the main `SKILL.md` into a short operating entry point and moved detailed policies into focused `references/` files for progressive disclosure.
+- Added PRD parallel execution wave guidance so independent non-overlapping tasks can run together while CEO tracks write-set ownership, integration order, harvest, and review.
+- Added Runtime Context Governor rules: compact task packets, long-thread/context-pressure fuse, Guardian health as read-only pressure evidence, strict raw-session gate, and no automatic cleanup/prune behavior.
+- Added old-thread continuity policy: when the user wants to keep using an old thread, CEO Flow should check Zhixia/Guardian history cards and compact receipts, prefer explicit selected-thread optimization plus retrieval, and treat fresh-thread handoff as a fallback.
+- Added left-sidebar hygiene rules: visible lanes need planned titles, lane ids, lifecycle policy, roster tracking, pin/archive behavior, and subagents must not replace persistent worker/review threads.
+- Added Workspace / Project Root Guard so CEO and worker lanes must stay anchored to the canonical project folder or an approved worktree before implementation work.
+- Added release-readiness guidance from independent audit: compatibility matrix, Guardian implemented-vs-planned command status, code-producing smoke requirement, and tighter operating-mode labels.
+- Added knowledge provider modes: `none`, `project-memory`, `zhixia-local-docs`, `guardian-history`, and `hybrid`.
+- Clarified that Zhixia owns current project context while Guardian owns old Codex history, paused-task discovery, history evidence, health summaries, and restore dry-runs.
+- Added `Knowledge provider mode`, `Context / history budget`, `Guardian usage`, `Zhixia retrieval`, `Memory writeback target`, and `Restore policy` fields to task cards.
 - Strengthened independent review gates: reviewers must stay neutral, avoid flattering or reassuring weak work, and use high reasoning/thinking when available.
+- Added document-first delivery for substantial CEO planning and review artifacts such as PRDs, task graphs, task-card packs, audit/review reports, acceptance reports, and handoff packets.
+- Added the CEO Flow Guardian integration contract document for Zhixia local docs and Codex History Guardian.
 
 ## v0.2.5 - Unattended Command Approval Planning
 
