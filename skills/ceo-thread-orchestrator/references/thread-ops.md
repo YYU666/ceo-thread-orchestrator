@@ -134,6 +134,7 @@ Every implementation or review task card should state:
 CEO thread id:
 Callback events: completion | blocker | approval_stall | revise_needed
 Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
+Callback priority: queued | interrupt
 Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
 CEO harvest fallback:
 ```
@@ -146,6 +147,13 @@ Worker callback rules:
 4. The callback must not include long chat history, raw session content, full knowledge bases, or broad logs.
 5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
 6. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
+
+Callback interrupt policy:
+
+- Default callbacks are queued harvest signals. Completion, ordinary progress, low-risk revise-needed, memory candidates, and routine status updates should not interrupt the CEO thread.
+- Interrupt only for a blocker that stops downstream work, approval stall for an in-scope action, safety risk, destructive-risk, urgent user-visible failure, credential/spending/legal/security issue, or conflicting parallel writes.
+- If a worker is unsure whether interruption is justified, use queued priority and state the risk in the payload.
+- Callback priority affects attention only. It does not prove completion, authorize scope changes, or replace CEO evidence review.
 
 For broad parallel projects, CEO harvest remains primary. Callback is a useful signal, but the CEO must still read/inspect evidence before accepting work.
 

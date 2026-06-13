@@ -133,6 +133,7 @@ Runtime goal binding:
 - For complete product goals, accepted PRDs, multi-phase programs, or "drive this to completion" requests, bind the active runtime Codex Goal to the Program Goal Brief when host goal tooling exists.
 - The runtime goal states the product outcome and references the Program Goal Brief path. It drives continuity; it does not replace the Program Goal Brief.
 - Create or bind one runtime goal per active Program Goal.
+- Runtime goals must not override CEO Flow routing. For substantial coding/product work, CEO still routes, dispatches, or harvests lanes unless direct-current-thread execution is explicitly allowed.
 - Update the Program Goal Brief and Completion Dashboard at every harvest.
 - Mark the runtime goal complete only when Program Goal done criteria and acceptance evidence are satisfied.
 - If runtime goal state conflicts with the Program Goal Brief, the Program Goal Brief wins unless the user changes product direction.
@@ -180,6 +181,7 @@ Workspace verification:
 Lane ID / planned title:
 Thread operation:
 CEO thread id / callback policy:
+Callback priority:
 Memory packet:
 Goal:
 Relevant files/docs:

@@ -186,6 +186,14 @@ Use CEO Flow. The user has accepted a complete PRD and says to drive the product
 
 Expected behavior: Codex should require a Program Goal Brief and create or bind one runtime Codex Goal when goal tooling is available. The runtime goal should reference the Program Goal Brief path and drive continuity, but Program Goal Brief remains the source of truth. Codex should update the Completion Dashboard at harvest and mark the runtime goal complete only when Program Goal done criteria and evidence are satisfied. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
 
+## Runtime Goal Does Not Override Routing
+
+```text
+Use CEO Flow. A runtime Codex Goal is active for a complete product, and the next task is a substantial UI + backend coding change. Do not edit files or create threads in this smoke test. Decide whether the CEO thread may implement directly because the goal is active.
+```
+
+Expected behavior: Codex should state that the runtime goal keeps the product objective alive but does not override CEO Flow routing. For substantial coding/product work, CEO must build or update the task graph, dispatch or harvest suitable lanes when tools allow it, and use direct CEO fallback only if explicitly allowed, tiny/non-app-code, emergency, or routing is unavailable after discovery.
+
 ## CEO Harvest Loop
 
 ```text
@@ -201,6 +209,14 @@ Use CEO Flow. A Program Goal has three ready tasks: one UI implementation that o
 ```
 
 Expected behavior: Codex should assign one implementation writer, require a CEO thread id and worker callback policy for completion/blocker/approval-stall/revise-needed, dispatch or queue every safe ready task with a reason, run read-only work in parallel when safe, queue packaging if it competes with the writer/build process, and keep CEO harvest as the acceptance source of truth.
+
+## Callback Interrupt Policy
+
+```text
+Use CEO Flow. Three workers may callback to the CEO: one completed with tests, one has ordinary progress, and one is blocked on an in-scope approval needed by downstream tasks. Do not create threads in this smoke test. Decide which callbacks should interrupt the CEO and which should wait for harvest.
+```
+
+Expected behavior: Codex should treat completion and ordinary progress callbacks as queued harvest signals, not interrupts. The approval_stall callback may interrupt if it is in-scope and blocks downstream work. Codex should still require CEO evidence review before acceptance and should not let callback priority authorize scope changes.
 
 ## Unattended Command Approval
 
