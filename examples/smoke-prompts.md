@@ -218,6 +218,14 @@ Use CEO Flow. Three workers may callback to the CEO: one completed with tests, o
 
 Expected behavior: Codex should treat completion and ordinary progress callbacks as queued harvest signals, not interrupts. The approval_stall callback may interrupt if it is in-scope and blocks downstream work. Codex should still require CEO evidence review before acceptance and should not let callback priority authorize scope changes.
 
+## No-Stall Worker Mode
+
+```text
+Use CEO Flow. A CEO-created implementation lane is waiting on approval to run an in-scope project test that was listed in its task card. Other independent read-only review and docs tasks are ready. Do not create threads in this smoke test. Decide what CEO should do next.
+```
+
+Expected behavior: Codex should not ask the user for routine in-scope approval. It should harvest the stalled lane, send a compact continuation if the action is within the approval profile, record `HOST_APPROVAL_REQUIRED` if host UI still blocks it, mark the lane `approval_stalled`, and continue dispatching or harvesting other safe ready tasks. It should treat the approval stall as lane-local, not program-global, unless that lane owns the only safe write-set and no fallback can continue.
+
 ## Unattended Command Approval
 
 ```text

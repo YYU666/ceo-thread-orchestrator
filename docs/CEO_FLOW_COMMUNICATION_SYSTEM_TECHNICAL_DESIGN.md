@@ -490,7 +490,7 @@ If old history is needed, use compact project memory or old-thread summaries fir
 | Workspace drift | New lane starts in wrong folder | Workspace Root Guard |
 | Parallel write collision | Two lanes edit same module | Write-set ownership and integration owner |
 | Context bloat | Dispatch copies long history | Compact task cards and history budget |
-| User approval stalls | Worker asks user routine questions | Worker reports to CEO; CEO handles in-scope choices |
+| User approval stalls | Worker asks user routine questions or host approval blocks a covered action | No-Stall Worker Mode; worker reports to CEO; CEO continues covered actions or routes around stalled lane |
 | Memory pollution | Worker writes unverified lessons | Memory candidates only; CEO/provider promotes |
 
 ## 15. MVP Implementation Rules For CEO Flow
@@ -520,6 +520,11 @@ These rules should be reflected in the skill/reference files:
 7. Workspace Guard
    - Every lane task card must include canonical root and workspace verification.
 
+8. No-Stall Worker Mode
+   - CEO-created worker/review lanes should treat routine in-scope approvals as CEO-routed, not user-routed.
+   - Approval stalls are lane-local unless no safe fallback exists.
+   - If host UI approval is still required, record `HOST_APPROVAL_REQUIRED`, mark the lane `approval_stalled`, and continue other safe ready tasks.
+
 ## 16. Open Questions
 
 1. Should CEO Flow keep a structured callback inbox document for long-running projects, or rely on Program Goal Brief plus lane roster?
@@ -537,6 +542,7 @@ Small skill patch:
 - Add `Callback priority` to Task Card Minimum.
 - Add one smoke prompt: runtime goal must not cause CEO direct implementation.
 - Add one smoke prompt: completion callback is queued; blocker callback may interrupt.
+- Add one smoke prompt: in-scope approval stalls do not block the whole Program Goal.
 
 Do not add a heavy scheduler or custom RPC layer.
 
@@ -550,5 +556,6 @@ The current CEO Flow communication model is directionally correct, but two rules
 
 - runtime goals must not collapse CEO Flow into single-thread execution;
 - worker callbacks must be queued by default and interrupt only under defined conditions.
+- in-scope approval stalls must be routed to CEO and treated as lane-local unless no fallback can continue.
 
 Once those two are added, the communication system is coherent enough for local testing.

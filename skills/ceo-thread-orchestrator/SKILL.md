@@ -44,10 +44,11 @@ Follow this path before reading deeper policy:
 9. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
 10. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
 11. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-12. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
-13. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-14. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
-15. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+12. Use no-stall worker mode for CEO-created implementation/review lanes: preauthorize routine in-scope command families in the task card, require `approval_stall` callback when host approval blocks progress, and treat approval stalls as lane-local unless no safe fallback exists.
+13. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
+14. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+15. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
+16. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -283,6 +284,7 @@ For unattended or preauthorized waves:
 3. Put command approval profile, allowed command families, and commands that must not run in every implementation task card.
 4. Worker lanes should not ask the user for routine command approvals; they report to CEO.
 5. If a needed command exceeds the plan, the worker stops and reports the command, reason, and safer alternative to CEO.
+6. If host approval blocks a routine in-scope action, the worker reports `approval_stall` to CEO instead of asking the user. CEO sends continuation when in profile, changes lane/route when host UI still blocks it, and continues other safe ready tasks.
 
 This cannot bypass host security UI. It prevents avoidable mid-run stalls.
 
@@ -303,6 +305,8 @@ Escalate to the user only for out-of-scope changes, destructive actions, credent
 Do not final after dispatching implementation or review lanes unless at least one harvest mechanism is active or explicitly documented: heartbeat automation, concrete next harvest time, or immediate synchronous harvest in the same turn.
 
 If a lane is `waitingOnApproval`, harvest it immediately. If the requested action is within the task card's approval profile, allowed command families, and write-set, CEO should approve or send a continuation without asking the user. If the task card omitted approval details, revise and redispatch the task card. Escalate only for out-of-scope, destructive, credentials, spending, legal/security, external account, or changed goal decisions.
+
+Approval stalls are lane-local, not program-global. A `waitingOnApproval` lane must not block the whole Program Goal when other safe ready tasks, read-only review/audit work, a reusable lane, or a direct fallback within policy can continue. If host UI approval is still required after CEO continuation, record `HOST_APPROVAL_REQUIRED`, mark that lane `approval_stalled`, and keep harvesting or dispatching non-conflicting work.
 
 ## Quality And Review Gate
 

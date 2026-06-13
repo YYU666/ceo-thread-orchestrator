@@ -128,6 +128,8 @@ Do not use thread messaging as a hidden autonomous chat room. CEO remains accoun
 
 Worker callback is an optional acceleration path, not a replacement for CEO harvest. Use it when a project cannot safely run many implementation lanes, when only one visible worker is active, or when quick CEO feedback matters more than broad parallelism.
 
+CEO-created implementation and review lanes default to no-stall worker mode. The goal is not to bypass host security approval; it is to stop a single worker's approval wait from freezing the whole program.
+
 Every implementation or review task card should state:
 
 ```text
@@ -137,6 +139,7 @@ Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVA
 Callback priority: queued | interrupt
 Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
 CEO harvest fallback:
+No-stall fallback: continue other ready tasks | reuse another lane | direct CEO fallback if allowed | HOST_APPROVAL_REQUIRED
 ```
 
 Worker callback rules:
@@ -155,6 +158,15 @@ Callback interrupt policy:
 - If a worker is unsure whether interruption is justified, use queued priority and state the risk in the payload.
 - Callback priority affects attention only. It does not prove completion, authorize scope changes, or replace CEO evidence review.
 
+Approval stall handling:
+
+1. Workers must not ask the user for routine read/edit/test/build/screenshot approvals already covered by the task card.
+2. If host approval blocks a covered action, workers callback `approval_stall` to CEO with the exact pending action, command/tool, reason, and safer alternative.
+3. CEO immediately harvests the stalled lane. If the action is within the approval profile, CEO sends a compact continuation/approval message.
+4. If host UI approval is still required, CEO records `HOST_APPROVAL_REQUIRED`, marks the lane `approval_stalled`, and continues other safe ready tasks instead of waiting.
+5. Escalate to the user only for out-of-scope, destructive, credential, spending, external account, legal/security, privacy, or changed-goal decisions.
+6. A stalled lane is program-blocking only when it owns the only safe write-set and no review, audit, docs, alternate lane, or policy-compliant fallback can continue.
+
 For broad parallel projects, CEO harvest remains primary. Callback is a useful signal, but the CEO must still read/inspect evidence before accepting work.
 
 ## Capability Boundaries
@@ -165,6 +177,7 @@ For broad parallel projects, CEO harvest remains primary. Callback is a useful s
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
 - Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
+- No-stall worker mode reduces approval stalls but does not bypass host security UI or guarantee every thread has CEO-equivalent permissions.
 - Worker reports are evidence, not proof.
 - Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
 - Memory is not automatic unless a maintained memory provider or writeback routine exists.
