@@ -36,7 +36,7 @@ Follow this path before reading deeper policy:
 1. Confirm the newest request and mode.
 2. Anchor the canonical project root and allowed worktrees before edits.
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
-4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, progress, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
+4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, completion dashboard, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
 5. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
 6. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
 7. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
@@ -108,7 +108,14 @@ Program goal:
 Canonical project root:
 Outcome / launch definition:
 Phases:
-Current progress by workstream:
+Completion dashboard:
+  Phase:
+  Percent complete:
+  Active lanes:
+  Blocked lanes:
+  Accepted work:
+  Next task:
+  Evidence:
 Task graph:
 Lane roster / thread ids:
 Current blockers:

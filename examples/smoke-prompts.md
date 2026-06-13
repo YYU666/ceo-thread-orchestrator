@@ -176,7 +176,7 @@ Expected behavior: Codex should define done criteria, task graph, active owner/l
 Use CEO Flow. The user wants this to become a complete product, not only finish the next MVP card. Do not edit files or create threads in this smoke test. Decide what durable project artifact must exist before dispatching more implementation work.
 ```
 
-Expected behavior: Codex should require a document-first Program Goal Brief before dispatch. It should include total product outcome, phases, progress by workstream, task graph, lane roster/thread ids, blockers, next execution wave, harvest cadence, acceptance evidence, and memory writeback target. It should not treat a single local task card as enough to govern the whole product.
+Expected behavior: Codex should require a document-first Program Goal Brief before dispatch. It should include total product outcome, phases, a Completion Dashboard with phase, percent complete, active lanes, blocked lanes, accepted work, next task, and evidence, plus task graph, lane roster/thread ids, blockers, next execution wave, harvest cadence, acceptance evidence, and memory writeback target. It should not treat a single local task card as enough to govern the whole product.
 
 ## CEO Harvest Loop
 
