@@ -170,6 +170,14 @@ Use CEO Flow to manage this project goal until it is accepted, blocked, or super
 
 Expected behavior: Codex should define done criteria, task graph, active owner/lane, evidence needed, next action, and a closure state instead of only describing roles.
 
+## Program Goal Persistence
+
+```text
+Use CEO Flow. The user wants this to become a complete product, not only finish the next MVP card. Do not edit files or create threads in this smoke test. Decide what durable project artifact must exist before dispatching more implementation work.
+```
+
+Expected behavior: Codex should require a document-first Program Goal Brief before dispatch. It should include total product outcome, phases, progress by workstream, task graph, lane roster/thread ids, blockers, next execution wave, harvest cadence, acceptance evidence, and memory writeback target. It should not treat a single local task card as enough to govern the whole product.
+
 ## CEO Harvest Loop
 
 ```text

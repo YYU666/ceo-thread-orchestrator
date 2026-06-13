@@ -36,15 +36,16 @@ Follow this path before reading deeper policy:
 1. Confirm the newest request and mode.
 2. Anchor the canonical project root and allowed worktrees before edits.
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
-4. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
-5. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
-6. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
-7. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
-8. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
-9. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-10. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-11. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
-12. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, progress, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
+5. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
+6. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
+7. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
+8. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
+9. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
+10. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
+11. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+12. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
+13. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -98,6 +99,25 @@ Create the smallest artifact that can drive execution:
 - Task card: narrow bug fix, small UI change, test run, docs edit, or single-worker task.
 - Goal brief: multi-step work, unclear dependencies, more than one lane, or work continuing beyond the turn.
 - PRD/design brief: product direction, user flows, architecture contracts, database/API shape, high-risk UX, or work likely to drift without a shared spec.
+- Program Goal Brief: complete product goals, multi-phase roadmaps, long-running launches, or projects where progress must survive across threads.
+
+A Program Goal Brief is mandatory before dispatch when the user asks CEO Flow to finish a complete product, run a multi-phase project, or keep progressing beyond one bounded task. Keep it as a project document, not a chat-only plan:
+
+```text
+Program goal:
+Canonical project root:
+Outcome / launch definition:
+Phases:
+Current progress by workstream:
+Task graph:
+Lane roster / thread ids:
+Current blockers:
+Next execution wave:
+Harvest cadence:
+Acceptance evidence:
+Memory / knowledge writeback:
+Last updated:
+```
 
 Every open goal needs:
 
