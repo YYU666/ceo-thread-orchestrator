@@ -37,16 +37,17 @@ Follow this path before reading deeper policy:
 2. Anchor the canonical project root and allowed worktrees before edits.
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
 4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, completion dashboard, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
-5. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
-6. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
-7. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
-8. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
-9. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
-10. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-11. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
-12. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-13. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
-14. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+5. When an accepted PRD/design brief/task graph should be driven to completion, create or bind one runtime Codex Goal when host goal tooling is available. Link it to the Program Goal Brief. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
+6. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
+7. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
+8. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
+9. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
+10. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
+11. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
+12. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
+13. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+14. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
+15. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -126,6 +127,16 @@ Acceptance evidence:
 Memory / knowledge writeback:
 Last updated:
 ```
+
+Runtime goal binding:
+
+- For complete product goals, accepted PRDs, multi-phase programs, or "drive this to completion" requests, bind the active runtime Codex Goal to the Program Goal Brief when host goal tooling exists.
+- The runtime goal states the product outcome and references the Program Goal Brief path. It drives continuity; it does not replace the Program Goal Brief.
+- Create or bind one runtime goal per active Program Goal.
+- Update the Program Goal Brief and Completion Dashboard at every harvest.
+- Mark the runtime goal complete only when Program Goal done criteria and acceptance evidence are satisfied.
+- If runtime goal state conflicts with the Program Goal Brief, the Program Goal Brief wins unless the user changes product direction.
+- If goal tooling is unavailable, record `runtime_goal_unavailable` in the Program Goal Brief or operating note and continue with CEO harvest.
 
 Every open goal needs:
 

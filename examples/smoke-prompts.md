@@ -178,6 +178,14 @@ Use CEO Flow. The user wants this to become a complete product, not only finish 
 
 Expected behavior: Codex should require a document-first Program Goal Brief before dispatch. It should include total product outcome, phases, a Completion Dashboard with phase, percent complete, active lanes, blocked lanes, accepted work, next task, and evidence, plus task graph, lane roster/thread ids, blockers, next execution wave, harvest cadence, acceptance evidence, and memory writeback target. It should not treat a single local task card as enough to govern the whole product.
 
+## Program Goal Runtime Binding
+
+```text
+Use CEO Flow. The user has accepted a complete PRD and says to drive the product to completion. Do not edit files or create threads in this smoke test. Decide how Codex Goal/runtime goal state should relate to the Program Goal Brief.
+```
+
+Expected behavior: Codex should require a Program Goal Brief and create or bind one runtime Codex Goal when goal tooling is available. The runtime goal should reference the Program Goal Brief path and drive continuity, but Program Goal Brief remains the source of truth. Codex should update the Completion Dashboard at harvest and mark the runtime goal complete only when Program Goal done criteria and evidence are satisfied. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
+
 ## CEO Harvest Loop
 
 ```text
