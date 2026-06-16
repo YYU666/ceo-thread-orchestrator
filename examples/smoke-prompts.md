@@ -152,7 +152,7 @@ Expected behavior: Codex should not treat "CEO/architecture lane" as permission 
 Use CEO Flow. Create a worker lane task card for an accepted PRD, but do not actually create a thread in this smoke test. Show what must be recorded before the CEO can final after dispatch.
 ```
 
-Expected behavior: Codex should include expected report, stop condition, lane roster entry, and one harvest mechanism: heartbeat automation, concrete next harvest time, or immediate synchronous harvest plan. It should state that dispatch without a harvest plan is incomplete.
+Expected behavior: Codex should include expected report, stop condition, lane roster entry, and one harvest driver: heartbeat automation, concrete next harvest time, immediate synchronous harvest plan, or an active runtime Codex Goal bound to the Program Goal Brief. It should state that dispatch without a harvest driver is incomplete.
 
 ## Mid-Task Rebalancing
 
@@ -161,6 +161,30 @@ Use CEO Flow. We started with one code task, but now I added a second requiremen
 ```
 
 Expected behavior: Codex should re-evaluate the whole task graph, prefer reuse when sequential, and add a second lane only for independent parallel work with non-overlapping write-sets.
+
+## Lightweight Pipeline Contract
+
+```text
+Use CEO Flow. An accepted PRD has independent backend, frontend, and docs/test work. Do not edit files or create threads in this smoke test. Decide whether to create a lightweight pipeline contract, and show the minimum fields needed for safe parallel dispatch.
+```
+
+Expected behavior: Codex should recommend a small `pipeline.yaml` or equivalent Program Goal section with lane ids, dependencies, write-set owners, environment profile, typed handoff schema, scorecard/review gate, and stop conditions. It should not propose a heavyweight workflow engine or serialize all tasks through one worker without a stated conflict.
+
+## Typed Handoff And Scorecard
+
+```text
+Use CEO Flow. A worker lane reports "done" for a pipeline task but provides no structured handoff, changed files, command output, or residual risk. Do not edit files or create threads in this smoke test. Decide accept/revise/block and state what the Scorecard MVP should require.
+```
+
+Expected behavior: Codex should revise or block, not accept. It should ask for a typed handoff with lane id, status, files changed, write-set compliance, verification command result or not-run reason, blockers/assumptions, and recommended next action. It should state that scorecard checks evidence triage only and does not replace neutral review.
+
+## Pipeline Templates And Validators
+
+```text
+Use CEO Flow. A broad PRD is ready for implementation and the project allows file writes. Do not create threads in this smoke test. Generate a pipeline from the bundled template, explain which handoff templates workers must use, and state which validators should run before CEO acceptance.
+```
+
+Expected behavior: Codex should use the bundled `templates/pipeline.yaml`, `templates/typed_handoff.yaml`, `templates/review_handoff.yaml`, and `templates/scorecard.md` as starting points. It should run or recommend `scripts/validate_pipeline.py` and `scripts/scorecard_handoff.py` before acceptance, while still saying validators do not replace evidence review.
 
 ## Goal Closure Loop
 
@@ -193,6 +217,14 @@ Use CEO Flow. A runtime Codex Goal is active for a complete product, and the nex
 ```
 
 Expected behavior: Codex should state that the runtime goal keeps the product objective alive but does not override CEO Flow routing. For substantial coding/product work, CEO must build or update the task graph, dispatch or harvest suitable lanes when tools allow it, and use direct CEO fallback only if explicitly allowed, tiny/non-app-code, emergency, or routing is unavailable after discovery.
+
+## Runtime Goal Harvest Driver
+
+```text
+Use CEO Flow. A Program Goal has an active runtime Codex Goal bound to its Program Goal Brief. CEO dispatches two worker lanes. Do not create threads in this smoke test. Decide whether CEO must also create a heartbeat automation or fixed next harvest time before final reporting.
+```
+
+Expected behavior: Codex should say a separate heartbeat or fixed next-harvest time is optional because the active runtime goal can serve as the harvest driver. It must still record lane roster, expected reports, callback policy, stop condition, and next harvest trigger, and must not treat the runtime goal as replacing CEO harvest, evidence review, or accept/revise/block decisions.
 
 ## CEO Harvest Loop
 

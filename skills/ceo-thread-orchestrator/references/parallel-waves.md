@@ -29,6 +29,8 @@ Do not parallelize when tasks:
 
 ## Wave Plan
 
+For broad PRDs, the wave plan may be represented as `pipeline.yaml`, `workflow.yaml`, or an equivalent Program Goal section. Use `references/pipeline-contract.md` when typed handoffs, scorecard checks, environment profiles, or machine-checkable lane dependencies are needed.
+
 ```text
 Wave ID:
 Parallel goal:

@@ -1,0 +1,14 @@
+review:
+  schema: review_handoff_v1
+  laneId: integration-review
+  decision: revise
+  evidenceInspected:
+    - task card
+    - diff
+    - test output
+  reasons:
+    - "State the evidence-based reason for the decision."
+  missingEvidence: []
+  requiredFixes: []
+  residualRisk: []
+  confidence: medium

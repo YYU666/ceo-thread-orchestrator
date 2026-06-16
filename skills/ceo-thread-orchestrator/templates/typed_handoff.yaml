@@ -1,0 +1,44 @@
+handoff:
+  schema: typed_handoff_v1
+  laneId: backend-api
+  threadId: optional-visible-thread-id
+  status: complete
+  summary: "One-paragraph implementation result."
+
+  task:
+    goal: "Bounded task goal."
+    acceptedScope:
+      - "What was completed."
+    outOfScope:
+      - "What was intentionally not touched."
+
+  changes:
+    filesChanged:
+      - path: src/api/example.ts
+        changeType: modified
+        reason: "Why this file changed."
+    writeSetCompliant: true
+
+  evidence:
+    commandsRun:
+      - command: npm test -- api
+        result: pass
+        outputRef: docs/reports/backend-api-test-output.md
+    tests:
+      passed: []
+      failed: []
+    artifacts: []
+    sourceRefs: []
+
+  risks:
+    knownIssues: []
+    assumptions: []
+
+  next:
+    recommendedAction: review
+    needsCEODecision: false
+    blockers: []
+
+  provenance:
+    createdAt: 2026-06-16T00:00:00Z
+    workspace: "canonical project root or worktree"

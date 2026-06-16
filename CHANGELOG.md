@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Upgraded the CEO Flow pipeline layer beyond MVP with bundled `pipeline.yaml`, `typed_handoff.yaml`, `review_handoff.yaml`, and `scorecard.md` templates.
+- Added lightweight `validate_pipeline.py` and `scorecard_handoff.py` scripts so pipeline contracts and worker/review handoffs can be checked before CEO acceptance.
+- Added an operating playbook reference that gives a stable end-to-end decision flow for direct answers, CEO-only work, worker callbacks, runtime Goal harvest drivers, parallel waves, pipeline contracts, approval stalls, and accept/revise/block closure.
+- Updated smoke prompts and pipeline docs to require template/validator-aware behavior while preserving the lightweight, non-workflow-engine boundary.
+
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 
 - Slimmed the main `SKILL.md` into a short operating entry point and moved detailed policies into focused `references/` files for progressive disclosure.

@@ -42,7 +42,7 @@ Follow this path before reading deeper policy:
 7. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
 8. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
 9. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
-10. After dispatching any implementation or review lane, set a heartbeat automation, explicit next harvest time, or immediate synchronous harvest plan before final reporting.
+10. After dispatching any implementation or review lane, record one active harvest driver before final reporting: heartbeat automation, explicit next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
 11. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
 12. Use no-stall worker mode for CEO-created implementation/review lanes: preauthorize routine in-scope command families in the task card, require `approval_stall` callback when host approval blocks progress, and treat approval stalls as lane-local unless no safe fallback exists.
 13. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
@@ -52,8 +52,10 @@ Follow this path before reading deeper policy:
 
 Read references only when needed:
 
+- Stable operating flow, mode selection, goal/harvest driver, callback, and pipeline decision rules: `references/operating-playbook.md`.
 - Thread creation, sidebar hygiene, workspace guard, and relay packets: `references/thread-ops.md`.
 - PRD waves, dependency graph, and safe parallel execution: `references/parallel-waves.md`.
+- Lightweight pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
 - Zhixia, Guardian, old-thread continuity, context slimming, restore, and raw-session gates: `references/context-memory.md`.
 - Code quality, review gate, doom-loop recovery, and accept/revise/block criteria: `references/quality-gate.md`.
 - Public release, validators, privacy scan, and publishing readiness: `references/open-source-readiness.md`.
@@ -135,6 +137,8 @@ Runtime goal binding:
 - The runtime goal states the product outcome and references the Program Goal Brief path. It drives continuity; it does not replace the Program Goal Brief.
 - Create or bind one runtime goal per active Program Goal.
 - Runtime goals must not override CEO Flow routing. For substantial coding/product work, CEO still routes, dispatches, or harvests lanes unless direct-current-thread execution is explicitly allowed.
+- A bound runtime goal may serve as the harvest driver after dispatch, so a separate heartbeat or fixed next-harvest time is optional while the goal remains active.
+- Runtime goal harvest still requires lane roster, expected reports, callback policy, stop condition, and evidence review. It must not replace CEO harvest or accept/revise/block decisions.
 - Update the Program Goal Brief and Completion Dashboard at every harvest.
 - Mark the runtime goal complete only when Program Goal done criteria and acceptance evidence are satisfied.
 - If runtime goal state conflicts with the Program Goal Brief, the Program Goal Brief wins unless the user changes product direction.
@@ -216,6 +220,10 @@ After an accepted PRD/task graph, actively look for safe parallelism. Dispatch t
 
 Do not parallelize tasks that touch the same files, share unclear architecture, compete for one local server/database, depend on the same migration/generated artifact, need unplanned command approvals, or create more merge/review cost than time saved.
 
+For broad PRDs or multi-module implementation, create a lightweight pipeline contract before dispatch when it will reduce ambiguity: `pipeline.yaml` or an equivalent document section with lanes/nodes, dependencies, write-set owners, environment profile, required handoff schema, review/scorecard gates, and stop conditions. This contract is a CEO planning artifact, not a heavyweight workflow engine.
+
+Worker and review lanes should report with typed handoffs when the task is part of a pipeline wave. CEO harvest starts from typed handoff, diff, tests, artifacts, and relevant docs instead of long lane chat.
+
 If a Program Goal `Next execution wave` has multiple ready independent tasks, dispatch, reuse, or explicitly queue every safe parallel task. Do not select only one workstream unless dependencies, write-set conflict, shared process conflict, approval limits, missing thread tools, or harvest capacity make the rest blocked or serial. Record every ready-but-undispatched task with its reason and next harvest action.
 
 Use a wave plan:
@@ -236,6 +244,8 @@ Stop condition:
 Default lane count: 0 new lanes for CEO-only work; 1 implementation lane for one coherent write-set; 2 lanes for implementation plus review or two independent write-sets; 3-5 active experts only for broad separable phases.
 
 For projects that cannot safely run multiple writer lanes, prefer one implementation lane plus worker callback to CEO, and run parallel read-only lanes such as review, release audit, docs/status audit, or packaging verification only when they do not compete with the active writer or shared build process.
+
+For pipeline contract details, read `references/pipeline-contract.md`.
 
 ## Thread And Workspace Rules
 
@@ -302,7 +312,7 @@ The CEO owns result collection and closure:
 
 Escalate to the user only for out-of-scope changes, destructive actions, credentials, spending, legal/security/product-direction decisions, missing business facts, or changed done criteria.
 
-Do not final after dispatching implementation or review lanes unless at least one harvest mechanism is active or explicitly documented: heartbeat automation, concrete next harvest time, or immediate synchronous harvest in the same turn.
+Do not final after dispatching implementation or review lanes unless at least one harvest driver is active or explicitly documented: heartbeat automation, concrete next harvest time, immediate synchronous harvest in the same turn, or an active runtime Codex Goal bound to the Program Goal Brief.
 
 If a lane is `waitingOnApproval`, harvest it immediately. If the requested action is within the task card's approval profile, allowed command families, and write-set, CEO should approve or send a continuation without asking the user. If the task card omitted approval details, revise and redispatch the task card. Escalate only for out-of-scope, destructive, credentials, spending, legal/security, external account, or changed goal decisions.
 

@@ -41,6 +41,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Treats the PRD/design/task-graph thread as the CEO thread by default, then switches to Core Team execution after the plan is accepted.
 - Maintains a goal ledger with done criteria, task graph, active owner, evidence, next action, and closure state.
 - Runs a CEO harvest loop after dispatch: collect worker results, classify evidence, request revisions, and send the next unblocked task until the project lands.
+- Supports pipeline execution for broad PRDs: bundled pipeline, handoff, review, and scorecard templates plus lightweight validators help CEO decide safe parallel lanes and reject vague worker reports.
 - Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
 - Uses provider-specific memory modes: project memory for canonical docs, Zhixia local docs for current project context, and Guardian history for old Codex sessions or paused-task recovery.
 - Acts as a runtime context governor: dispatch compact task packets, prefer Zhixia summaries and source refs, avoid long chat transcripts/raw sessions by default, and use Guardian health/history for pressure/evidence plus explicitly authorized old-thread optimization receipts.
@@ -260,12 +261,22 @@ ceo-thread-orchestrator/
 │   └── ceo-thread-orchestrator/
 │       ├── SKILL.md
 │       ├── agents/openai.yaml
-│       └── references/
-│           ├── thread-ops.md
-│           ├── parallel-waves.md
-│           ├── context-memory.md
-│           ├── quality-gate.md
-│           └── open-source-readiness.md
+│       ├── references/
+│       │   ├── operating-playbook.md
+│       │   ├── thread-ops.md
+│       │   ├── parallel-waves.md
+│       │   ├── pipeline-contract.md
+│       │   ├── context-memory.md
+│       │   ├── quality-gate.md
+│       │   └── open-source-readiness.md
+│       ├── templates/
+│       │   ├── pipeline.yaml
+│       │   ├── typed_handoff.yaml
+│       │   ├── review_handoff.yaml
+│       │   └── scorecard.md
+│       └── scripts/
+│           ├── validate_pipeline.py
+│           └── scorecard_handoff.py
 ├── examples/
 └── docs/
 ```
@@ -279,6 +290,8 @@ ceo-thread-orchestrator/
 - [Code-producing smoke report](docs/CEO_FLOW_CODE_SMOKE_REPORT_2026-06-11.md)
 - [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
 - [Smoke prompts](examples/smoke-prompts.md)
+- [Pipeline contract reference](skills/ceo-thread-orchestrator/references/pipeline-contract.md)
+- [Operating playbook](skills/ceo-thread-orchestrator/references/operating-playbook.md)
 - [Open-source readiness checklist](skills/ceo-thread-orchestrator/references/open-source-readiness.md)
 
 ## Safety Model
@@ -301,6 +314,14 @@ If you have the Codex plugin validator available, also validate the plugin root:
 
 ```powershell
 python <path-to-plugin-creator>/scripts/validate_plugin.py .
+```
+
+Pipeline support helpers can also be run directly:
+
+```powershell
+python .\skills\ceo-thread-orchestrator\scripts\validate_pipeline.py .\skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
+python .\skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py .\skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
+python .\skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py .\skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
 ```
 
 Before publishing a release, save evidence for:

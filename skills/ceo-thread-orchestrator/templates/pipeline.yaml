@@ -1,0 +1,86 @@
+pipeline:
+  id: example-wave-1
+  goalBrief: docs/PROGRAM_GOAL.md
+  mode: ceo_flow_parallel_wave
+  stopCondition: accept_revise_or_block
+
+environmentProfiles:
+  project-default:
+    cwd: canonical-project-root
+    services: []
+    ports: []
+    browser: not_required
+    destructiveCommands: forbidden
+
+  browser-capable:
+    cwd: canonical-project-root
+    services:
+      - dev-server
+    ports:
+      - 3000
+    browser: allowed
+    destructiveCommands: forbidden
+
+lanes:
+  - id: backend-api
+    role: implementation
+    taskCard: docs/tasks/backend-api.md
+    dependsOn: []
+    parallelWith:
+      - frontend-ui
+      - docs-tests
+    writeSet:
+      - src/api/**
+      - src/services/**
+    doNotTouch:
+      - src/ui/**
+    environmentProfile: project-default
+    reportFormat: typed_handoff_v1
+    requiredVerification:
+      - npm test -- api
+
+  - id: frontend-ui
+    role: implementation
+    taskCard: docs/tasks/frontend-ui.md
+    dependsOn: []
+    parallelWith:
+      - backend-api
+      - docs-tests
+    writeSet:
+      - src/ui/**
+      - src/components/**
+    doNotTouch:
+      - src/api/**
+    environmentProfile: browser-capable
+    reportFormat: typed_handoff_v1
+    requiredVerification:
+      - npm test -- ui
+
+  - id: docs-tests
+    role: docs_tests
+    taskCard: docs/tasks/docs-tests.md
+    dependsOn: []
+    parallelWith:
+      - backend-api
+      - frontend-ui
+    writeSet:
+      - docs/**
+      - tests/**
+    environmentProfile: project-default
+    reportFormat: typed_handoff_v1
+    requiredVerification:
+      - npm test
+
+  - id: integration-review
+    role: review
+    taskCard: docs/tasks/integration-review.md
+    dependsOn:
+      - backend-api
+      - frontend-ui
+      - docs-tests
+    parallelWith: []
+    writeSet: []
+    environmentProfile: project-default
+    reportFormat: review_handoff_v1
+    requiredVerification:
+      - review diff, tests, and task evidence

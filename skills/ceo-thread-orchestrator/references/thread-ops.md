@@ -92,7 +92,7 @@ Use this fallback only when the user wants lane execution and no correct saved p
 5. Add `Do not touch` for the host project files unless they are explicitly part of the task.
 6. Require the worker to run a workspace check before edits and stop with `workspace_mismatch` if the absolute canonical root is unavailable or differs from the task card.
 7. Use absolute paths in every edit, command, and report.
-8. Set a harvest mechanism before final reporting: heartbeat, concrete next harvest time, or immediate synchronous harvest.
+8. Set a harvest driver before final reporting: heartbeat, concrete next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
 
 This is a bridge for tool limitations, not permission to let project roots drift. If the host lane cannot safely access the canonical repo, keep it read-only and ask the user to open or save the correct project.
 
@@ -176,6 +176,7 @@ For broad parallel projects, CEO harvest remains primary. Callback is a useful s
 - Subagents are short-lived scouts unless the user/tool contract says otherwise.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
+- A bound runtime Codex Goal can be the harvest driver when it references the Program Goal Brief and the CEO records lane roster, expected reports, callback policy, stop condition, and next harvest trigger. It does not replace evidence review or acceptance.
 - Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
 - No-stall worker mode reduces approval stalls but does not bypass host security UI or guarantee every thread has CEO-equivalent permissions.
 - Worker reports are evidence, not proof.
