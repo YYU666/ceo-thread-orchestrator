@@ -38,17 +38,19 @@ Follow this path before reading deeper policy:
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
 4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, completion dashboard, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
 5. When an accepted PRD/design brief/task graph should be driven to completion, create or bind one runtime Codex Goal when host goal tooling is available. Link it to the Program Goal Brief. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
-6. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
-7. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
-8. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
-9. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, or broad history into worker prompts.
-10. After dispatching any implementation or review lane, record one active harvest driver before final reporting: heartbeat automation, explicit next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
-11. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-12. Use no-stall worker mode for CEO-created implementation/review lanes: preauthorize routine in-scope command families in the task card, require `approval_stall` callback when host approval blocks progress, and treat approval stalls as lane-local unless no safe fallback exists.
-13. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
-14. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-15. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`.
-16. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+6. Treat MVP as a milestone, not a default stopping point, when the Program Goal or user outcome is a full product. After MVP evidence is accepted, update the dashboard and dispatch the next full-version/hardening wave unless the user explicitly scoped the goal to MVP-only or a real blocker exists.
+7. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
+8. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
+9. Prefer clean worker creation or reuse over forking a CEO thread. Do not fork a worker from an active/unfinished CEO turn or from CEO self-routing context unless the task explicitly requires completed history and the task card hard-resets the role.
+10. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
+11. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, broad history, or CEO self-routing instructions into worker prompts.
+12. After dispatching any implementation or review lane, record one active harvest driver before final reporting: heartbeat automation, explicit next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
+13. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
+14. Use no-stall worker mode for CEO-created implementation/review lanes: preauthorize routine in-scope command families in the task card, require `approval_stall` callback when host approval blocks progress, and treat approval stalls as lane-local unless no safe fallback exists.
+15. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
+16. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+17. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`. Treat worker self-routing, thread creation, or "waiting for another worker" as `role_contamination` unless explicitly authorized.
+18. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -57,6 +59,7 @@ Read references only when needed:
 - PRD waves, dependency graph, and safe parallel execution: `references/parallel-waves.md`.
 - Lightweight pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
 - Zhixia, Guardian, old-thread continuity, context slimming, restore, and raw-session gates: `references/context-memory.md`.
+- Optional FlowSkill reusable-skill search/capture/score hook: `references/flowskill-hook.md`.
 - Code quality, review gate, doom-loop recovery, and accept/revise/block criteria: `references/quality-gate.md`.
 - Public release, validators, privacy scan, and publishing readiness: `references/open-source-readiness.md`.
 
@@ -140,6 +143,7 @@ Runtime goal binding:
 - A bound runtime goal may serve as the harvest driver after dispatch, so a separate heartbeat or fixed next-harvest time is optional while the goal remains active.
 - Runtime goal harvest still requires lane roster, expected reports, callback policy, stop condition, and evidence review. It must not replace CEO harvest or accept/revise/block decisions.
 - Update the Program Goal Brief and Completion Dashboard at every harvest.
+- If an MVP phase is accepted inside a full-product Program Goal, mark the MVP phase accepted and continue to the next full-version, production-hardening, release-readiness, or quality wave. Stop at MVP only when the user explicitly set MVP as the final outcome, done criteria are fully satisfied, or a real blocker/external dependency exists.
 - Mark the runtime goal complete only when Program Goal done criteria and acceptance evidence are satisfied.
 - If runtime goal state conflicts with the Program Goal Brief, the Program Goal Brief wins unless the user changes product direction.
 - If goal tooling is unavailable, record `runtime_goal_unavailable` in the Program Goal Brief or operating note and continue with CEO harvest.
@@ -161,7 +165,7 @@ Stop / heartbeat condition:
 Memory updates needed:
 ```
 
-Do not stop after producing an org chart if executable work remains and tools are available.
+Do not stop after producing an org chart, MVP feasibility result, or local proof-of-concept if executable full-version work remains, tools are available, and the Program Goal is not MVP-only.
 
 ## Document-First Artifacts
 
@@ -187,6 +191,7 @@ Lane ID / planned title:
 Thread operation:
 CEO thread id / callback policy:
 Callback priority:
+Role contamination guard:
 Memory packet:
 Goal:
 Relevant files/docs:
@@ -304,7 +309,7 @@ The CEO owns result collection and closure:
 
 1. Record dispatched lanes, task cards, expected reports, stop conditions, and next harvest time.
 2. Read worker reports and available evidence before sending new work.
-3. Classify each lane as `accepted`, `revise`, `blocked`, `superseded`, `still_running`, or `stale`.
+3. Classify each lane as `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `role_contamination`, or `stale_no_evidence`.
 4. For accepted work, update task graph and dispatch the next unblocked task.
 5. For revise work, send a bounded revision card unless the lane is stale, unsafe, or repeatedly failing.
 6. For blocked work, decide whether CEO can resolve it, route it, or escalate to user.
@@ -340,6 +345,7 @@ Use an explicit CEO decision:
 
 ```text
 Decision: accept | revise | block | supersede
+Reason/subreason: role_contamination | stale_no_evidence | insufficient_evidence | out_of_scope | conflict | blocker | none
 Evidence inspected:
 Tests or artifacts checked:
 Files or write-set reviewed:
@@ -352,6 +358,8 @@ Memory update needed:
 - Revise when objective is right but implementation, tests, UX, or report quality is insufficient.
 - Block when progress depends on user input, missing credentials, broken tooling, or unresolved external state.
 - Supersede when another lane completed the task or a newer decision made it obsolete.
+- Use `role_contamination` when a worker/reviewer behaves like a CEO/router, creates or delegates to other threads, waits for another worker, inspects CEO lane state without being asked, or refuses direct execution of its bounded task.
+- Use `stale_no_evidence` when a lane or heartbeat has no current evidence, targets an obsolete thread id, or was superseded by a cleaner worker.
 
 Review posture stays neutral and evidence-first. Do not flatter the user, bless weak work to keep momentum, or hide risk behind positive wording.
 

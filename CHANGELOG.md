@@ -6,6 +6,8 @@
 - Added lightweight `validate_pipeline.py` and `scorecard_handoff.py` scripts so pipeline contracts and worker/review handoffs can be checked before CEO acceptance.
 - Added an operating playbook reference that gives a stable end-to-end decision flow for direct answers, CEO-only work, worker callbacks, runtime Goal harvest drivers, parallel waves, pipeline contracts, approval stalls, and accept/revise/block closure.
 - Updated smoke prompts and pipeline docs to require template/validator-aware behavior while preserving the lightweight, non-workflow-engine boundary.
+- Added a thin FlowSkill hook reference for optional local reusable-skill search, capture, and score operations without merging FlowSkill implementation into CEO Flow.
+- Added worker role-contamination guardrails: prefer clean worker creation over CEO-thread forks, classify self-routing workers as `role_contamination`, and keep harvest drivers current when lanes are superseded.
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 

@@ -13,7 +13,7 @@ Use thread tools this way:
 - Continue: send a follow-up prompt to an existing thread when it is the right lane.
 - Reuse: prefer matching specialist lanes when role, workspace, freshness, and write-set reduce risk.
 - Create: create only when user/project authorization and tool contract allow it.
-- Fork: fork only when completed conversation history is needed. Active unfinished turns are not copied.
+- Fork: fork only when completed conversation history is needed and role contamination risk is controlled. Active unfinished turns are not copied; CEO self-routing context may still be inherited.
 - Handoff: move between Local and Worktree only when supported and useful.
 - Lifecycle: rename, pin, archive, or retire based on evidence.
 
@@ -26,6 +26,8 @@ Before creating or forking any visible lane:
 3. Assign a stable lane id and planned title.
 4. Put planned title and lifecycle policy in the task card.
 5. Create only the lanes needed for the current task graph.
+
+Prefer clean worker creation or reuse over forking the CEO thread. A worker lane should start from a compact task card, not from the CEO lane's planning/self-routing mindset.
 
 Use short sortable titles when title tools exist:
 
@@ -124,6 +126,41 @@ Relay sequence:
 
 Do not use thread messaging as a hidden autonomous chat room. CEO remains accountable for context crossing thread boundaries.
 
+## Clean Worker Creation And Fork Risk
+
+Worker creation preference:
+
+1. Reuse a suitable existing worker lane with matching role, workspace, write-set, and freshness.
+2. Create a clean visible worker lane in the correct project/workspace when tools allow it.
+3. Use same-directory or worktree fork only when the worker genuinely needs completed source-thread history and the source is not in an active unfinished turn.
+
+Do not fork a worker directly from an active/unfinished CEO turn. Do not fork a worker from a CEO thread whose recent completed history is dominated by orchestration, routing, thread creation, or "I will ask another worker" instructions, unless the task card explicitly resets the lane role.
+
+Fork inherits completed conversation history. That can be useful for context, but it can also copy CEO identity, self-routing habits, stale thread ids, old harvest prompts, and "create another worker" behavior into a supposed implementation lane.
+
+If fork is unavoidable, the first task card must include:
+
+```text
+Thread operation: worker execution only.
+Do not create, fork, route, message, inspect, or wait on other worker/CEO threads unless this task card explicitly asks.
+Do not inspect CEO lane state unless asked.
+Execute the bounded task in this lane.
+Report in this lane only; send compact callback to CEO only if callback tooling is available and the task card includes a CEO thread id.
+If you cannot execute directly, report blocker with evidence; do not delegate.
+Role contamination guard: if you start planning to dispatch another thread, stop and report role_contamination.
+```
+
+CEO must immediately classify the lane as `role_contamination` and revise/block/supersede if the first worker response says or implies:
+
+- "I will create/fork/route another thread";
+- "I will ask the backend/frontend worker";
+- "I will wait for another thread's report";
+- "I need to inspect the CEO thread first";
+- "I am the CEO/orchestrator for this task";
+- it creates another worker instead of executing the bounded task.
+
+For `role_contamination`, do not keep nudging the contaminated lane. Archive/retire it when safe, record the reason, and create/reuse a clean worker with a stricter task card.
+
 ## Worker Callback Contract
 
 Worker callback is an optional acceleration path, not a replacement for CEO harvest. Use it when a project cannot safely run many implementation lanes, when only one visible worker is active, or when quick CEO feedback matters more than broad parallelism.
@@ -134,6 +171,8 @@ Every implementation or review task card should state:
 
 ```text
 CEO thread id:
+Thread operation: worker execution only; do not create/fork/route threads unless explicitly asked
+Role contamination guard: execute this bounded task directly; report blocker instead of delegating
 Callback events: completion | blocker | approval_stall | revise_needed
 Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
 Callback priority: queued | interrupt
@@ -150,6 +189,7 @@ Worker callback rules:
 4. The callback must not include long chat history, raw session content, full knowledge bases, or broad logs.
 5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
 6. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
+7. Worker completion does not automatically push to CEO. Callback may fail, queue, or be unavailable; CEO must still harvest by reading the worker lane or evidence source.
 
 Callback interrupt policy:
 
@@ -169,6 +209,19 @@ Approval stall handling:
 
 For broad parallel projects, CEO harvest remains primary. Callback is a useful signal, but the CEO must still read/inspect evidence before accepting work.
 
+## Harvest Driver Thread Freshness
+
+Harvest drivers must track current lane ids and thread ids. A heartbeat, automation, or reminder that targets a superseded, retired, role-contaminated, or stale worker is itself stale.
+
+When a worker is superseded, retired, archived, or replaced:
+
+1. Update the lane roster with the new current thread id.
+2. Mark old thread ids as `superseded`, `role_contamination`, `stale`, or `stale_no_evidence`.
+3. Delete, update, or replace heartbeat/harvest prompts that mention obsolete thread ids.
+4. Do not accept results from an old heartbeat unless the CEO revalidates the thread state and evidence.
+
+If a worker finishes in a nested child thread that the CEO did not explicitly authorize, classify the parent lane as `role_contamination` or `superseded` and harvest the actual evidence by reading the real worker thread. Do not assume the nested child can or will report back automatically.
+
 ## Capability Boundaries
 
 - A new thread is a separate conversation, not a guaranteed autonomous employee.
@@ -176,6 +229,7 @@ For broad parallel projects, CEO harvest remains primary. Callback is a useful s
 - Subagents are short-lived scouts unless the user/tool contract says otherwise.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
+- Forked workers may inherit CEO context; clean worker creation is safer for bounded implementation.
 - A bound runtime Codex Goal can be the harvest driver when it references the Program Goal Brief and the CEO records lane roster, expected reports, callback policy, stop condition, and next harvest trigger. It does not replace evidence review or acceptance.
 - Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
 - No-stall worker mode reduces approval stalls but does not bypass host security UI or guarantee every thread has CEO-equivalent permissions.

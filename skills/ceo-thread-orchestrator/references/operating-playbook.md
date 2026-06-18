@@ -40,6 +40,28 @@ Runtime Goal rules:
 
 If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus ordinary harvest.
 
+## MVP Gate And Full-Version Continuation
+
+MVP is a checkpoint, not the default final state.
+
+When a Program Goal or user outcome asks for a complete product/project, CEO must treat accepted MVP evidence as a phase transition:
+
+1. Mark the MVP phase accepted in the Completion Dashboard.
+2. Record what the MVP proves and what it does not prove.
+3. Identify the next full-version wave: production hardening, UX polish, reliability, tests, release readiness, docs, packaging, memory/writeback, or scale/performance.
+4. Dispatch every safe ready task in that next wave, or record why each ready task is blocked/serial.
+5. Keep the runtime Goal active until the Program Goal done criteria are satisfied.
+
+CEO may stop at MVP only when:
+
+- the user explicitly scoped the goal to MVP-only;
+- the Program Goal done criteria define MVP as the final outcome;
+- the next phase needs a real user/product/business decision;
+- tools, credentials, budget, or external state create a real blocker;
+- further work would be unsafe without new acceptance criteria.
+
+Do not ask the user whether to continue merely because MVP is viable when the accepted Program Goal already says to finish the full product. Continue with the next bounded full-version wave and report the decision.
+
 ## 3. Choose The Execution Shape
 
 Use the smallest shape that can safely finish the next objective.
@@ -65,6 +87,14 @@ Are there multiple independent ready tasks?
 Is the PRD broad/multi-module/unattended?
   yes -> add lightweight pipeline contract.
 ```
+
+Worker lane creation rule:
+
+```text
+Prefer existing clean worker -> create clean worker -> fork only when completed history is required and role contamination risk is controlled.
+```
+
+Do not fork a worker from an active CEO turn or from CEO self-routing context. If fork is unavoidable, the task card must reset the role to worker execution only.
 
 ## 4. Parallel Gate
 
@@ -134,7 +164,7 @@ Visible Codex threads are work lanes, not shared memory.
 
 CEO dispatches compact task cards. Worker lanes report in their own lane and, when thread messaging exists, send a compact callback to the CEO thread.
 
-Callback is a signal, not proof. CEO still harvests evidence before acceptance.
+Callback is a signal, not proof. Worker completion does not automatically push to CEO. CEO still harvests evidence before acceptance by reading the worker lane, callback, handoff, diff, tests, or artifacts.
 
 Small task callback may be compact:
 
@@ -167,9 +197,13 @@ scorecard_handoff.py for worker/review handoffs
 
 Workers ask CEO, not the user, for routine in-scope questions. Escalate to the user only for out-of-scope changes, destructive actions, credentials, spending, legal/security/product-direction decisions, missing business facts, or changed done criteria.
 
+Worker lanes must not create, fork, route, inspect, or wait on other CEO/worker threads unless the task card explicitly asks. If a worker starts acting as a CEO/router, classify it as `role_contamination`.
+
 ## 7. Worker Report / Handoff Rules
 
 Never accept a bare "done" report for implementation work.
+
+Never accept a worker that delegates its bounded task to another thread instead of executing it. Treat this as `role_contamination` unless the task card explicitly authorized delegation.
 
 Minimum worker report:
 
@@ -183,6 +217,26 @@ Evidence/artifacts:
 Risks/assumptions:
 Recommended next action:
 Memory candidates:
+```
+
+Role contamination indicators:
+
+```text
+I will create/fork/route another worker.
+I will ask another implementation thread.
+I will wait for another thread to report.
+I need to inspect the CEO lane first.
+I am coordinating this task rather than executing it.
+```
+
+CEO response:
+
+```text
+Classify lane: role_contamination.
+Do not keep nudging the contaminated lane.
+Supersede/retire it when safe.
+Create or reuse a clean worker with a stricter task card.
+Update harvest drivers to the current worker thread id.
 ```
 
 Pipeline workers should use `typed_handoff_v1`.
@@ -229,13 +283,20 @@ At every harvest:
 2. Read typed handoffs when present.
 3. Inspect diff, changed files, test output, screenshots, logs, or artifacts as risk requires.
 4. Check write-set and dependency conflicts.
-5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, or `stale`.
+5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `role_contamination`, or `stale_no_evidence`.
 6. For accepted work, update Program Goal/Completion Dashboard and start next unblocked task.
 7. For revise work, send a bounded revision card.
 8. For blocked work, resolve as CEO, reroute, or escalate only if truly necessary.
 9. Record memory candidates only when evidence-backed.
 
 Do not final after dispatch unless a harvest driver exists.
+
+Harvest driver freshness:
+
+- Do not let heartbeat/harvest prompts keep watching obsolete thread ids.
+- When a lane is superseded, role-contaminated, archived, or replaced, update or delete its heartbeat.
+- If the real work completed in a nested child thread, harvest that child explicitly and mark the parent `role_contamination` or `superseded`.
+- `stale_no_evidence` means the lane/heartbeat has no current evidence for acceptance.
 
 ## 10. Approval Stall Handling
 

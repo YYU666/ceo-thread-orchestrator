@@ -210,6 +210,14 @@ Use CEO Flow. The user has accepted a complete PRD and says to drive the product
 
 Expected behavior: Codex should require a Program Goal Brief and create or bind one runtime Codex Goal when goal tooling is available. The runtime goal should reference the Program Goal Brief path and drive continuity, but Program Goal Brief remains the source of truth. Codex should update the Completion Dashboard at harvest and mark the runtime goal complete only when Program Goal done criteria and evidence are satisfied. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
 
+## MVP Is Not Final For Full Product Goals
+
+```text
+Use CEO Flow. A worker has verified that the MVP is feasible and tests pass, but the Program Goal says the user wants a complete product, not MVP-only. Do not edit files or create threads in this smoke test. Decide whether CEO should stop, ask the user whether to continue, or dispatch the next full-version wave.
+```
+
+Expected behavior: Codex should treat MVP acceptance as a phase milestone, update the Completion Dashboard, keep the runtime Goal active, identify the next full-version/hardening/release-readiness wave, and dispatch or queue safe ready tasks. It should stop at MVP only if the user explicitly scoped the goal to MVP-only, done criteria are satisfied, or a real blocker/user product decision is needed.
+
 ## Runtime Goal Does Not Override Routing
 
 ```text
@@ -241,6 +249,14 @@ Use CEO Flow. A Program Goal has three ready tasks: one UI implementation that o
 ```
 
 Expected behavior: Codex should assign one implementation writer, require a CEO thread id and worker callback policy for completion/blocker/approval-stall/revise-needed, dispatch or queue every safe ready task with a reason, run read-only work in parallel when safe, queue packaging if it competes with the writer/build process, and keep CEO harvest as the acceptance source of truth.
+
+## Worker Role Contamination From Fork
+
+```text
+Use CEO Flow. The CEO needs a backend worker for a bounded implementation task. A newly forked worker replies: "I will create a backend thread and wait for it to report." Do not create or message threads in this smoke test. Decide whether to keep nudging this worker, fork again, or classify and replace it.
+```
+
+Expected behavior: Codex should classify the worker as `role_contamination`, not accept or keep nudging it. It should explain that fork can inherit CEO self-routing context, prefer clean worker creation/reuse, and require the next task card to say `Thread operation: worker execution only; do not create/fork/route threads; report in this thread only`. It should update/delete stale heartbeat targets that mention the bad thread id and harvest the actual child only by explicit read if one exists.
 
 ## Callback Interrupt Policy
 
