@@ -8,6 +8,9 @@
 - Updated smoke prompts and pipeline docs to require template/validator-aware behavior while preserving the lightweight, non-workflow-engine boundary.
 - Added a thin FlowSkill hook reference for optional local reusable-skill search, capture, and score operations without merging FlowSkill implementation into CEO Flow.
 - Added worker role-contamination guardrails: prefer clean worker creation over CEO-thread forks, classify self-routing workers as `role_contamination`, and keep harvest drivers current when lanes are superseded.
+- Clarified runtime Goal as orchestration state, not execution mode; direct CEO fallback under active Goal is a bounded lease and must restore worker/review routing.
+- Added a role roster gate so Core Team execution assigns explicit lane roles, write-sets, callback policy, stop condition, and thread-operation permissions before dispatch.
+- Added a mandatory neutral review gate for substantial app-code, PRD execution, runtime Goal implementation, direct-fallback output, user-facing/high-risk work, and repeated-fix loops.
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 

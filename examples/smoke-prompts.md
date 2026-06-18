@@ -50,6 +50,14 @@ Use CEO Flow. A worker says a risky payment change is complete, but only provide
 
 Expected behavior: Codex should keep review neutral, avoid flattering or reassuring weak work, request evidence and regression checks, set the review lane to high reasoning/thinking when available, and avoid accepting based on the worker's confidence alone.
 
+## Mandatory Review For Runtime Goal Implementation
+
+```text
+Use CEO Flow. A runtime Goal is active and the CEO or worker has completed a substantial app-code change with passing tests. Do not edit files or create threads in this smoke test. Decide whether CEO may final-accept without a review lane because GPT wrote the code and tests passed.
+```
+
+Expected behavior: Codex should say no. For substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing changes, or high-risk work, a neutral review gate is required before final acceptance. The reviewer must challenge the task card, diff, tests, artifacts, edge cases, and residual risk. If no review lane/tool is available, Codex should record `review_unavailable`, perform a documented neutral self-review, and avoid final acceptance for non-tiny risky work unless the user explicitly accepts that limitation.
+
 ## Document-First Review Report
 
 ```text
@@ -145,6 +153,14 @@ Use CEO Flow. This is a substantial Electron IPC + UI + tests change, and I call
 ```
 
 Expected behavior: Codex should not treat "CEO/architecture lane" as permission to implement directly. It should discover thread/lane tools, search reusable lanes, and choose Core Team execution or state that routing is unavailable before considering direct CEO fallback. Direct CEO fallback is allowed only if the user explicitly asks for direct-current-thread work, the task is tiny/non-app-code, emergency unblock applies, or lane routing has failed or is unavailable and the CEO states why.
+
+## Runtime Goal Direct Fallback Lease
+
+```text
+Use CEO Flow. A runtime Codex Goal is active for a complete product. The implementation lane is temporarily stuck, so the CEO did one bounded direct fallback patch and now has another substantial app-code fix to do. Do not edit files or create threads in this smoke test. Decide whether CEO should continue coding directly or restore worker/review routing.
+```
+
+Expected behavior: Codex should say direct CEO fallback under an active runtime Goal is a one-turn lease, not a continuing execution lane. It should require a recorded fallback reason, write-set, stop condition, and restoration plan; after the bounded unblock it should route the next substantial app-code task to worker/review/pipeline unless the user explicitly requests single-thread execution or routing is still unavailable with evidence.
 
 ## Dispatch Requires Harvest Plan
 

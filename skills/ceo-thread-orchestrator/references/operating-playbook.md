@@ -10,11 +10,11 @@ This is the default operating order. Do not invent a heavier process unless the 
 | --- | --- | --- | --- |
 | Casual chat, explanation, tiny Q&A | Direct answer | none | none |
 | Small docs/skill/memory edit | CEO-only | concise note or changed file | current CEO thread |
-| Small bug or single coherent write-set | Core Team execution | task card | 1 implementation lane or direct fallback only if allowed |
+| Small bug or single coherent write-set | Core Team execution | task card; review if substantial app-code | 1 implementation lane or direct fallback only if allowed |
 | Risky small change | Core Team execution | task card + review gate | 1 implementation lane + 1 review lane |
-| Accepted PRD with multiple modules | Core Team execution | Program Goal Brief + wave plan | parallel lanes when safe |
-| Complete product / multi-phase program | Core Team execution + Goal Loop | Program Goal Brief + Completion Dashboard | lanes by wave |
-| Broad separable PRD needing unattended work | Core Team execution + pipeline contract | Program Goal Brief + `pipeline.yaml` or section | N lanes + review |
+| Accepted PRD with multiple modules | Core Team execution | Program Goal Brief + wave plan + review gate | parallel lanes when safe + review |
+| Complete product / multi-phase program | Core Team execution + Goal Loop | Program Goal Brief + Completion Dashboard + review gate | lanes by wave + review |
+| Broad separable PRD needing unattended work | Core Team execution + pipeline contract | Program Goal Brief + `pipeline.yaml` or section + review gate | N lanes + review |
 | Worker/reviewer task card from another CEO | Bounded worker/reviewer | report/handoff only | do not self-promote to CEO |
 
 If the task is not substantial, do not force CEO ceremony.
@@ -39,6 +39,51 @@ Runtime Goal rules:
 - A bound active runtime Goal can be the harvest driver, so separate heartbeat/fixed-time harvest is optional while the Goal remains active.
 
 If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus ordinary harvest.
+
+## Runtime Goal Direct-Fallback Lease
+
+An active runtime Goal increases continuity pressure. It must not turn the CEO thread into the default implementer.
+
+Direct CEO fallback under an active runtime Goal is allowed only as a bounded one-turn lease when:
+
+- the user explicitly asked for direct-current-thread execution;
+- the change is tiny or non-app-code;
+- an emergency unblock is needed;
+- or routing/reuse/create is unavailable after tool discovery and the CEO records why.
+
+When CEO uses this lease, record:
+
+```text
+Fallback lease: active
+Reason:
+Write-set:
+Stop condition:
+Why worker/review routing is unavailable or temporarily unsafe:
+Restoration plan:
+Next routed lane/review:
+```
+
+The lease ends after the bounded patch, unblock, or evidence collection. CEO must then restore Core Team routing:
+
+1. update the Program Goal roster/dashboard;
+2. dispatch independent review when risk justifies it;
+3. route the next substantial app-code task to worker/review/pipeline;
+4. record any reason if routing is still unavailable.
+
+Do not chain direct CEO fallback turns under a runtime Goal. A second consecutive substantial direct-current-thread coding step requires either explicit user single-thread instruction or a fresh routing failure note.
+
+Screenshot-shaped anti-pattern:
+
+```text
+CEO says: "implementation lane is stuck, so I will temporarily take over,"
+then continues coding the next feature/fix itself.
+```
+
+Correct behavior:
+
+```text
+CEO may finish one bounded unblock, then immediately sends review/implementation work back to clean lanes and harvests evidence.
+```
 
 ## MVP Gate And Full-Version Continuation
 
@@ -81,6 +126,9 @@ Is there exactly one coherent write-set?
 Is the change risky/user-facing?
   yes -> add independent review lane.
 
+Is this substantial app-code, accepted PRD execution, runtime Goal implementation, or direct fallback output?
+  yes -> add neutral review gate before final acceptance.
+
 Are there multiple independent ready tasks?
   yes -> parallel wave if gates pass.
 
@@ -95,6 +143,56 @@ Prefer existing clean worker -> create clean worker -> fork only when completed 
 ```
 
 Do not fork a worker from an active CEO turn or from CEO self-routing context. If fork is unavoidable, the task card must reset the role to worker execution only.
+
+## Role Roster Gate
+
+Before Core Team execution, CEO must assign an explicit lane roster. Every lane gets:
+
+```text
+Lane:
+Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs
+Workspace:
+Allowed write-set:
+Task card:
+Callback policy:
+Stop condition:
+May create/route/fork threads: yes/no
+```
+
+Default `May create/route/fork threads` is `no` for implementation, review, UX, knowledge, and research lanes. Only the CEO/router lane may create or route threads unless the task card explicitly grants that operation.
+
+If a worker/reviewer starts acting like CEO, says it will create another worker, waits for another lane to report, or tries to inspect CEO state without being asked, classify the lane as `role_contamination` and either correct it with a hard role-reset card or supersede it with a clean lane.
+
+## Mandatory Neutral Review Gate
+
+Review is the one role that becomes mandatory for serious implementation. It is not mandatory for casual chat, tiny Q&A, tiny docs-only edits, or explicitly accepted low-risk one-line changes. It is mandatory before final acceptance for:
+
+- substantial app-code;
+- accepted PRD execution;
+- active runtime Goal implementation;
+- direct CEO fallback output;
+- user-facing UI/product behavior;
+- data, security, payment, migration, release, packaging, or other high-risk work;
+- repeated-fix or doom-loop recovery.
+
+The review lane must be neutral and adversarial enough to find problems:
+
+```text
+Assume the implementation may be wrong.
+Start from task card, diff, tests, artifacts, screenshots, and relevant docs.
+Do not rely on the worker's confidence or the fact that GPT wrote it.
+Look for missing evidence, edge cases, scope creep, duplicate logic, brittle code, regressions, workspace drift, and untested paths.
+Return accept | revise | block with reasons and residual risk.
+```
+
+Reviewer does not own product direction and does not expand scope. Its job is to challenge evidence and implementation quality.
+
+If no separate review lane/tool is available:
+
+1. Record `review_unavailable`.
+2. Do a documented neutral self-review from diff/tests/artifacts.
+3. For non-tiny risky work, do not final-accept unless the user explicitly accepts the review limitation.
+4. Route to review as soon as a lane/tool becomes available.
 
 ## 4. Parallel Gate
 

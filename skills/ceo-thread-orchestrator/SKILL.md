@@ -25,7 +25,7 @@ State one mode before substantive work:
 - `route to existing implementation lane`: reuse a suitable visible lane.
 - `create/request new lane`: a new visible lane is justified and authorized.
 - `configured workflow`: explicit project task pool, routing script, external workflow, or automation.
-- `direct CEO fallback`: direct coding only when explicitly requested, tiny, non-app-code, emergency unblock, or delegation is unavailable after tool discovery and the CEO states why.
+- `direct CEO fallback`: direct coding only when explicitly requested, tiny, non-app-code, emergency unblock, or delegation is unavailable after tool discovery and the CEO states why. Under an active runtime Goal, direct fallback is a bounded one-turn lease, not a continuing execution lane.
 
 When tool contracts and this skill disagree, follow the stricter current tool contract and say how the operating plan changes.
 
@@ -40,17 +40,20 @@ Follow this path before reading deeper policy:
 5. When an accepted PRD/design brief/task graph should be driven to completion, create or bind one runtime Codex Goal when host goal tooling is available. Link it to the Program Goal Brief. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
 6. Treat MVP as a milestone, not a default stopping point, when the Program Goal or user outcome is a full product. After MVP evidence is accepted, update the dashboard and dispatch the next full-version/hardening wave unless the user explicitly scoped the goal to MVP-only or a real blocker exists.
 7. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
-8. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
-9. Prefer clean worker creation or reuse over forking a CEO thread. Do not fork a worker from an active/unfinished CEO turn or from CEO self-routing context unless the task explicitly requires completed history and the task card hard-resets the role.
-10. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
-11. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, broad history, or CEO self-routing instructions into worker prompts.
-12. After dispatching any implementation or review lane, record one active harvest driver before final reporting: heartbeat automation, explicit next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
-13. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
-14. Use no-stall worker mode for CEO-created implementation/review lanes: preauthorize routine in-scope command families in the task card, require `approval_stall` callback when host approval blocks progress, and treat approval stalls as lane-local unless no safe fallback exists.
-15. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
-16. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
-17. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`. Treat worker self-routing, thread creation, or "waiting for another worker" as `role_contamination` unless explicitly authorized.
-18. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+8. Before dispatch, assign an explicit lane roster: each lane has one primary role, workspace, write-set, task card, callback policy, and stop condition. Do not let worker/reviewer lanes infer whether they are CEO.
+9. Search reusable visible lanes before creating new ones. Prefer stable specialist lanes over disposable one-shot threads.
+10. Prefer clean worker creation or reuse over forking a CEO thread. Do not fork a worker from an active/unfinished CEO turn or from CEO self-routing context unless the task explicitly requires completed history and the task card hard-resets the role.
+11. Do not use direct CEO fallback for substantial coding until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined.
+12. If direct CEO fallback is used under an active runtime Goal, record the fallback lease, exact reason, write-set, stop condition, and restoration plan. The next substantial app-code task must go to worker/review/pipeline unless the user explicitly asks for single-thread execution or routing is still unavailable.
+13. Dispatch compact task cards. Do not paste long CEO chat, full knowledge bases, raw sessions, broad history, or CEO self-routing instructions into worker prompts.
+14. Require a neutral review gate before final acceptance for substantial app-code, accepted PRD execution, active runtime Goal implementation, direct-fallback output, user-facing changes, or high-risk work. The reviewer must challenge evidence and may revise/block; it is not a rubber stamp.
+15. After dispatching any implementation or review lane, record one active harvest driver before final reporting: heartbeat automation, explicit next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
+16. Run parallel waves when tasks are independent, write-sets do not overlap, verification is isolated, and harvest/review capacity exists.
+17. Use no-stall worker mode for CEO-created implementation/review lanes: preauthorize routine in-scope command families in the task card, require `approval_stall` callback when host approval blocks progress, and treat approval stalls as lane-local unless no safe fallback exists.
+18. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
+19. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
+20. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`. Treat worker self-routing, thread creation, or "waiting for another worker" as `role_contamination` unless explicitly authorized.
+21. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -81,12 +84,14 @@ Use this company-style role map as a routing model, not a permanent org chart:
 
 - CEO / PM / Architect: owns PRD, task graph, architecture boundaries, staffing, evidence review, and final decision.
 - Implementation Expert: edits app code inside a declared write-set and reports files, commands, tests, failures, risks, and memory candidates.
-- Review / QA Expert: independently checks diffs, tests, screenshots, regressions, and PRD alignment with neutral high-reasoning posture.
+- Review / QA Expert: independently checks diffs, tests, screenshots, regressions, and PRD alignment with neutral high-reasoning posture. For substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing changes, or high-risk work, this is a required gate before final acceptance.
 - Product / UX Expert: handles user flows, UI structure, interaction quality, copy, screenshots, and design-system fit when material.
 - Knowledge / Memory Expert: promotes accepted lessons into durable memory after evidence exists.
 - Research / Docs Expert: checks current external facts, official docs, APIs, benchmarks, market, or policy when freshness matters.
 
-Default minimum execution is CEO plus one implementation lane. Add review for high-risk or user-facing work. Add UX, research, or knowledge only when the task graph needs them.
+Default minimum execution is CEO plus one implementation lane. Add a neutral review gate for substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing changes, or high-risk work. Add UX, research, or knowledge only when the task graph needs them.
+
+Before Core Team execution, create or update the lane roster explicitly. Each dispatched lane needs one primary role and must not self-promote to CEO, create its own sub-lanes, or wait for another lane unless the task card explicitly authorizes that operation.
 
 ## Preflight
 
@@ -140,6 +145,7 @@ Runtime goal binding:
 - The runtime goal states the product outcome and references the Program Goal Brief path. It drives continuity; it does not replace the Program Goal Brief.
 - Create or bind one runtime goal per active Program Goal.
 - Runtime goals must not override CEO Flow routing. For substantial coding/product work, CEO still routes, dispatches, or harvests lanes unless direct-current-thread execution is explicitly allowed.
+- Runtime goals must not convert the CEO thread into the implementation lane. Direct CEO fallback under a runtime Goal is a short emergency lease; after the bounded patch/unblock, CEO must restore worker/review routing and update the Program Goal roster.
 - A bound runtime goal may serve as the harvest driver after dispatch, so a separate heartbeat or fixed next-harvest time is optional while the goal remains active.
 - Runtime goal harvest still requires lane roster, expected reports, callback policy, stop condition, and evidence review. It must not replace CEO harvest or accept/revise/block decisions.
 - Update the Program Goal Brief and Completion Dashboard at every harvest.
@@ -333,7 +339,7 @@ Implementation must inspect existing architecture, make the smallest coherent ch
 
 CEO review checks diff size, root cause, local patterns, duplicate logic, edge cases, tests/static checks, unrelated churn, and residual risk.
 
-Use independent read-only review for high-risk work. Reviewer starts from task card, diff, tests, artifacts, and relevant docs, not the implementation thread's long conversation.
+Use independent read-only review for substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing changes, or high-risk work. Reviewer starts from task card, diff, tests, artifacts, and relevant docs, not the implementation thread's long conversation. If no separate review lane/tool is available, CEO must record `review_unavailable`, perform a documented neutral self-review from evidence, and avoid final acceptance for non-tiny risky work unless the user explicitly accepts that risk.
 
 After two failed attempts, require root-cause re-analysis. For doom-loop signs, stop expanding the diff and route to debug/review or propose rollback/fresh bounded task. Do not run destructive rollback without authorization.
 
