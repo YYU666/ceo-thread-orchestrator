@@ -53,7 +53,8 @@ Follow this path before reading deeper policy:
 18. For single-writer, single-lane, or non-parallelizable projects, include a worker callback policy: report in the worker lane and send a compact completion/blocker/approval-stall callback to the CEO thread when thread messaging is available.
 19. Keep routine in-scope decisions inside the CEO lane. Worker lanes report blockers/questions to CEO, not to the user, unless the choice exceeds accepted scope.
 20. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, and decide `accept | revise | block | supersede`. Treat worker self-routing, thread creation, or "waiting for another worker" as `role_contamination` unless explicitly authorized.
-21. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+21. After any terminal lane, module, subline, heartbeat, or runtime sub-goal result such as `accept`, `block`, `supersede`, or `pause`, run a Program Goal portfolio check. A module/subline pause is not a Program Goal pause unless the whole user outcome is paused or all safe product-progress waves are blocked.
+22. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
 
 Read references only when needed:
 
@@ -63,6 +64,7 @@ Read references only when needed:
 - Lightweight pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
 - Zhixia, Guardian, old-thread continuity, context slimming, restore, and raw-session gates: `references/context-memory.md`.
 - Optional FlowSkill reusable-skill search/capture/score hook: `references/flowskill-hook.md`.
+- Failure-triggered reflection, rule-candidate triage, and regression promotion: `references/self-harness.md`.
 - Code quality, review gate, doom-loop recovery, and accept/revise/block criteria: `references/quality-gate.md`.
 - Public release, validators, privacy scan, and publishing readiness: `references/open-source-readiness.md`.
 
@@ -72,6 +74,7 @@ Read references only when needed:
 - Keep evaluation neutral: state risks, weak evidence, counterarguments, and opportunity cost plainly.
 - Never flatter the idea. Separate demand, feasibility, quality, and likelihood of success.
 - Keep the CEO thread as the high-reasoning brain: scope, architecture tradeoffs, staffing, memory routing, conflict resolution, acceptance decisions, and user reporting.
+- Keep reasoning direction top-down only. CEO may assign reasoning effort to worker, review, audit, or research lanes; lane callbacks may report reasoning limits or recommendations but must not instruct or mutate the CEO lane's reasoning effort, model, role, or quality gates.
 - Prefer steering, decomposition, delegation, review, and acceptance over direct app-code editing.
 - Do app-code changes directly only under `direct CEO fallback` or when editing this skill, docs, memory, PRD, or strategy artifacts.
 - Treat the operating model as experimental. Simplify when it feels heavy; strengthen gates when implementation quality slips.
@@ -198,6 +201,7 @@ Thread operation:
 CEO thread id / callback policy:
 Callback priority:
 Role contamination guard:
+Reasoning profile:
 Memory packet:
 Goal:
 Relevant files/docs:
@@ -209,7 +213,11 @@ Acceptance criteria:
 Required verification:
 Change budget / quality gates:
 Knowledge provider mode:
+Memory Runtime query:
 Context / history budget:
+Retrieved source refs:
+Memory writeback target:
+Promotion boundary:
 Autonomy level:
 Approval route:
 Command approval profile:
@@ -265,7 +273,7 @@ Treat visible Codex threads as steerable work lanes. They do not automatically k
 - Discover and inspect before reuse or creation.
 - Reuse stable specialist lanes when role, workspace, and write-set align.
 - Create a visible lane only when authorized and justified by task graph, role separation, isolation, review, or safe parallelism.
-- Subagents are temporary scouts, not substitutes for persistent visible lanes when the user expects multi-thread execution or later harvest.
+- Subagents are temporary bounded scouts. Use them for one-shot exploration, audit, or verification; do not use them as substitutes for persistent visible lanes when the user expects multi-thread execution, durable expert roles, visible progress, implementation ownership, or later harvest.
 - Keep thread titles, lane ids, lifecycle policy, and roster entries understandable.
 - Project work must stay anchored to the canonical project root or approved worktree. Wrong-workspace lanes are read-only history sources until re-anchored.
 - If the canonical source repo is not a saved Codex project, create or reuse only a host lane that names the canonical repo as the sole allowed write root, requires absolute-path edits, stops on `workspace_mismatch`, and has a harvest plan.
@@ -288,7 +296,7 @@ Knowledge provider modes:
 
 Use compact retrieval before raw chat or broad history. Old-thread slimming must preserve recallable full history in Zhixia Thread History Vault or an equivalent source-backed archive before selected-thread compaction is accepted. Cold/raw history stays behind the hard gate.
 
-Read `references/context-memory.md` for Zhixia/Guardian, hot-warm-cold retrieval, compact-session safety, restore policy, and raw-session gate.
+Use a configured compact project memory provider as a Memory Runtime across bootstrap, dispatch, review, harvest, handoff, writeback, and old-thread recovery. Read `references/context-memory.md` for provider lifecycle hooks, Zhixia/Guardian, hot-warm-cold retrieval, compact-session safety, restore policy, and raw-session gate.
 
 ## Unattended Execution
 
@@ -407,5 +415,7 @@ For substantial reports, link the document and list only top decisions/risks in 
 ## Continuous Improvement
 
 If the process feels too heavy, simplify lanes and reporting. If implementation quality slips, strengthen review gates. If cost climbs, lower routine lane strength, batch research, or replace repeated work with scripts. If context fragments, improve memory and handoff packets.
+
+Use failure-triggered reflection only when CEO Flow behavior drifts, repeats a process failure, lacks acceptance evidence, receives user process-correction feedback, or a rule change is being considered. Keep it minimal and evidence-backed; do not add reflection to ordinary tasks.
 
 When editing this skill, keep `SKILL.md` lean, move detailed policy into references, avoid project-specific rules in public docs, sync installed copies when needed, and run validators before handoff.

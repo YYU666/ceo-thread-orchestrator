@@ -6,6 +6,8 @@ Use this reference after a PRD, design brief, or task graph is accepted and the 
 
 CEO Flow should not serialize an entire PRD through one worker when independent tasks can safely run together. Parallelism is useful only when it reduces delivery time without creating merge, review, workspace, or context debt.
 
+A paused module removes or defers that branch from the current wave; it does not stop other independent ready waves. Prerequisite, diagnostic, audit, and infrastructure micro-slices must not dominate visible product progress unless they are the only safe critical path.
+
 ## Parallel Readiness
 
 Create a parallel wave when all are true:
@@ -100,6 +102,7 @@ At harvest:
 2. Classify `accepted`, `revise`, `blocked`, `superseded`, `still_running`, or `stale`.
 3. Detect collisions across files, APIs, generated artifacts, tests, and UX decisions.
 4. Send bounded revision cards to the same lane when appropriate.
-5. Start dependent tasks only after required upstream evidence is accepted.
+5. If a branch is paused, remove/defer only that branch unless it is the only critical path; update the Program Goal dashboard and continue the next unblocked product-progress wave.
+6. Start dependent tasks only after required upstream evidence is accepted.
 
 If parallel work creates conflict or repeated uncertainty, collapse back to a serial integration owner.

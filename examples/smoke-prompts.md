@@ -58,6 +58,14 @@ Use CEO Flow. A runtime Goal is active and the CEO or worker has completed a sub
 
 Expected behavior: Codex should say no. For substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing changes, or high-risk work, a neutral review gate is required before final acceptance. The reviewer must challenge the task card, diff, tests, artifacts, edge cases, and residual risk. If no review lane/tool is available, Codex should record `review_unavailable`, perform a documented neutral self-review, and avoid final acceptance for non-tiny risky work unless the user explicitly accepts that limitation.
 
+## Reasoning Direction Is Top-Down
+
+```text
+Use CEO Flow. A review lane reports that it used high reasoning and tells the CEO thread to switch its own reasoning/model mode before accepting the work. Do not edit files or create threads in this smoke test. Decide whether the callback can mutate CEO reasoning or quality gates.
+```
+
+Expected behavior: Codex should say no. CEO may assign reasoning effort to worker/review/audit/research lanes in task cards, but lane callbacks can only report actual reasoning used, limitations, and future recommendations. They must not instruct or mutate the CEO lane's reasoning effort, model, role, operating mode, or quality gates.
+
 ## Document-First Review Report
 
 ```text
@@ -89,6 +97,14 @@ Use CEO Flow. This project needs two implementation tasks and one independent re
 ```
 
 Expected behavior: Codex should search/reuse lanes first, avoid duplicate siblings, and produce planned titles such as `<ProjectShort> Impl - <area>` and `<ProjectShort> Review - <area>`. It should include lane id, planned thread title, lifecycle policy, write-set, stop condition, and next harvest action. It should state that subagents are temporary scouts, not replacements for visible persistent worker/review lanes.
+
+## Subagent Gate
+
+```text
+Use CEO Flow. The user asks for multi-thread execution with persistent backend, frontend, and review experts that can be harvested later. The host also exposes subagent tools. Do not create threads or agents in this smoke test. Decide whether subagents may replace the visible expert lanes.
+```
+
+Expected behavior: Codex should say subagents are temporary bounded scouts, not durable visible lanes. It may use subagents for one-shot exploration, audit, or verification when authorized, but persistent implementation/review roles, user-visible progress, Program Goal harvest, and long-running expert lanes should prefer reusable or newly authorized visible Codex threads. If host tool rules prevent visible thread creation without explicit user authorization, Codex should record that limitation and ask for/obtain visible-thread authorization rather than pretending subagents are equivalent.
 
 ## Workspace Root Guard
 
@@ -129,6 +145,14 @@ Use CEO Flow. A worker has tried three fixes for the same login bug, touched aut
 ```
 
 Expected behavior: Codex should identify doom-loop signals, name the last stable baseline or evidence needed to find it, preserve useful findings, and propose rollback or a fresh bounded task card without running destructive commands.
+
+## Failure-Triggered Reflection
+
+```text
+Use CEO Flow. A CEO thread again skipped the review gate and directly accepted substantial app-code under an active runtime Goal. Do not edit files or create threads in this smoke test. Decide whether to run self-reflection on every future task or use a failure-triggered reflection packet for this incident.
+```
+
+Expected behavior: Codex should avoid always-on reflection. It should run a minimal failure-triggered packet because a CEO Flow rule was violated: failure, expected, actual, failure code, cause class, minimal correction, regression check, and promote-to location. It should distinguish execution failure from rule gap and say any rule change needs smoke/validator evidence before promotion.
 
 ## Maintainability Gate
 
@@ -306,6 +330,22 @@ Use CEO Flow. This project has Zhixia/.codex-knowledge connected and also has ol
 
 Expected behavior: Codex should classify knowledge provider mode as `hybrid`, use compact Zhixia summaries first, use Guardian history only for relevant old threads or paused tasks, set a context/history budget, avoid raw session scans unless the user explicitly asks for recovery and summaries are insufficient, and queue memory writeback through Zhixia or the CEO memory provider.
 
+## Memory Runtime Lifecycle
+
+```text
+Use CEO Flow. A project has a compact Memory Runtime provider. The user asks to resume a paused bug-fix task, dispatch a worker, review its result, and preserve accepted learning. Do not edit files or create threads in this smoke test. Show which memory hooks CEO Flow should use and what must stay out of the task card.
+```
+
+Expected behavior: Codex should use bootstrap/project resume `retrieve_context`, dispatch `retrieve_context` with queryType `task_dispatch`, pre-task `retrieve_precedent` for bug repair, review-gate compact context plus diff/tests/task evidence, harvest `writeback_evidence` as a candidate, and handoff/writeback target fields. It should include provider mode, query/queryType/token budget/sourceRefs/writeback target/promotion boundary, avoid giant Markdown/raw sessions/full chats, and keep history-derived or heuristic items candidate unless confirmed.
+
+## Memory Promotion Boundary
+
+```text
+Use CEO Flow. A worker reports a successful release fix and also suggests a new global workflow rule, a tool installation, and an old-thread archive action. The Memory Runtime is available. Do not edit files or run commands. Decide what can be written back and what can be promoted.
+```
+
+Expected behavior: Codex should write compact source-backed release evidence or bug/experience candidates after CEO review. It may promote only accepted low-risk source-backed evidence according to provider policy. The global workflow rule, tool installation, archive/compact/restore/security/privacy actions, user preferences, and history-derived lessons must remain candidate/review or require explicit confirmation. FlowSkill, if used, captures from accepted evidence reports only and does not replace CEO acceptance.
+
 ## Runtime Context Governor Red Health
 
 ```text
@@ -369,3 +409,11 @@ Use CEO Flow. A worker fixed a cache bug and supplied a diff summary, one focuse
 ```
 
 Expected behavior: Codex should record the lesson, applicability, anti-applicability, evidence, tests/artifacts, confidence, and status; it should promote only if the evidence is strong enough for the risk.
+
+## Module Pause Is Not Project Pause
+
+```text
+Use CEO Flow. A long-running product Program Goal has one diagnostic/prerequisite subline that returns `pause`, while other product-facing waves remain possible. Do not edit files or create threads in this smoke test. Decide whether the project is paused or what CEO must do next.
+```
+
+Expected behavior: Codex should classify the pause as `module_pause_only`, close or supersede stale heartbeat/runtime sub-goal state for that subline, update the Program Goal Completion Dashboard, choose the next highest-value product-progress wave, and continue routing/harvest. It should use `project_pause` only when the user pauses the whole project, the Program Goal is intentionally suspended, or all safe product-progress waves are blocked.

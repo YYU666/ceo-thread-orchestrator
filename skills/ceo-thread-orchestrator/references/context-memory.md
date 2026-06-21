@@ -25,6 +25,89 @@ At bootstrap, dispatch, reuse, review, harvest, and writeback:
 
 Use canonical project files, source code, tests, decision logs, and worker reports as stronger evidence than summaries when they disagree.
 
+## Memory Runtime Lifecycle
+
+A compact project memory provider may expose explicit runtime hooks such as `retrieve_context(task_goal)`, `retrieve_precedent(task_type)`, `writeback_evidence(result)`, and `promote_memory(candidate)`. Zhixia is one provider; another project may supply an equivalent local memory runtime.
+
+CEO Flow uses the provider as a lifecycle service, not as a giant context file:
+
+| CEO Flow stage | Memory Runtime hook | CEO use |
+| --- | --- | --- |
+| Bootstrap / resume | `retrieve_context(task_goal)` with `queryType=project_resume` | confirm project state, current source of truth, blockers, next action, active lanes |
+| Dispatch / task card | `retrieve_context(task_goal)` with `queryType=task_dispatch` | build compact `Memory packet` with source-backed excerpts, constraints, and sourceRefs |
+| Pre-task precedent | `retrieve_precedent(task_type)` | check prior bug repairs, UI decisions, packaging/release evidence, archive rules, or tool-skill boundaries |
+| Review gate | `retrieve_context(...)` or `retrieve_precedent(...)` with `queryType=review_gate` | give reviewer task card, diff/tests/artifacts, relevant docs, and compact memory; do not start from long worker chat |
+| Harvest | `writeback_evidence(result)` candidate | capture CEO decision, evidence, missing evidence, blocker, revise reason, or accepted outcome |
+| Handoff | `writeback_evidence(result)` candidate plus compact Handoff | preserve next action and source refs instead of whole chat history |
+| Old-thread recovery | `retrieve_context(...)` with `queryType=thread_recovery` | retrieve hot/warm history by threadId, parent CEO, project path, and query before cold/raw gated recovery |
+
+Preferred query types:
+
+```text
+project_resume
+task_dispatch
+review_gate
+bug_repair
+architecture
+release
+thread_recovery
+archive_candidate
+runtime_diagnosis
+tool_skill_lookup
+workflow_reuse
+handoff
+memory_writeback
+```
+
+Every provider result used in a task card or review should expose compact `items[]` with source/provenance fields when available:
+
+```text
+item id:
+kind:
+summary/excerpt:
+sourceRefs:
+freshness:
+status:
+whyMatched:
+tokenEstimate:
+requiresHumanConfirmation:
+```
+
+If the provider cannot supply source refs, treat the result as advisory context only.
+
+## Task Card Memory Runtime Fields
+
+For memory-enabled dispatch, include only the fields needed for the task:
+
+```text
+Knowledge provider mode:
+Memory Runtime query:
+  provider:
+  hook: retrieve_context | retrieve_precedent
+  queryType:
+  query:
+  projectPath/projectId:
+  threadId:
+  parentCeoThreadId:
+  tokenBudget:
+Retrieved source refs:
+Memory packet:
+  compact excerpts:
+  constraints:
+  warnings:
+Writeback target:
+Promotion boundary:
+```
+
+Default token budgets should stay small:
+
+- task dispatch: about 800-1500 tokens;
+- project resume: about 1500-3000 tokens;
+- review gate: enough for task card, evidence refs, and only relevant memory;
+- thread recovery: explicit higher budget only when the hard gate is satisfied.
+
+Do not increase retrieval limits merely to be complete. Stop when high-quality source-backed context is sufficient.
+
 ## Zhixia Workflow
 
 When `.codex-knowledge/` exists, treat the workspace as Zhixia-enabled. Look for `project-knowledge.md`, `context.md`, `knowledge-items.md`, `experience-cards.md`, and `skill-candidates.md`.
@@ -41,8 +124,62 @@ Writeback:
 - CEO or active memory provider decides whether the result becomes a Decision, Handoff, Bug/Experience card, or KnowledgeItem.
 - Do not edit `.codex-knowledge/` directly unless the user explicitly asks.
 - Prefer durable updates in canonical markdown/docs that Zhixia can scan.
+- When a Memory Runtime exists, call writeback only with compact accepted/revise/block evidence packets, not raw chats or raw session bodies.
 
 Skill candidates from Zhixia are draft material only. Install or modify skills from them only with explicit user approval.
+
+## Precedent Retrieval
+
+Use `retrieve_precedent(task_type)` before tasks where prior experience can prevent repeat mistakes:
+
+| Task type | Query type | Use |
+| --- | --- | --- |
+| Bug repair | `bug_repair` | prior fixes, failed attempts, root causes, do-not-repeat cards |
+| UI redesign | `architecture` or `review_gate` | product rules, UX decisions, current design docs, rejected approaches |
+| Packaging / installer | `release` | release runbooks, packaging commands, known installer/test issues |
+| Release readiness | `release` | evidence gates, external validation status, residual risks |
+| Thread archive / slimming | `archive_candidate` | vault, receipt, memory pointer, cooling state, blockers |
+| Old-thread recovery | `thread_recovery` | hot/warm summaries before cold/raw |
+| Tool or skill reuse | `tool_skill_lookup` or `workflow_reuse` | purpose, trigger, risk boundary, safe/forbidden command labels |
+
+Precedents are context and risk signals. They do not expand the task scope, authorize tools, replace current source files, or override CEO accept/revise/block.
+
+## Evidence Writeback And Promotion Boundary
+
+Workers report candidates; CEO inspects evidence; the memory provider owns durable writeback and promotion policy.
+
+`writeback_evidence(result)` may receive compact packets such as:
+
+```text
+decision: accept | revise | block | supersede
+task id:
+goal:
+write-set:
+changed files:
+commands/tests:
+artifacts:
+review decision:
+sourceRefs:
+freshness:
+confidence:
+residual risk:
+memory candidates:
+```
+
+Accepted low-risk, source-backed evidence may become `active`, `ready`, or `curated` only through the provider's policy. Examples include accepted decisions, verified bug-fix lessons, current project status, accepted handoffs, and current source-of-truth summaries.
+
+Keep these as `candidate` or `review` unless confirmed by the user, a configured memory owner, or an explicit project policy:
+
+- heuristic or summary-only findings;
+- history-derived lessons from old threads;
+- user preferences;
+- model/reasoning/workflow policy;
+- cross-project or global rules;
+- tool/skill/script records;
+- stale, conflict, or low-confidence results;
+- executable, install, archive, compact, restore, security, privacy, credential, spending, or destructive-action recommendations.
+
+Guardian or equivalent history providers may supply provenance and receipts, but they do not own project memory promotion.
 
 ## Old-Thread Continuity
 

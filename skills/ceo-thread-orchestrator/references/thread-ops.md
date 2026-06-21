@@ -55,6 +55,31 @@ Sidebar cleanup:
 - Archive/retire stale or superseded lanes only after a compact handoff, memory pointer, or reason is recorded.
 - Prefer one stable implementation lane per project/domain, one review lane for high-risk work, and one knowledge lane only when durable memory work is active.
 
+## Subagent Gate
+
+Subagents are temporary bounded scouts, not durable visible lanes.
+
+Use subagents for:
+
+- one-shot codebase exploration;
+- read-only audit or comparison;
+- quick independent verification;
+- disposable research that does not need user-visible thread continuity;
+- bounded implementation only when the write-set is disjoint, the result can be reviewed/integrated by CEO, and the user/tool contract allows subagent delegation.
+
+Prefer visible Codex threads for:
+
+- user-requested multi-thread execution;
+- persistent expert roles such as implementation, review, UX, release, or knowledge lanes;
+- Program Goals that need later harvest or user-visible progress;
+- work where the user may need to click into the lane and continue;
+- implementation ownership across multiple turns;
+- any task where callback, roster, workspace anchoring, or lifecycle policy matters.
+
+Subagents must not replace lane roster, task cards, callback policy, harvest driver, workspace guard, or neutral review gate. If a subagent performs implementation, CEO still owns integration, evidence review, and accept/revise/block.
+
+If the host tool contract says current-request subtasks should use subagents unless the user explicitly asks for new threads, follow that contract but record the limitation. When durable lanes are required, ask for or use explicit visible-thread authorization instead of pretending subagents are equivalent.
+
 ## Workspace Root Guard
 
 Project work must stay anchored to the user's real project folder. Wrong Codex project folders, scratch directories, generated worktrees, or sibling folders cause long-term drift.
@@ -226,7 +251,7 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 
 - A new thread is a separate conversation, not a guaranteed autonomous employee.
 - Existing thread steering requires explicit read/send operations.
-- Subagents are short-lived scouts unless the user/tool contract says otherwise.
+- Subagents are short-lived scouts unless the user/tool contract says otherwise; they are not equivalent to user-visible persistent lanes.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
 - Forked workers may inherit CEO context; clean worker creation is safer for bounded implementation.

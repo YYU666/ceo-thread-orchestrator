@@ -50,6 +50,8 @@ flowskill export --public-candidate <candidate-id> --json
 - Search is optional. If FlowSkill is missing, disabled, slow, or irrelevant, continue normal CEO Flow.
 - Capture is optional and only after CEO acceptance with evidence-backed reusable learning.
 - Capture should use an accepted evidence report, not raw chat transcripts or broad session history.
+- Capture should use accepted evidence packets or reports written for the active memory provider; do not capture from raw sessions, long chats, full knowledge dumps, or unreviewed worker claims.
+- FlowSkill output is context, candidate, or reusable-skill signal only. It is not CEO acceptance evidence, does not promote memory, and does not authorize execution, installation, archive, compact, restore, or security-sensitive actions.
 - Public export candidates require FlowSkill privacy review and CEO/user approval when appropriate.
 
 ## Expected JSON Contracts
@@ -123,4 +125,3 @@ FlowSkill capture:
   status:
   candidate id:
 ```
-

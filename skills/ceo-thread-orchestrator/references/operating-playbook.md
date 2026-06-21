@@ -107,6 +107,29 @@ CEO may stop at MVP only when:
 
 Do not ask the user whether to continue merely because MVP is viable when the accepted Program Goal already says to finish the full product. Continue with the next bounded full-version wave and report the decision.
 
+## Portfolio Steering After Terminal Lane Result
+
+Terminal lane, module, subline, heartbeat, or runtime sub-goal results must trigger project-level steering before final reporting.
+
+Classify a `pause`, `block`, `accept`, or `supersede` result:
+
+- `module_pause_only`: close, record, or defer that bounded subline; complete or supersede its heartbeat/runtime sub-goal; then choose the next highest-value Program Goal wave.
+- `project_pause`: only when the user pauses the whole product/project, the accepted Program Goal is intentionally suspended, or all safe product-progress waves are blocked.
+- `external_blocker`: no meaningful safe product-progress wave can continue because of missing credentials/tools, legal/security/destructive-action limits, external service state, or a required user product-direction decision.
+
+A module/subline pause must not stall the Program Goal unless it is on the only critical path and no other ready wave exists.
+
+Run this portfolio check:
+
+1. What remains in the Program Goal Completion Dashboard?
+2. Which product-facing wave is highest value now?
+3. Which lanes are accepted, blocked, paused, stale, superseded, or still running?
+4. Is the active runtime goal too narrow for the whole product outcome?
+5. Should a subline goal or heartbeat be completed, superseded, deleted, or replaced with a project-level goal?
+6. What is the next dispatch, review, harvest, or user-decision action?
+
+Heartbeats are not the main continuity source. Program Goal Brief plus the runtime project goal carry project continuity; heartbeat only harvests dispatched lane callbacks. Prerequisite, diagnostic, audit, and infrastructure micro-slices must not dominate visible product progress unless they are the only safe critical path.
+
 ## 3. Choose The Execution Shape
 
 Use the smallest shape that can safely finish the next objective.
@@ -162,6 +185,26 @@ May create/route/fork threads: yes/no
 Default `May create/route/fork threads` is `no` for implementation, review, UX, knowledge, and research lanes. Only the CEO/router lane may create or route threads unless the task card explicitly grants that operation.
 
 If a worker/reviewer starts acting like CEO, says it will create another worker, waits for another lane to report, or tries to inspect CEO state without being asked, classify the lane as `role_contamination` and either correct it with a hard role-reset card or supersede it with a clean lane.
+
+## Reasoning Direction Gate
+
+Reasoning direction is top-down only.
+
+CEO may assign reasoning effort in task cards, for example:
+
+```text
+Implementation lane: thinking medium/low, execute and verify inside the write-set.
+Review/Audit lane: thinking high, challenge evidence, risks, and regressions.
+Research lane: thinking level based on question complexity and freshness risk.
+```
+
+Lane callbacks may report:
+
+- the reasoning/model profile they actually used;
+- quality limitations caused by reasoning, permissions, or context;
+- a recommendation that future similar tasks use higher or lower reasoning.
+
+Lane callbacks must not instruct or mutate the CEO lane's reasoning effort, model, role, quality gates, operating mode, or acceptance policy. CEO decides any CEO-lane reasoning/model changes from system, developer, user, and active tool-contract instructions.
 
 ## Mandatory Neutral Review Gate
 

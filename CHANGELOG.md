@@ -11,6 +11,11 @@
 - Clarified runtime Goal as orchestration state, not execution mode; direct CEO fallback under active Goal is a bounded lease and must restore worker/review routing.
 - Added a role roster gate so Core Team execution assigns explicit lane roles, write-sets, callback policy, stop condition, and thread-operation permissions before dispatch.
 - Added a mandatory neutral review gate for substantial app-code, PRD execution, runtime Goal implementation, direct-fallback output, user-facing/high-risk work, and repeated-fix loops.
+- Added a top-down reasoning direction gate: CEO may assign lane reasoning profiles, but worker/review/audit callbacks cannot mutate CEO reasoning, model, role, or quality gates.
+- Added a subagent gate that keeps subagents as temporary bounded scouts rather than substitutes for durable visible lanes, Program Goal harvest, or persistent expert roles.
+- Added failure-triggered reflection / self-harness guidance so CEO Flow diagnoses repeated process failures with minimal evidence-backed packets instead of adding always-on reflection overhead.
+- Added a generic Memory Runtime lifecycle contract for compact project memory providers: retrieve context/precedent, write back evidence, and promote memory under source-backed safety boundaries.
+- Added portfolio steering guardrails so terminal lane/subline `pause`, `accept`, `block`, or `supersede` results trigger a Program Goal dashboard check; a module pause no longer implies project pause.
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 
