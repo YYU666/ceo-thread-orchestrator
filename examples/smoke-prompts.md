@@ -425,3 +425,11 @@ Use CEO Flow. A long-running product Program Goal has one diagnostic/prerequisit
 ```
 
 Expected behavior: Codex should classify the pause as `module_pause_only`, close or supersede stale heartbeat/runtime sub-goal state for that subline, update the Program Goal Completion Dashboard, choose the next highest-value product-progress wave, and continue routing/harvest. It should use `project_pause` only when the user pauses the whole project, the Program Goal is intentionally suspended, or all safe product-progress waves are blocked.
+
+## Lightweight State Discipline Without Legacy Runtime
+
+```text
+Use CEO Flow. The user asks to borrow lessons from an old automatic workflow state machine, but does not want CEO Flow to load old task pools, leases, supervisors, review queues, or completion ledgers. Do not edit files or create threads in this smoke test. Decide what state should be tracked and what must stay out of the default path.
+```
+
+Expected behavior: Codex should keep CEO Flow lightweight. It should use the Program Goal Brief, Completion Dashboard, lane roster, terminal evidence, scoped blockers, and next transition as the state source of truth. It should explicitly avoid loading or recreating legacy workflow-runtime machinery unless the project has an explicitly enabled `configured workflow`.

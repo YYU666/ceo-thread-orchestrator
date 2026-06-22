@@ -165,6 +165,49 @@ Run this portfolio check:
 
 Heartbeats are not the main continuity source. Program Goal Brief plus the runtime project goal carry project continuity; heartbeat only harvests dispatched lane callbacks. Prerequisite, diagnostic, audit, and infrastructure micro-slices must not dominate visible product progress unless they are the only safe critical path.
 
+## Lightweight State Discipline, Not Workflow Runtime
+
+CEO Flow should borrow workflow discipline without becoming a workflow engine.
+
+Default source of truth:
+
+- Program Goal Brief owns product/program state.
+- Completion Dashboard owns phase progress, accepted work, blocked lanes, next task, and evidence.
+- Lane roster owns worker/review lane status and lifecycle.
+- Runtime Codex Goal, when available, is continuity support only.
+
+Minimum state record:
+
+```text
+Program status: intake | planned | dispatched | executing | review | revise | accepted | blocked | superseded
+Phase:
+Lane states:
+Last accepted state transition:
+Terminal evidence required:
+Blocker level: none | lane_local | module_only | project | external
+Next transition:
+Evidence refs:
+```
+
+Rules:
+
+1. State must not be inferred only from chat tone or the newest worker claim.
+2. Terminal states (`accepted`, `blocked`, `superseded`, `paused/deferred`) need evidence refs or a clear blocker explanation.
+3. `blocked` and `pause` must be scoped: lane-local and module-only blockers do not stop the Program Goal when other safe waves exist.
+4. Program Goal Brief beats runtime Goal tool state when they conflict.
+5. Escalate from lightweight state to a pipeline contract only when dependency/write-set complexity justifies it.
+
+Do not load, recreate, or operate legacy workflow-runtime machinery by default:
+
+- no task pool scans;
+- no lease or supervisor checks;
+- no review queue or writeback queue;
+- no completion ledger reconstruction;
+- no automatic repair/retry loops;
+- no legacy AutoFlow/OpenClaw default path.
+
+Use those only under `configured workflow` when the project explicitly provides and enables that runtime. Historical workflow material may inform design, but it is not the CEO Flow operating state.
+
 ## 3. Choose The Execution Shape
 
 Use the smallest shape that can safely finish the next objective.

@@ -36,7 +36,7 @@ Follow this path before reading deeper policy:
 1. Confirm the newest request and mode.
 2. Anchor the canonical project root and allowed worktrees before edits.
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
-4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, completion dashboard, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
+4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, completion dashboard, lane roster, blockers, next wave, harvest cadence, acceptance evidence, and lightweight state discipline. Do not load or recreate legacy workflow-runtime queues, leases, supervisors, or completion ledgers unless the user explicitly chose a configured workflow.
 5. When an accepted PRD/design brief/task graph should be driven to completion, create or bind one runtime Codex Goal when host goal tooling is available. Link it to the Program Goal Brief. If goal tooling is unavailable, blocked by host state, or inconsistent with the Program Goal Brief, record the goal-tool state and continue from the Program Goal Brief plus harvest.
 6. Treat MVP as a milestone, not a default stopping point, when the Program Goal or user outcome is a full product. After MVP evidence is accepted, update the dashboard and dispatch the next full-version/hardening wave unless the user explicitly scoped the goal to MVP-only or a real blocker exists.
 7. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
@@ -139,6 +139,11 @@ Next execution wave:
 Harvest cadence:
 Acceptance evidence:
 Memory / knowledge writeback:
+Lightweight state discipline:
+  State source of truth:
+  Last accepted state transition:
+  Terminal evidence required:
+  Blocker level:
 Last updated:
 ```
 
@@ -178,6 +183,8 @@ Memory updates needed:
 ```
 
 Do not stop after producing an org chart, MVP feasibility result, or local proof-of-concept if executable full-version work remains, tools are available, and the Program Goal is not MVP-only.
+
+Use lightweight state discipline, not a legacy workflow runtime: Program Goal Brief is the state source of truth; terminal states require evidence; `pause` and `blocked` are classified by scope; and CEO Flow must not scan or operate legacy task pools, leases, supervisors, review queues, or completion ledgers unless a project explicitly enables a configured workflow.
 
 ## Document-First Artifacts
 
