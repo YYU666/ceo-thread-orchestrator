@@ -37,8 +37,43 @@ Runtime Goal rules:
 - It does not allow CEO to implement substantial work alone.
 - It does not replace harvest, evidence review, or accept/revise/block.
 - A bound active runtime Goal can be the harvest driver, so separate heartbeat/fixed-time harvest is optional while the Goal remains active.
+- It represents the whole Program Goal, not every module, phase, wave, lane, heartbeat, or temporary sub-goal.
 
-If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus ordinary harvest.
+If goal tooling is unavailable or blocked by host state, record `runtime_goal_unavailable` or `runtime_goal_host_state_blocked` and continue with Program Goal Brief plus ordinary harvest.
+
+## Runtime Goal Tool-State Guard
+
+Runtime Codex Goal is a continuity helper. Program Goal Brief is the project source of truth.
+
+Before creating, replacing, completing, or blocking a runtime Goal:
+
+1. Check current goal state when host tooling exposes it.
+2. Reuse an aligned active goal instead of creating another one.
+3. Keep module, phase, wave, lane, heartbeat, and temporary sub-goal state in the Program Goal Brief, not as separate host runtime Goals.
+4. Treat host goal-tool failures, stale blocked goals, or create-goal collisions as tool state issues, not proof that the product is blocked.
+
+Use runtime Goal status narrowly:
+
+- `active`: whole Program Goal is still moving and can serve as harvest driver.
+- `complete`: Program Goal done criteria and acceptance evidence are satisfied.
+- `blocked`: only when the whole Program Goal is genuinely blocked by the same repeated blocking condition and no safe product-progress, review, audit, docs, rerouting, or portfolio wave can continue.
+
+Do not mark runtime Goal `blocked` for:
+
+- module/subline pause;
+- stale heartbeat cleanup;
+- role-contaminated or superseded worker lanes;
+- approval stalls that are lane-local;
+- MVP phase transition inside a full-product goal;
+- ordinary re-selection of the next product-progress wave;
+- one failed worker, test, build, route, or review attempt when alternatives remain.
+
+If the host refuses `create_goal` because an old blocked/stale/unfinished goal still occupies the slot, CEO should:
+
+1. Record `runtime_goal_host_state_blocked` in the Program Goal Brief.
+2. Continue from the Program Goal Brief, Completion Dashboard, lane roster, and immediate/explicit harvest plan.
+3. Avoid deleting/recreating goals as routine workflow unless the user explicitly asks or the host provides a safe goal-management action.
+4. Ask the user to delete/recreate the stale goal only when the stale goal prevents continuity and no safe fallback harvest driver exists.
 
 ## Runtime Goal Direct-Fallback Lease
 

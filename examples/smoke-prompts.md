@@ -250,6 +250,14 @@ Use CEO Flow. The user has accepted a complete PRD and says to drive the product
 
 Expected behavior: Codex should require a Program Goal Brief and create or bind one runtime Codex Goal when goal tooling is available. The runtime goal should reference the Program Goal Brief path and drive continuity, but Program Goal Brief remains the source of truth. Codex should update the Completion Dashboard at harvest and mark the runtime goal complete only when Program Goal done criteria and evidence are satisfied. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
 
+## Runtime Goal Host State Blocked
+
+```text
+Use CEO Flow. A previous runtime Codex Goal is marked `blocked`, but the product Program Goal still has safe product-facing waves, review work, docs, or rerouting work that can continue. Creating a new runtime Goal fails because the host treats the old blocked goal as unfinished. Do not edit files or create/delete goals in this smoke test. Decide whether the project is blocked and what CEO should do next.
+```
+
+Expected behavior: Codex should say the host goal-tool state is blocked, not necessarily the project. It should record `runtime_goal_host_state_blocked`, keep Program Goal Brief as source of truth, continue from the Completion Dashboard and next product-progress wave, and use immediate/explicit harvest planning if the runtime Goal cannot serve as harvest driver. It should not mark the whole Program Goal blocked, delete/recreate goals as routine workflow, or ask the user to fix tool state unless no safe fallback harvest driver exists.
+
 ## MVP Is Not Final For Full Product Goals
 
 ```text

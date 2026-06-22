@@ -16,6 +16,7 @@
 - Added failure-triggered reflection / self-harness guidance so CEO Flow diagnoses repeated process failures with minimal evidence-backed packets instead of adding always-on reflection overhead.
 - Added a generic Memory Runtime lifecycle contract for compact project memory providers: retrieve context/precedent, write back evidence, and promote memory under source-backed safety boundaries.
 - Added portfolio steering guardrails so terminal lane/subline `pause`, `accept`, `block`, or `supersede` results trigger a Program Goal dashboard check; a module pause no longer implies project pause.
+- Added a runtime Goal tool-state guard so stale/blocked host goals do not override the Program Goal Brief or stop product-progress waves when safe work remains.
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 

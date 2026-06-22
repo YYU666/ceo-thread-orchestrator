@@ -37,7 +37,7 @@ Follow this path before reading deeper policy:
 2. Anchor the canonical project root and allowed worktrees before edits.
 3. Define done criteria, non-goals, task graph, dependencies, write-sets, verification evidence, context budget, and memory provider mode.
 4. For a complete product, multi-phase program, or long-running project goal, create or update a document-first Program Goal Brief before dispatch: phases, completion dashboard, lane roster, blockers, next wave, harvest cadence, and acceptance evidence.
-5. When an accepted PRD/design brief/task graph should be driven to completion, create or bind one runtime Codex Goal when host goal tooling is available. Link it to the Program Goal Brief. If goal tooling is unavailable, record `runtime_goal_unavailable` and continue with Program Goal Brief plus harvest.
+5. When an accepted PRD/design brief/task graph should be driven to completion, create or bind one runtime Codex Goal when host goal tooling is available. Link it to the Program Goal Brief. If goal tooling is unavailable, blocked by host state, or inconsistent with the Program Goal Brief, record the goal-tool state and continue from the Program Goal Brief plus harvest.
 6. Treat MVP as a milestone, not a default stopping point, when the Program Goal or user outcome is a full product. After MVP evidence is accepted, update the dashboard and dispatch the next full-version/hardening wave unless the user explicitly scoped the goal to MVP-only or a real blocker exists.
 7. If a PRD/design brief/task graph has been accepted or the user asks to start/continue implementation, leave CEO-only planning and run Core Team execution unless the work is tiny, non-coding, or explicitly direct-current-thread.
 8. Before dispatch, assign an explicit lane roster: each lane has one primary role, workspace, write-set, task card, callback policy, and stop condition. Do not let worker/reviewer lanes infer whether they are CEO.
@@ -147,6 +147,8 @@ Runtime goal binding:
 - For complete product goals, accepted PRDs, multi-phase programs, or "drive this to completion" requests, bind the active runtime Codex Goal to the Program Goal Brief when host goal tooling exists.
 - The runtime goal states the product outcome and references the Program Goal Brief path. It drives continuity; it does not replace the Program Goal Brief.
 - Create or bind one runtime goal per active Program Goal.
+- Use the runtime Codex Goal for whole-product continuity, not for every module, phase, wave, lane, heartbeat, or temporary sub-goal. Put sub-goal state in the Program Goal Brief.
+- Before creating or replacing a runtime Goal, check current goal state when the host exposes it. Reuse an aligned active goal instead of creating another one.
 - Runtime goals must not override CEO Flow routing. For substantial coding/product work, CEO still routes, dispatches, or harvests lanes unless direct-current-thread execution is explicitly allowed.
 - Runtime goals must not convert the CEO thread into the implementation lane. Direct CEO fallback under a runtime Goal is a short emergency lease; after the bounded patch/unblock, CEO must restore worker/review routing and update the Program Goal roster.
 - A bound runtime goal may serve as the harvest driver after dispatch, so a separate heartbeat or fixed next-harvest time is optional while the goal remains active.
@@ -154,8 +156,9 @@ Runtime goal binding:
 - Update the Program Goal Brief and Completion Dashboard at every harvest.
 - If an MVP phase is accepted inside a full-product Program Goal, mark the MVP phase accepted and continue to the next full-version, production-hardening, release-readiness, or quality wave. Stop at MVP only when the user explicitly set MVP as the final outcome, done criteria are fully satisfied, or a real blocker/external dependency exists.
 - Mark the runtime goal complete only when Program Goal done criteria and acceptance evidence are satisfied.
+- Mark the runtime goal blocked only when the whole Program Goal is genuinely blocked: the same blocking condition has persisted across repeated goal turns and no safe product-progress, review, audit, docs, or rerouting work can continue. Do not mark runtime Goal blocked for module pauses, stale heartbeat cleanup, role-contaminated lanes, approval stalls, MVP phase transition, or ordinary portfolio re-selection.
 - If runtime goal state conflicts with the Program Goal Brief, the Program Goal Brief wins unless the user changes product direction.
-- If goal tooling is unavailable, record `runtime_goal_unavailable` in the Program Goal Brief or operating note and continue with CEO harvest.
+- If goal tooling is unavailable, blocked by a stale/unfinished host goal, or cannot create/replace a goal because of host state, record `runtime_goal_unavailable` or `runtime_goal_host_state_blocked` in the Program Goal Brief or operating note and continue with CEO harvest. Do not treat host goal-tool failure as project failure.
 
 Every open goal needs:
 
