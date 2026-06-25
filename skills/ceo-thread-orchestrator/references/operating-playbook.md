@@ -19,6 +19,37 @@ This is the default operating order. Do not invent a heavier process unless the 
 
 If the task is not substantial, do not force CEO ceremony.
 
+## Reference Scan Gate
+
+Before substantial product, coding, architecture, UI/UX, workflow, video/creative, framework-selection, or PRD-to-implementation work, CEO should run a lightweight reference scan so the plan starts from proven patterns instead of invention from scratch.
+
+Use:
+
+- official docs for APIs, platforms, and frameworks;
+- mature open-source projects with relevant architecture or implementation patterns;
+- high-quality public examples for UI/UX, motion, product flow, docs, or release practice;
+- local project conventions and previous accepted implementations;
+- known bug/experience cards, Memory Runtime precedents, or FlowSkill search results when available.
+
+Output a compact reference packet:
+
+```text
+Reference:
+Why relevant:
+What to borrow:
+What not to copy:
+License/attribution caution:
+Impact on task graph/write-set/quality gate:
+```
+
+Rules:
+
+1. Prefer 3-5 targeted references; do not turn this into exhaustive research.
+2. Do not clone large repos, dump giant docs, or paste large source files into context.
+3. Use references to shape architecture, user experience, acceptance criteria, and review checks; do not cargo-cult unrelated code or copy licensed/private assets.
+4. If no good reference is found quickly, record `reference_scan_limited` and proceed with explicit risk.
+5. Skip for casual Q&A, tiny direct tasks, small docs edits, urgent emergency unblocks, user-explicit no-research requests, or when current search is unavailable and local references are enough.
+
 ## 2. Goal Mode Trigger
 
 Create or bind a runtime Codex Goal when the user asks to:
@@ -502,7 +533,7 @@ At every harvest:
 2. Read typed handoffs when present.
 3. Inspect diff, changed files, test output, screenshots, logs, or artifacts as risk requires.
 4. Check write-set and dependency conflicts.
-5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `role_contamination`, or `stale_no_evidence`.
+5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `role_contamination`, `stale_lane_reference`, or `stale_no_evidence`.
 6. For accepted work, update Program Goal/Completion Dashboard and start next unblocked task.
 7. For revise work, send a bounded revision card.
 8. For blocked work, resolve as CEO, reroute, or escalate only if truly necessary.
@@ -513,8 +544,11 @@ Do not final after dispatch unless a harvest driver exists.
 Harvest driver freshness:
 
 - Do not let heartbeat/harvest prompts keep watching obsolete thread ids.
+- If a recorded worker/review `threadId` is not found, classify it as `stale_lane_reference` and run the bounded locator path from `thread-ops.md` before retrying, blocking, or declaring the evidence lost. Use locator anchors such as id prefix, title, task id, `source_thread_id`, project/cwd, write-set, latest callback record, recovery package, and Zhixia/Guardian/vault metadata.
 - When a lane is superseded, role-contaminated, archived, or replaced, update or delete its heartbeat.
 - If the real work completed in a nested child thread, harvest that child explicitly and mark the parent `role_contamination` or `superseded`.
+- If locator fallback finds a likely replacement thread, correct the roster and harvest it. If only compact archive/vault evidence exists, recover that evidence and route a fresh lane when needed. If nothing is found, mark `stale_no_evidence` and continue other safe product-progress work.
+- A missing lane reference is lane-local. Run a Program Goal portfolio check before pausing or blocking the whole project.
 - `stale_no_evidence` means the lane/heartbeat has no current evidence for acceptance.
 
 ## 10. Approval Stall Handling

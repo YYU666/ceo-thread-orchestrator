@@ -45,7 +45,7 @@ After creating or reusing a lane:
 - Rename vague or untitled lanes immediately when the tool allows it.
 - Pin only active CEO, implementation, review, and harvest-critical lanes.
 - Archive or unpin after acceptance, supersession, or retirement, after recording why.
-- Record `threadId`, title, role, workspace, write-set, status, and next harvest action in the roster or operating note.
+- Record `threadId`, title, task id, role, workspace, write-set, source CEO thread id, expected callback signature, status, and next harvest action in the roster or operating note.
 - Avoid multiple sibling implementation lanes for the same project/area unless write-sets are non-overlapping and merge/review cost is justified.
 - Do not use subagents as substitutes for visible lanes when the user asked for multi-thread execution, persistent experts, or later harvest.
 
@@ -197,6 +197,7 @@ Every implementation or review task card should state:
 ```text
 CEO thread id:
 Thread operation: worker execution only; do not create/fork/route threads unless explicitly asked
+Locator anchors: lane title, task id, source_thread_id, project/cwd, write-set, expected callback signature
 Role contamination guard: execute this bounded task directly; report blocker instead of delegating
 Callback events: completion | blocker | approval_stall | revise_needed
 Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
@@ -238,10 +239,33 @@ For broad parallel projects, CEO harvest remains primary. Callback is a useful s
 
 Harvest drivers must track current lane ids and thread ids. A heartbeat, automation, or reminder that targets a superseded, retired, role-contaminated, or stale worker is itself stale.
 
+## Missing Thread Locator
+
+When a rostered lane, heartbeat, callback, or recovery packet points to a `threadId` that host tools cannot read, CEO must not keep retrying that exact id in a loop. Classify the lane as `stale_lane_reference` and run a bounded locator pass before treating the work as lost.
+
+Use these anchors in order, stopping when confidence is high enough to harvest or correct the roster:
+
+1. exact `read_thread(threadId)` or equivalent host lookup;
+2. thread id prefix search when the prefix is distinctive;
+3. lane title, task id, latest callback record, or callback first line search;
+4. `source_thread_id` / `codex_delegation` source id search when present;
+5. project/cwd plus task id or write-set search;
+6. current project recovery docs, handoff packets, Program Goal Brief, restore/recovery package, or compact memory packet;
+7. Zhixia/Guardian/vault metadata by threadId, project path, title, or task id.
+
+Keep the raw-session gate closed during locator fallback. Use compact metadata, recovery indexes, vault manifests, and accepted evidence first. Read full raw chat/session only after an explicit narrow recovery need and the normal raw-history policy allows it.
+
+After locator fallback:
+
+- If a likely replacement thread is found, update the lane roster with the corrected `threadId`, record the old id as `stale_lane_reference`, update/delete stale heartbeat prompts, and harvest the replacement.
+- If only archived or vault history is found, recover compact evidence, mark the visible lane `stale_lane_reference`, and route a fresh replacement lane or continue from accepted evidence.
+- If nothing is found, mark the lane `stale_no_evidence` and move the Program Goal portfolio forward when any safe task, review, audit, docs, or fallback work remains.
+- A single missing lane reference must not pause or block the whole Program Goal unless that lane owns the only critical path and no other safe progress is possible.
+
 When a worker is superseded, retired, archived, or replaced:
 
 1. Update the lane roster with the new current thread id.
-2. Mark old thread ids as `superseded`, `role_contamination`, `stale`, or `stale_no_evidence`.
+2. Mark old thread ids as `superseded`, `role_contamination`, `stale`, `stale_lane_reference`, or `stale_no_evidence`.
 3. Delete, update, or replace heartbeat/harvest prompts that mention obsolete thread ids.
 4. Do not accept results from an old heartbeat unless the CEO revalidates the thread state and evidence.
 
@@ -261,3 +285,4 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 - Worker reports are evidence, not proof.
 - Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
 - Memory is not automatic unless a maintained memory provider or writeback routine exists.
+- Lane rosters need more than a `threadId`: record title, task id, project/cwd, write-set, source CEO thread id, callback signature, and expected report so a typoed, archived, or replaced thread can be located later.

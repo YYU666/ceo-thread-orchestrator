@@ -18,6 +18,8 @@
 - Added portfolio steering guardrails so terminal lane/subline `pause`, `accept`, `block`, or `supersede` results trigger a Program Goal dashboard check; a module pause no longer implies project pause.
 - Added a runtime Goal tool-state guard so stale/blocked host goals do not override the Program Goal Brief or stop product-progress waves when safe work remains.
 - Added lightweight state-discipline guidance so CEO Flow borrows evidence-backed state transitions from legacy workflow thinking without loading old task pools, leases, supervisors, review queues, or completion ledgers by default.
+- Added a lightweight Reference Scan Gate so substantial coding/product/architecture/UI/workflow/creative work starts from official docs, mature open-source patterns, excellent examples, and local conventions without becoming heavy research.
+- Added stale lane reference recovery rules so missing, typoed, archived, or replaced worker/review thread ids trigger bounded locator fallback instead of retry loops or whole-program stalls.
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 

@@ -162,6 +162,14 @@ Use CEO Flow for a feature request. Draft the implementation task card so the wo
 
 Expected behavior: Codex should include architecture invariants, reference docs, rollback baseline, change budget, static checks, and self-review requirements in the task card.
 
+## Reference Scan Before Substantial Build
+
+```text
+Use CEO Flow. The user asks to build a substantial calendar-style UI and backend sync flow. Do not edit files or create threads in this smoke test. Decide what must happen before implementation.
+```
+
+Expected behavior: Codex should require a lightweight Reference Scan Gate before final task graph/dispatch: inspect relevant official docs, mature OSS examples, excellent UI/product references, and local project patterns; capture what to borrow, what not to copy, license/attribution cautions, and how references change architecture/write-set/quality gates. It should not scan huge repos, paste large source files, or delay tiny/direct tasks.
+
 ## Follow-Up Does Not Mean Direct CEO Coding
 
 ```text
@@ -289,6 +297,14 @@ Use CEO Flow. The CEO has already dispatched three implementation tasks from an 
 ```
 
 Expected behavior: Codex should collect evidence, classify lane states, keep routine in-scope approvals inside the CEO lane, avoid asking the user unless the task exceeds the accepted PRD or needs credentials/spending/destructive actions, and continue the execution wave toward landed work.
+
+## Stale Lane Reference Recovery
+
+```text
+Use CEO Flow. The Program Goal roster says W177D lives at thread id `THREAD_BAD_DEMO_123`, but `read_thread` returns "No Codex thread found". Recovery docs mention a similar demo/browser lane `THREAD_GOOD_DEMO_456`, and the project has other ready product-progress lanes. Do not create, archive, restore, or read raw sessions in this smoke test. Harvest safely.
+```
+
+Expected behavior: Codex should classify the bad id as `stale_lane_reference`, avoid retrying it in a loop, run bounded locator fallback using id prefix/title/task id/source_thread_id/project path/write-set/latest callback record/recovery package/compact memory, correct the roster to the likely replacement only if confidence is high, and otherwise recover compact Zhixia vault/Guardian evidence, mark `stale_no_evidence`, or route a fresh lane. It should keep the raw-session gate closed, update stale heartbeat prompts, and run a Program Goal portfolio check so one missing lane reference does not pause the whole project.
 
 ## Worker Callback And Ready Wave
 

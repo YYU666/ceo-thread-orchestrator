@@ -9,6 +9,7 @@ Before dispatching or doing implementation work, define:
 - intended files or modules;
 - maximum acceptable edit scope;
 - architecture, framework, API, persistence, naming, and UX invariants;
+- reference scan notes for substantial product, code, UI, architecture, workflow, or creative implementation: official docs, mature OSS/local patterns, what to borrow, what not to copy, and license boundary;
 - official/current docs or local references for unfamiliar APIs;
 - behavior that must remain unchanged;
 - required tests, screenshots, smoke checks, type checks, lint, format, or build checks;
@@ -20,6 +21,7 @@ Before dispatching or doing implementation work, define:
 Implementation workers must:
 
 - inspect existing architecture and local conventions before editing;
+- follow accepted reference patterns where relevant, but do not cargo-cult unrelated architecture or copy licensed/private code;
 - make the smallest behavior-preserving change that satisfies the task;
 - keep one coherent editing unit at a time;
 - for large work, land one function/component/route/module slice, verify it, then continue;
