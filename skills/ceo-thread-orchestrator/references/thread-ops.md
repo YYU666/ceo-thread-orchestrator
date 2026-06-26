@@ -239,6 +239,68 @@ For broad parallel projects, CEO harvest remains primary. Callback is a useful s
 
 Harvest drivers must track current lane ids and thread ids. A heartbeat, automation, or reminder that targets a superseded, retired, role-contaminated, or stale worker is itself stale.
 
+## Broken CEO Thread / Heartbeat Fuse
+
+Do not keep automatically harvesting or sending tasks to a CEO thread, project-main thread, or long-running heartbeat target that is no longer a safe execution surface.
+
+Treat these as degraded warnings:
+
+- one empty heartbeat or harvest turn;
+- one context-pressure or auto-compact event;
+- hot session size makes routine harvest noticeably expensive;
+- the target is slow but still producing useful new evidence.
+
+Treat these as immediate fuse conditions:
+
+- `systemError`, stream disconnected, reconnect loop, or repeated host/tool read failure;
+- `inProgress` for too long with no useful new output;
+- two consecutive heartbeat/harvest turns with `last_agent_message=null`, empty items, or no new evidence;
+- repeated `ContextLimit`, auto-compact loops, or near-window context pressure on every turn;
+- CEO/project-main thread is unreadable, archived, replaced, or missing.
+
+On fuse:
+
+1. Pause, delete, or supersede heartbeat/automation targeting the broken thread. Record `reason=broken_ceo_thread`.
+2. Do not fork the broken thread.
+3. Do not copy the full old chat, raw session, or giant knowledge dump into a new thread.
+4. Generate or update a compact `ThreadRecoveryPacket`.
+5. Create or designate a clean CEO takeover thread when tools and authorization allow it.
+6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, and Zhixia/Guardian/vault pointers.
+7. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
+8. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
+9. Write a compact WorkingMemory/evidence card.
+
+`ThreadRecoveryPacket` fields:
+
+```text
+threadId:
+thread title:
+canonical project root:
+symptom:
+recommendedReadOrder:
+current Program Goal Brief:
+compact project memory:
+known active worker/thread ids:
+vault/sourceRefs pointers:
+paused automation ids:
+replacement CEO thread id:
+next safe action:
+```
+
+Compact evidence card:
+
+```text
+BrokenThreadEvidence:
+brokenThreadId:
+symptom:
+pausedAutomationId:
+replacementCeoThreadId:
+recoveryPacketRefs:
+nextSafeAction:
+```
+
+Use `broken_ceo_thread` for CEO/project-main/heartbeat target failure. Use `stale_lane_reference` for a missing worker or review lane id. Missing worker ids should not pause the whole Program Goal.
+
 ## Missing Thread Locator
 
 When a rostered lane, heartbeat, callback, or recovery packet points to a `threadId` that host tools cannot read, CEO must not keep retrying that exact id in a loop. Classify the lane as `stale_lane_reference` and run a bounded locator pass before treating the work as lost.
@@ -282,6 +344,8 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 - A bound runtime Codex Goal can be the harvest driver when it references the Program Goal Brief and the CEO records lane roster, expected reports, callback policy, stop condition, and next harvest trigger. It does not replace evidence review or acceptance.
 - Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
 - No-stall worker mode reduces approval stalls but does not bypass host security UI or guarantee every thread has CEO-equivalent permissions.
+- Runtime Goal and project-main heartbeat should not be co-primary harvest drivers. If a bound runtime Goal is active, use heartbeat only for short-lived worker-local monitoring, external reminders, or fallback when goal tooling is unavailable.
+- Broken CEO/project-main threads must be taken over from a compact ThreadRecoveryPacket, not forked or copied wholesale.
 - Worker reports are evidence, not proof.
 - Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
 - Memory is not automatic unless a maintained memory provider or writeback routine exists.

@@ -15,6 +15,18 @@ At bootstrap, dispatch, reuse, review, harvest, and writeback:
 - do not treat old threads as free context;
 - prefer compact retrieval and source-backed packets over stacking instructions in long threads.
 
+When a CEO/project-main thread is broken or context-exhausted, recover through a compact `ThreadRecoveryPacket`, not by forking or copying the old chat.
+
+Recommended takeover read order:
+
+1. ThreadRecoveryPacket;
+2. Program Goal Brief and Completion Dashboard;
+3. compact project memory / Memory Runtime `retrieve_context(queryType=project_resume)`;
+4. active lane roster and latest callbacks;
+5. canonical project docs/source files;
+6. Zhixia/Guardian/vault sourceRefs;
+7. cold/raw session evidence only through the raw-session gate.
+
 ## Knowledge Provider Modes
 
 - `none`: no durable provider; use newest request, local source files, task cards, reports, and verification.

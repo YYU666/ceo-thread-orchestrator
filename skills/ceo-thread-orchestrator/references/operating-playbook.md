@@ -67,10 +67,28 @@ Runtime Goal rules:
 - It does not replace the Program Goal Brief.
 - It does not allow CEO to implement substantial work alone.
 - It does not replace harvest, evidence review, or accept/revise/block.
-- A bound active runtime Goal can be the harvest driver, so separate heartbeat/fixed-time harvest is optional while the Goal remains active.
+- A bound active runtime Goal can be the primary harvest driver, so separate heartbeat/fixed-time harvest is optional while the Goal remains active.
 - It represents the whole Program Goal, not every module, phase, wave, lane, heartbeat, or temporary sub-goal.
 
 If goal tooling is unavailable or blocked by host state, record `runtime_goal_unavailable` or `runtime_goal_host_state_blocked` and continue with Program Goal Brief plus ordinary harvest.
+
+## One Primary Harvest Driver Rule
+
+Each Program Goal should have exactly one primary harvest driver at a time. Driver priority:
+
+1. Active runtime Codex Goal bound to the Program Goal Brief.
+2. Immediate synchronous harvest.
+3. Explicit next harvest time.
+4. Heartbeat automation.
+
+When an active runtime Goal is bound to the Program Goal Brief:
+
+- do not create a project-main heartbeat for the same CEO thread;
+- pause, delete, or mark existing duplicate heartbeats as `superseded_by_runtime_goal`;
+- keep lane roster, expected reports, callback policy, stop condition, and evidence-to-inspect in the Program Goal Brief;
+- use heartbeat only for short-lived worker-local monitors, explicit external calendar reminders, or temporary fallback when goal tooling is unavailable or host goal state is blocked.
+
+If Goal and heartbeat both exist, CEO must name one primary driver and scope the other as local/temporary/external. Two co-primary drivers for the same Program Goal are a process smell because they can double-harvest, wake broken threads, and burn context.
 
 ## Runtime Goal Tool-State Guard
 
@@ -511,10 +529,10 @@ After dispatching any implementation/review lane, record one harvest driver:
 | --- | --- |
 | Immediate synchronous harvest | The worker is expected to return in the same turn/session |
 | Explicit next harvest time | User is present or short planned wait is enough |
-| Heartbeat automation | Work may run unattended and no runtime Goal is active |
+| Heartbeat automation | Work may run unattended and no runtime Goal is active, or the heartbeat is a short-lived worker-local/external reminder |
 | Active runtime Codex Goal | Program Goal is active and the Goal is bound to the Program Goal Brief |
 
-If runtime Goal is active and bound, separate heartbeat/fixed-time harvest is optional.
+If runtime Goal is active and bound, separate project-main heartbeat/fixed-time harvest is not needed and should not be co-primary.
 
 Still record:
 
@@ -522,7 +540,7 @@ Still record:
 - expected report;
 - callback policy;
 - stop condition;
-- next harvest trigger;
+- primary harvest driver and next harvest trigger;
 - evidence to inspect.
 
 ## 9. CEO Harvest Procedure
@@ -533,7 +551,7 @@ At every harvest:
 2. Read typed handoffs when present.
 3. Inspect diff, changed files, test output, screenshots, logs, or artifacts as risk requires.
 4. Check write-set and dependency conflicts.
-5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `role_contamination`, `stale_lane_reference`, or `stale_no_evidence`.
+5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `broken_ceo_thread`, `role_contamination`, `stale_lane_reference`, or `stale_no_evidence`.
 6. For accepted work, update Program Goal/Completion Dashboard and start next unblocked task.
 7. For revise work, send a bounded revision card.
 8. For blocked work, resolve as CEO, reroute, or escalate only if truly necessary.
@@ -544,6 +562,7 @@ Do not final after dispatch unless a harvest driver exists.
 Harvest driver freshness:
 
 - Do not let heartbeat/harvest prompts keep watching obsolete thread ids.
+- If a CEO/project-main thread or long-running heartbeat target is stream-broken, repeatedly empty, context-exhausted, unreadable, or unsafe as a harvest target, classify it as `broken_ceo_thread`, pause the heartbeat/automation, and run the ThreadRecoveryPacket takeover path in `thread-ops.md`.
 - If a recorded worker/review `threadId` is not found, classify it as `stale_lane_reference` and run the bounded locator path from `thread-ops.md` before retrying, blocking, or declaring the evidence lost. Use locator anchors such as id prefix, title, task id, `source_thread_id`, project/cwd, write-set, latest callback record, recovery package, and Zhixia/Guardian/vault metadata.
 - When a lane is superseded, role-contaminated, archived, or replaced, update or delete its heartbeat.
 - If the real work completed in a nested child thread, harvest that child explicitly and mark the parent `role_contamination` or `superseded`.

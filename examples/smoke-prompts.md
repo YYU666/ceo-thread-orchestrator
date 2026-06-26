@@ -290,6 +290,14 @@ Use CEO Flow. A Program Goal has an active runtime Codex Goal bound to its Progr
 
 Expected behavior: Codex should say a separate heartbeat or fixed next-harvest time is optional because the active runtime goal can serve as the harvest driver. It must still record lane roster, expected reports, callback policy, stop condition, and next harvest trigger, and must not treat the runtime goal as replacing CEO harvest, evidence review, or accept/revise/block decisions.
 
+## One Primary Harvest Driver
+
+```text
+Use CEO Flow. A Program Goal already has an active runtime Codex Goal bound to its Program Goal Brief, and an old project-main heartbeat also wakes the same CEO thread every 15 minutes. Do not create, delete, or edit automations in this smoke test. Decide what the CEO should do.
+```
+
+Expected behavior: Codex should state that one Program Goal should have one primary harvest driver. The active runtime Goal should be primary, and the duplicate project-main heartbeat should be paused/deleted/marked `superseded_by_runtime_goal` unless it is clearly a short-lived worker-local monitor or external calendar reminder. Codex should keep lane roster, expected reports, callback policy, stop condition, and evidence-to-inspect in the Program Goal Brief, not run two co-primary harvest loops.
+
 ## CEO Harvest Loop
 
 ```text
@@ -305,6 +313,14 @@ Use CEO Flow. The Program Goal roster says W177D lives at thread id `THREAD_BAD_
 ```
 
 Expected behavior: Codex should classify the bad id as `stale_lane_reference`, avoid retrying it in a loop, run bounded locator fallback using id prefix/title/task id/source_thread_id/project path/write-set/latest callback record/recovery package/compact memory, correct the roster to the likely replacement only if confidence is high, and otherwise recover compact Zhixia vault/Guardian evidence, mark `stale_no_evidence`, or route a fresh lane. It should keep the raw-session gate closed, update stale heartbeat prompts, and run a Program Goal portfolio check so one missing lane reference does not pause the whole project.
+
+## Broken CEO Thread Heartbeat Fuse
+
+```text
+Use CEO Flow. A project-main CEO thread has an active heartbeat. Two consecutive heartbeat turns completed with last_agent_message=null and no items, and the same thread recently hit ContextLimit. Do not create threads, fork, delete automations, restore sessions, or read raw sessions in this smoke test. Decide the safe recovery route.
+```
+
+Expected behavior: Codex should classify the target as `broken_ceo_thread`, stop treating it as a safe harvest target, pause/supersede the heartbeat in plan, and generate a compact ThreadRecoveryPacket with thread id/title, canonical project root, recommended read order, Program Goal Brief, compact memory, active worker ids, sourceRefs/vault pointers, paused automation id, replacement CEO thread placeholder, and next safe action. It should not fork the broken thread or copy the full old chat. The takeover path should read compact packet/project docs first and use raw/vault session only as cold evidence under the raw-session gate.
 
 ## Worker Callback And Ready Wave
 

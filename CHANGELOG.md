@@ -20,6 +20,8 @@
 - Added lightweight state-discipline guidance so CEO Flow borrows evidence-backed state transitions from legacy workflow thinking without loading old task pools, leases, supervisors, review queues, or completion ledgers by default.
 - Added a lightweight Reference Scan Gate so substantial coding/product/architecture/UI/workflow/creative work starts from official docs, mature open-source patterns, excellent examples, and local conventions without becoming heavy research.
 - Added stale lane reference recovery rules so missing, typoed, archived, or replaced worker/review thread ids trigger bounded locator fallback instead of retry loops or whole-program stalls.
+- Added one-primary-harvest-driver rules so active runtime Goals and project-main heartbeats do not run as duplicate co-primary harvest loops.
+- Added Broken CEO Thread / Heartbeat Fuse rules so stream-broken, repeatedly empty, context-exhausted, or unreadable CEO heartbeat targets move to compact ThreadRecoveryPacket takeover instead of being re-harvested or forked.
 
 ## v0.2.6 - Zhixia Context Slimming And Neutral Review
 
