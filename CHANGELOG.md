@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added a static `scripts/smoke_eval.py` harness plus `examples/smoke-eval-cases.json` to guard policy coverage for recent CEO Flow regressions without calling an LLM.
+- Added `references/state-schema.md` to formalize Program Goal, Completion Dashboard, lane roster, harvest driver, decision, ThreadRecoveryPacket, and memory candidate contracts.
+- Slimmed the main `SKILL.md` into a lean operating entry point and moved detailed state/goal/harvest policy behind references for progressive disclosure.
+
 - Upgraded the CEO Flow pipeline layer beyond MVP with bundled `pipeline.yaml`, `typed_handoff.yaml`, `review_handoff.yaml`, and `scorecard.md` templates.
 - Added lightweight `validate_pipeline.py` and `scorecard_handoff.py` scripts so pipeline contracts and worker/review handoffs can be checked before CEO acceptance.
 - Added an operating playbook reference that gives a stable end-to-end decision flow for direct answers, CEO-only work, worker callbacks, runtime Goal harvest drivers, parallel waves, pipeline contracts, approval stalls, and accept/revise/block closure.

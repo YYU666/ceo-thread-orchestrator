@@ -465,3 +465,12 @@ Use CEO Flow. The user asks to borrow lessons from an old automatic workflow sta
 ```
 
 Expected behavior: Codex should keep CEO Flow lightweight. It should use the Program Goal Brief, Completion Dashboard, lane roster, terminal evidence, scoped blockers, and next transition as the state source of truth. It should explicitly avoid loading or recreating legacy workflow-runtime machinery unless the project has an explicitly enabled `configured workflow`.
+
+## Static Smoke Eval Harness
+
+```text
+python scripts/smoke_eval.py
+python scripts/smoke_eval.py --json
+```
+
+Expected behavior: The script should validate `examples/smoke-eval-cases.json` without calling an LLM. It checks that each smoke case has required fields and that the skill/reference corpus still contains the policy terms for recent regressions such as direct fallback, runtime Goal routing, one primary harvest driver, stale lane recovery, broken CEO thread recovery, role contamination, MVP continuation, module-pause portfolio steering, reference scan, and Memory Runtime lifecycle. Passing this harness is evidence of prompt-policy coverage only; it does not replace forward testing with real Codex threads.

@@ -1,0 +1,193 @@
+[
+  {
+    "id": "ordinary-coding-false-positive",
+    "title": "Ordinary coding should not force heavy CEO ceremony",
+    "prompt": "Fix this tiny failing unit test directly in this small repo. Do not use CEO Flow unless project instructions require it.",
+    "expected_labels": [
+      "smallest mode",
+      "avoid unnecessary lanes"
+    ],
+    "forbidden_labels": [
+      "heavy orchestration",
+      "unneeded new lanes"
+    ],
+    "coverage_terms": [
+      "smallest mode",
+      "tiny",
+      "direct"
+    ]
+  },
+  {
+    "id": "direct-fallback-hard-gate",
+    "title": "Direct CEO fallback is gated for substantial coding",
+    "prompt": "Use CEO Flow for a substantial Electron IPC + UI + tests change; decide whether CEO may code directly.",
+    "expected_labels": [
+      "direct CEO fallback gated",
+      "discover thread tools first"
+    ],
+    "forbidden_labels": [
+      "CEO implements by default"
+    ],
+    "coverage_terms": [
+      "Direct CEO fallback",
+      "thread tools",
+      "failed"
+    ]
+  },
+  {
+    "id": "runtime-goal-does-not-override-routing",
+    "title": "Runtime Goal supports continuity, not solo implementation",
+    "prompt": "A runtime Goal is active and the next task is substantial UI + backend coding.",
+    "expected_labels": [
+      "Goal is continuity",
+      "route worker/review"
+    ],
+    "forbidden_labels": [
+      "goal means CEO codes alone"
+    ],
+    "coverage_terms": [
+      "runtime Codex Goal",
+      "does not replace",
+      "implementer"
+    ]
+  },
+  {
+    "id": "one-primary-harvest-driver",
+    "title": "Goal and heartbeat must not be co-primary harvest drivers",
+    "prompt": "A Program Goal has active runtime Goal and old project-main heartbeat.",
+    "expected_labels": [
+      "one primary harvest driver",
+      "superseded_by_runtime_goal"
+    ],
+    "forbidden_labels": [
+      "duplicate harvest loops"
+    ],
+    "coverage_terms": [
+      "one primary harvest driver",
+      "superseded_by_runtime_goal",
+      "heartbeat"
+    ]
+  },
+  {
+    "id": "stale-lane-reference",
+    "title": "Missing thread id triggers locator instead of retry loop",
+    "prompt": "read_thread cannot find a rostered worker id.",
+    "expected_labels": [
+      "stale_lane_reference",
+      "locator fallback"
+    ],
+    "forbidden_labels": [
+      "whole program blocked"
+    ],
+    "coverage_terms": [
+      "stale_lane_reference",
+      "locator",
+      "id prefix"
+    ]
+  },
+  {
+    "id": "broken-ceo-thread-fuse",
+    "title": "Broken CEO heartbeat target requires recovery packet",
+    "prompt": "Two heartbeat turns have empty output and ContextLimit happened.",
+    "expected_labels": [
+      "broken_ceo_thread",
+      "ThreadRecoveryPacket"
+    ],
+    "forbidden_labels": [
+      "fork broken thread",
+      "copy full old chat"
+    ],
+    "coverage_terms": [
+      "broken_ceo_thread",
+      "ThreadRecoveryPacket",
+      "Do not fork"
+    ]
+  },
+  {
+    "id": "worker-role-contamination",
+    "title": "Forked worker acting as router is contaminated",
+    "prompt": "A worker says it will create another backend thread and wait.",
+    "expected_labels": [
+      "role_contamination",
+      "replace clean lane"
+    ],
+    "forbidden_labels": [
+      "keep nudging contaminated worker"
+    ],
+    "coverage_terms": [
+      "role_contamination",
+      "self-routing",
+      "worker-only"
+    ]
+  },
+  {
+    "id": "mvp-not-final",
+    "title": "MVP is milestone for full product Program Goals",
+    "prompt": "MVP tests pass but Program Goal says complete product.",
+    "expected_labels": [
+      "phase transition",
+      "next full-version wave"
+    ],
+    "forbidden_labels": [
+      "stop at MVP by default"
+    ],
+    "coverage_terms": [
+      "MVP",
+      "full-version",
+      "phase transition"
+    ]
+  },
+  {
+    "id": "module-pause-not-project-pause",
+    "title": "Module pause triggers portfolio steering",
+    "prompt": "A diagnostic subline returns pause while product-facing waves remain.",
+    "expected_labels": [
+      "module_pause_only",
+      "portfolio check"
+    ],
+    "forbidden_labels": [
+      "project pause"
+    ],
+    "coverage_terms": [
+      "module_pause_only",
+      "portfolio check",
+      "product-progress"
+    ]
+  },
+  {
+    "id": "reference-scan-before-build",
+    "title": "Substantial build starts from references",
+    "prompt": "Build a substantial calendar-style UI and backend sync flow.",
+    "expected_labels": [
+      "Reference Scan Gate",
+      "official docs or mature OSS"
+    ],
+    "forbidden_labels": [
+      "invent from scratch"
+    ],
+    "coverage_terms": [
+      "Reference Scan Gate",
+      "mature open-source",
+      "license"
+    ]
+  },
+  {
+    "id": "memory-runtime-lifecycle",
+    "title": "Memory Runtime hooks stay compact and source-backed",
+    "prompt": "Resume paused bug fix, dispatch worker, review result, preserve learning.",
+    "expected_labels": [
+      "retrieve_context",
+      "writeback evidence",
+      "promotion boundary"
+    ],
+    "forbidden_labels": [
+      "raw session by default",
+      "giant Markdown"
+    ],
+    "coverage_terms": [
+      "Memory Runtime",
+      "writeback",
+      "promotion"
+    ]
+  }
+]

@@ -216,7 +216,7 @@ Heartbeats are not the main continuity source. Program Goal Brief plus the runti
 
 ## Lightweight State Discipline, Not Workflow Runtime
 
-CEO Flow should borrow workflow discipline without becoming a workflow engine.
+CEO Flow should borrow workflow discipline without becoming a workflow engine. Use `state-schema.md` for compact Program Goal, dashboard, roster, harvest driver, decision, recovery, and memory-candidate field contracts.
 
 Default source of truth:
 
