@@ -16,6 +16,7 @@ This is the default operating order. Do not invent a heavier process unless the 
 | Complete product / multi-phase program | Core Team execution + Goal Loop | Program Goal Brief + Completion Dashboard + review gate | lanes by wave + review |
 | Broad separable PRD needing unattended work | Core Team execution + pipeline contract | Program Goal Brief + `pipeline.yaml` or section + review gate | N lanes + review |
 | Worker/reviewer task card from another CEO | Bounded worker/reviewer | report/handoff only | do not self-promote to CEO |
+| One-shot exploration, audit, or verification | CEO-only or Core Team sidecar | contractor trace if used | temporary contractor/subagent allowed |
 
 If the task is not substantial, do not force CEO ceremony.
 
@@ -304,12 +305,15 @@ Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowl
 Workspace:
 Allowed write-set:
 Task card:
+Contractor/subagent policy:
 Callback policy:
 Stop condition:
 May create/route/fork threads: yes/no
 ```
 
 Default `May create/route/fork threads` is `no` for implementation, review, UX, knowledge, and research lanes. Only the CEO/router lane may create or route threads unless the task card explicitly grants that operation.
+
+Default `May use contractors/subagents` is `no` for durable visible lanes unless the task card explicitly grants bounded outside help. Contractors may help with one-shot exploration, audit, verification, disposable research, or disjoint bounded patches. They are not durable lanes, and their hidden context is not project history until the visible lane reports a contractor trace.
 
 If a worker/reviewer starts acting like CEO, says it will create another worker, waits for another lane to report, or tries to inspect CEO state without being asked, classify the lane as `role_contamination` and either correct it with a hard role-reset card or supersede it with a clean lane.
 
@@ -463,9 +467,11 @@ validate_pipeline.py for pipeline/workflow files
 scorecard_handoff.py for worker/review handoffs
 ```
 
-Workers ask CEO, not the user, for routine in-scope questions. Escalate to the user only for out-of-scope changes, destructive actions, credentials, spending, legal/security/product-direction decisions, missing business facts, or changed done criteria.
+For visual/UI/game/design tasks, workers must preserve visual QA by inspecting local screenshots or image artifacts, but callbacks carry only artifact paths, hashes, dimensions, summaries, and decisions. Workers ask CEO, not the user, for routine in-scope questions. Escalate to the user only for out-of-scope changes, destructive actions, credentials, spending, legal/security/product-direction decisions, missing business facts, or changed done criteria.
 
 Worker lanes must not create, fork, route, inspect, or wait on other CEO/worker threads unless the task card explicitly asks. If a worker starts acting as a CEO/router, classify it as `role_contamination`.
+
+Worker lanes may use contractor/subagents only when the task card grants that operation. If granted, the worker remains responsible for integration and must report what each contractor did, what evidence/files it touched, what changed, what tests ran, limitations, and source refs. Without that contractor trace, CEO treats the contractor result as insufficient evidence for durable memory or acceptance.
 
 ## 7. Worker Report / Handoff Rules
 
@@ -482,9 +488,11 @@ Write-set compliance:
 Commands run:
 Results:
 Evidence/artifacts:
+Visual evidence paths/hashes/summaries, if any:
 Risks/assumptions:
 Recommended next action:
 Memory candidates:
+Contractor traces, if any:
 ```
 
 Role contamination indicators:
@@ -549,7 +557,7 @@ At every harvest:
 
 1. Read callbacks/reports.
 2. Read typed handoffs when present.
-3. Inspect diff, changed files, test output, screenshots, logs, or artifacts as risk requires.
+3. Inspect diff, changed files, test output, local screenshots, logs, or artifacts as risk requires; do not ingest image/base64 payloads into the CEO thread.
 4. Check write-set and dependency conflicts.
 5. Classify each lane: `accepted`, `revise`, `blocked`, `superseded`, `still_running`, `stale`, `broken_ceo_thread`, `role_contamination`, `stale_lane_reference`, or `stale_no_evidence`.
 6. For accepted work, update Program Goal/Completion Dashboard and start next unblocked task.

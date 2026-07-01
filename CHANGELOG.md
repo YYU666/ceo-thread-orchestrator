@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added visual evidence and image payload safety rules: visual QA remains required, but screenshots/reference/generated images stay in local artifacts while callbacks, memory, FlowSkill candidates, and third-party logs use paths, hashes, summaries, and decisions only.
+
+- Added a Contractor/Subagent outside-help role so temporary subagents can support exploration, audit, verification, or disjoint bounded patches without replacing durable visible lanes; contractor traces preserve history for memory providers.
+
 - Added a static `scripts/smoke_eval.py` harness plus `examples/smoke-eval-cases.json` to guard policy coverage for recent CEO Flow regressions without calling an LLM.
 - Added `references/state-schema.md` to formalize Program Goal, Completion Dashboard, lane roster, harvest driver, decision, ThreadRecoveryPacket, and memory candidate contracts.
 - Slimmed the main `SKILL.md` into a lean operating entry point and moved detailed state/goal/harvest policy behind references for progressive disclosure.

@@ -13,9 +13,10 @@ At bootstrap, dispatch, reuse, review, harvest, and writeback:
 - do not send full `.codex-knowledge/` or long generated knowledge files by default;
 - do not read raw sessions or long chat transcripts by default;
 - do not treat old threads as free context;
-- prefer compact retrieval and source-backed packets over stacking instructions in long threads.
+- prefer compact retrieval and source-backed packets over stacking instructions in long threads;
+- for visual tasks, keep screenshots/reference/generated images in local artifacts and pass only paths, hashes, dimensions, short summaries, and decisions through chat and memory.
 
-When a CEO/project-main thread is broken or context-exhausted, recover through a compact `ThreadRecoveryPacket`, not by forking or copying the old chat.
+When a CEO/project-main thread is broken, context-exhausted, or bloated by image/base64 payloads, recover through a compact `ThreadRecoveryPacket`, not by forking or copying the old chat or visual payloads.
 
 Recommended takeover read order:
 
@@ -170,6 +171,7 @@ write-set:
 changed files:
 commands/tests:
 artifacts:
+visual evidence: paths + hashes + dimensions + short summaries only; no image bytes/base64/data:image
 review decision:
 sourceRefs:
 freshness:
@@ -192,6 +194,36 @@ Keep these as `candidate` or `review` unless confirmed by the user, a configured
 - executable, install, archive, compact, restore, security, privacy, credential, spending, or destructive-action recommendations.
 
 Guardian or equivalent history providers may supply provenance and receipts, but they do not own project memory promotion.
+
+
+
+## Visual Evidence Memory Boundary
+
+For UI, game screen, design restoration, screenshot comparison, generated-image review, and other visual tasks, memory writeback must remain path-based.
+
+Allowed in hot memory, Zhixia/project memory, FlowSkill candidates, worker callbacks, and handoffs:
+
+- local artifact path or folder path;
+- hash;
+- dimensions;
+- timestamp;
+- short OCR/visual summary;
+- design conclusion;
+- accepted/revise/block decision;
+- remaining visual issues;
+- source/provenance refs.
+
+Forbidden in hot-readable memory and writeback:
+
+- image attachments;
+- raw image bytes;
+- base64;
+- `data:image` URLs;
+- full screenshot JSON;
+- complete third-party request bodies;
+- large OCR transcripts or stacked multi-image visual dumps.
+
+Original image files stay in project artifacts. Raw Codex sessions remain cold vault evidence. Do not edit raw session files as a memory writeback operation.
 
 ## Old-Thread Continuity
 

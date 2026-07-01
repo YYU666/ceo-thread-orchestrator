@@ -189,5 +189,82 @@
       "writeback",
       "promotion"
     ]
+  },
+  {
+    "id": "contractor-subagent-boundary",
+    "title": "Subagents are temporary contractors, not durable lanes",
+    "prompt": "A long-running product needs visible implementation and review roles, but subagents are available and do not ask for thread creation approval.",
+    "expected_labels": [
+      "Contractor/Subagent",
+      "visible threads for durable lanes",
+      "ContractorTrace"
+    ],
+    "forbidden_labels": [
+      "subagents replace formal lanes",
+      "hidden history accepted"
+    ],
+    "coverage_terms": [
+      "Contractor/Subagent",
+      "ContractorTrace",
+      "visible Codex threads"
+    ]
+  },
+  {
+    "id": "visual-evidence-local-artifacts-only",
+    "title": "Visual QA stays enabled but image payloads stay local",
+    "prompt": "A UI worker must compare many reference images and screenshots for a redesign.",
+    "expected_labels": [
+      "local-artifacts-only",
+      "paths+hash+summary",
+      "visual QA enabled"
+    ],
+    "forbidden_labels": [
+      "disable visual review",
+      "base64 callback",
+      "image attachments"
+    ],
+    "coverage_terms": [
+      "local-artifacts-only",
+      "paths+hash+summary",
+      "data:image"
+    ]
+  },
+  {
+    "id": "visual-payload-broken-thread-recovery",
+    "title": "Giant image/base64 thread triggers compact recovery",
+    "prompt": "A project-main thread exceeds 50 MB due to screenshots and data:image/base64 payloads.",
+    "expected_labels": [
+      "ThreadRecoveryPacket",
+      "visual artifact index",
+      "cold vault"
+    ],
+    "forbidden_labels": [
+      "fork bloated thread",
+      "copy image history"
+    ],
+    "coverage_terms": [
+      "50 MB",
+      "visual artifact index",
+      "image/base64"
+    ]
+  },
+  {
+    "id": "visual-memory-writeback-boundary",
+    "title": "Memory and FlowSkill store visual paths, not image bodies",
+    "prompt": "Generated-image review produced local PNG candidates and accepted output.",
+    "expected_labels": [
+      "artifact path",
+      "hash",
+      "visual summary"
+    ],
+    "forbidden_labels": [
+      "image bytes in memory",
+      "complete request bodies"
+    ],
+    "coverage_terms": [
+      "FlowSkill candidates",
+      "image bytes",
+      "base64"
+    ]
   }
 ]

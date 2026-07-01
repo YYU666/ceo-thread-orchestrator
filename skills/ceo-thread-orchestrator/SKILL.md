@@ -38,16 +38,19 @@ Use the smallest mode that can safely finish the next objective. When host tool 
 9. Before dispatch, assign a lane roster: one primary role, workspace, write-set, task card, callback policy, stop condition, and thread-operation permission per lane.
 10. Prefer reusable/clean visible lanes over new one-shot threads; prefer clean worker creation/reuse over forking CEO context. Do not fork workers from active/unfinished CEO turns.
 11. Direct CEO fallback for substantial coding is forbidden until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined. Under an active runtime Goal, it is only a bounded one-turn lease with restoration plan.
-12. Dispatch compact task cards only. Do not paste long CEO chat, full knowledge bases, raw sessions, or CEO self-routing instructions into worker prompts.
-13. Require neutral review before final acceptance for substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing/high-risk work, or repeated-fix recovery.
+12. Dispatch compact task cards only. Do not paste long CEO chat, full knowledge bases, raw sessions, image attachments/base64/data:image payloads, or CEO self-routing instructions into worker prompts.
+13. Require neutral review before final acceptance for substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing/high-risk work, or repeated-fix recovery. UI, game, design, screenshot, and generated-image tasks still require visual inspection from local artifacts.
 14. After dispatching implementation/review lanes, record exactly one primary harvest driver: active runtime Goal, immediate synchronous harvest, explicit next harvest time, or heartbeat automation. Do not run a project-main heartbeat and runtime Goal as co-primary drivers.
 15. Run parallel waves when tasks are independent, write-sets/verification/resources are isolated, contracts are stable, and harvest/review capacity exists. If multiple independent ready tasks exist, dispatch/queue all safe tasks or record why they are serial.
-16. Use no-stall worker mode: task cards preauthorize routine in-scope command families; workers report `approval_stall` to CEO instead of asking the user for routine approvals.
-17. For single-writer or non-parallelizable projects, keep one implementation lane plus compact callback to CEO when thread messaging exists; add read-only review/audit lanes only when safe.
-18. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, then decide `accept | revise | block | supersede`. Worker self-routing or waiting on another lane is `role_contamination` unless explicitly authorized.
-19. After any terminal lane/module/subline/heartbeat/runtime sub-goal result, run a Program Goal portfolio check. A module pause is not a project pause while safe product-progress waves remain.
-20. If a rostered lane id is missing, classify `stale_lane_reference` and run the thread locator before retrying. If the CEO/project-main heartbeat target is stream-broken, repeatedly empty, context-exhausted, or unreadable, run the Broken CEO Thread / Heartbeat Fuse and recover from a compact ThreadRecoveryPacket.
-21. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, or knowledge items.
+16. Use Contractor/Subagent lanes only as temporary bounded outside help: exploration, read-only audit, quick verification, disposable research, or disjoint bounded patches that CEO or a visible lane can review and integrate. Do not use contractors as substitutes for durable visible implementation/review/UX/release/memory lanes when user-visible progress, later harvest, or memory traceability matters.
+17. If a visible CEO-created lane is allowed to use contractors, its task card must say so, define contractor scope, forbid contractor self-routing, and require a compact contractor trace in the lane report.
+18. For visual work, use `local-artifacts-only`: screenshots/reference images stay in project artifacts; callbacks, task cards, memory, FlowSkill candidates, and third-party logs carry only paths, hashes, dimensions, short summaries, and decisions. Do not embed image attachments, base64, or `data:image` unless a single user-supplied image is explicitly needed within budget.
+19. Use no-stall worker mode: task cards preauthorize routine in-scope command families; workers report `approval_stall` to CEO instead of asking the user for routine approvals.
+20. For single-writer or non-parallelizable projects, keep one implementation lane plus compact callback to CEO when thread messaging exists; add read-only review/audit lanes only when safe.
+21. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, then decide `accept | revise | block | supersede`. Worker self-routing or waiting on another lane is `role_contamination` unless explicitly authorized.
+22. After any terminal lane/module/subline/heartbeat/runtime sub-goal result, run a Program Goal portfolio check. A module pause is not a project pause while safe product-progress waves remain.
+23. If a rostered lane id is missing, classify `stale_lane_reference` and run the thread locator before retrying. If the CEO/project-main heartbeat target is stream-broken, repeatedly empty, context-exhausted, or unreadable, run the Broken CEO Thread / Heartbeat Fuse and recover from a compact ThreadRecoveryPacket.
+24. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, contractor traces, or knowledge items.
 
 ## Role Contract
 
@@ -71,6 +74,7 @@ Default roles:
 - Product / UX Expert: handles flows, UI, interaction, copy, screenshots, and design-system fit when material.
 - Knowledge / Memory Expert: promotes accepted lessons after evidence exists.
 - Research / Docs Expert: checks current external facts, official docs, APIs, benchmarks, market, or policy when freshness matters.
+- Contractor / Temporary Subagent: outside-help role for bounded exploration, read-only audit, quick verification, disposable research, or disjoint bounded patches. Contractors are not durable lanes; their work becomes project history only through a CEO/worker evidence summary, handoff, or memory candidate.
 
 Default minimum execution is CEO plus one implementation lane. Add neutral review for substantial app-code and high-risk work. Add UX, research, or knowledge only when the task graph needs them.
 
@@ -87,6 +91,7 @@ Allowed write-set / do not touch:
 Lane ID / planned title:
 Thread operation:
 CEO thread id / callback policy:
+Contractor/subagent policy:
 Role contamination guard:
 Reasoning profile:
 Memory packet / retrieved source refs:
@@ -96,6 +101,12 @@ Architecture invariants / reference scan:
 Depends on / parallel with:
 Acceptance criteria:
 Required verification:
+Visual evidence policy:
+Reference input:
+Screenshot output:
+Image budget:
+Artifact return policy:
+Forbidden visual payloads:
 Change budget / quality gates:
 Knowledge provider mode:
 Memory Runtime query / context budget:
@@ -112,11 +123,11 @@ Autonomy levels: `advise-only`, `draft-only`, `implement-within-write-set`, `ope
 
 CEO Flow is a runtime context governor, not a Windows maintenance daemon or automatic cleanup tool.
 
-Default packet: newest goal, bounded task card, allowed write-set, verification commands, relevant source refs, compact memory excerpts, and a short history budget.
+Default packet: newest goal, bounded task card, allowed write-set, verification commands, relevant source refs, compact memory excerpts, path/hash/summary visual evidence when relevant, and a short history budget.
 
 Knowledge provider modes: `none`, `project-memory`, `zhixia-local-docs`, `guardian-history`, `hybrid`.
 
-Use compact retrieval before raw chat or broad history. Old-thread slimming must preserve recallable full history in a Thread History Vault or equivalent source-backed archive before selected-thread compaction is accepted. Cold/raw history stays behind the hard gate.
+Use compact retrieval before raw chat, broad history, or visual payloads. Old-thread slimming must preserve recallable full history in a Thread History Vault or equivalent source-backed archive before selected-thread compaction is accepted. Cold/raw history stays behind the hard gate.
 
 ## Decision Gate
 
@@ -149,6 +160,7 @@ Read only the reference needed for the current task:
 - PRD waves, dependency graph, and safe parallel execution: `references/parallel-waves.md`.
 - Pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
 - Memory Runtime, Zhixia/Guardian, old-thread continuity, context slimming, restore, raw-session gates: `references/context-memory.md`.
+- Visual evidence, image payload budgets, local artifact policy, and third-party visual request limits: `references/visual-evidence.md`.
 - FlowSkill reusable-skill search/capture/score hook: `references/flowskill-hook.md`.
 - Failure-triggered reflection and rule-candidate promotion: `references/self-harness.md`.
 - Code quality, neutral review, doom-loop recovery, accept/revise/block criteria: `references/quality-gate.md`.

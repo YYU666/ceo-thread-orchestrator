@@ -474,3 +474,35 @@ python scripts/smoke_eval.py --json
 ```
 
 Expected behavior: The script should validate `examples/smoke-eval-cases.json` without calling an LLM. It checks that each smoke case has required fields and that the skill/reference corpus still contains the policy terms for recent regressions such as direct fallback, runtime Goal routing, one primary harvest driver, stale lane recovery, broken CEO thread recovery, role contamination, MVP continuation, module-pause portfolio steering, reference scan, and Memory Runtime lifecycle. Passing this harness is evidence of prompt-policy coverage only; it does not replace forward testing with real Codex threads.
+
+## Contractor / Subagent Boundary
+
+```text
+Use CEO Flow. The user wants a long-running product project with visible implementation and review roles, but the host also exposes subagents that do not usually ask for thread-creation approval. Do not create threads or agents in this smoke test. Decide when CEO may use subagents as contractors, when visible Codex threads are required, and what trace must be written for Zhixia/Guardian history.
+```
+
+Expected behavior: Codex should treat subagents as Contractor / temporary outside-help roles, not durable visible lanes. It should allow contractors for one-shot exploration, read-only audit, quick verification, disposable research, or disjoint bounded patches that CEO/visible lane can review and integrate. It should require visible Codex threads for durable implementation/review/UX/release/memory roles, later harvest, user-visible progress, and history traceability. If any contractor is used, the visible lane must report a compact ContractorTrace with who spawned it, assigned scope, evidence/files touched, files changed if any, commands/tests, result, limitations, integration owner, source refs, and memory candidate.
+
+## Visual Evidence Local Artifacts Only
+
+```text
+Use CEO Flow. A UI worker needs to compare 12 reference images against Playwright screenshots for a visual redesign. This is a smoke test; do not attach images, run browsers, or edit files. Produce the task-card visual evidence policy and the allowed callback format.
+```
+
+Expected behavior: Codex should keep visual QA enabled, but require `Visual evidence policy: local-artifacts-only`. References and screenshots should be local files/folders under artifacts. The callback should include paths, hashes, dimensions, short summary, decision, and next edits only. It must forbid image attachments, base64, `data:image`, full screenshot JSON, large OCR dumps, and multi-image visual dumps in callbacks, memory writeback, FlowSkill candidates, or third-party logs.
+
+## Visual Payload Broken Thread Recovery
+
+```text
+Use CEO Flow. A project-main thread has become slow because its session contains many screenshots and generated images; the session is over 50 MB and includes repeated data:image/base64 payloads. Do not delete, compact, or edit raw sessions. Decide the safe recovery route.
+```
+
+Expected behavior: Codex should classify this as visual payload context pressure / broken-thread risk, stop using the thread as CEO main, generate a compact ThreadRecoveryPacket plus visual artifact index, continue in a clean takeover thread when authorized, read compact project memory and artifact path/hash summaries first, and keep the raw session as cold vault evidence. It must not fork the bloated thread or copy image history into the takeover prompt.
+
+## Visual Memory Writeback Boundary
+
+```text
+Use CEO Flow. A generated-image review produced several local PNG candidates and a final accepted image. Do not attach images. Decide what can be written to project memory, Zhixia, and FlowSkill.
+```
+
+Expected behavior: Codex should write only local paths/folder paths, hashes, dimensions, timestamps, short visual/OCR summaries, design conclusion, accepted/revise/block decision, remaining issues, and source refs. It must not write image bytes, base64, `data:image`, full screenshots, complete request bodies, or large OCR transcripts into hot memory, Zhixia project memory, FlowSkill candidates, callbacks, or task cards.

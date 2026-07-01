@@ -12,7 +12,7 @@ Before dispatching or doing implementation work, define:
 - reference scan notes for substantial product, code, UI, architecture, workflow, or creative implementation: official docs, mature OSS/local patterns, what to borrow, what not to copy, and license boundary;
 - official/current docs or local references for unfamiliar APIs;
 - behavior that must remain unchanged;
-- required tests, screenshots, smoke checks, type checks, lint, format, or build checks;
+- required tests, local artifact screenshots, smoke checks, type checks, lint, format, or build checks;
 - rollback baseline;
 - stop condition if the fix starts spreading.
 
@@ -46,7 +46,7 @@ The CEO checks more than "does it run":
 - existing helpers were reused when appropriate;
 - edge cases and failure paths are preserved;
 - tests or smoke checks cover changed behavior;
-- UI/workflow changes are verified through user-visible behavior where possible;
+- UI/workflow/game/design changes are verified through user-visible behavior and local screenshot/artifact inspection where possible; callbacks and memory keep only paths, hashes, dimensions, summaries, and decisions;
 - static checks/lint/type/build were run when available;
 - no unrelated cleanup, formatting churn, dependency changes, or hidden product decisions are bundled;
 - residual risk is explicit.
@@ -63,7 +63,7 @@ Reviewer posture:
 - report missed acceptance criteria, regressions, unclear evidence, and test gaps;
 - do not flatter or reassure weak work.
 
-Reviewer starts from task card, diff, tests, artifacts, relevant docs, and compact evidence refs. Do not send the implementation thread's long conversation unless a specific unresolved claim requires it and CEO states reason and token budget.
+Reviewer starts from task card, diff, tests, local artifacts/screenshots by path, relevant docs, and compact evidence refs. Do not send image attachments/base64/data:image, full screenshot JSON, or the implementation thread's long conversation unless a specific unresolved claim requires it and CEO states reason and token budget.
 
 ## Doom Loop Recovery
 

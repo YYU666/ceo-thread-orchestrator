@@ -55,17 +55,18 @@ Sidebar cleanup:
 - Archive/retire stale or superseded lanes only after a compact handoff, memory pointer, or reason is recorded.
 - Prefer one stable implementation lane per project/domain, one review lane for high-risk work, and one knowledge lane only when durable memory work is active.
 
-## Subagent Gate
+## Contractor / Subagent Gate
 
-Subagents are temporary bounded scouts, not durable visible lanes.
+Subagents are CEO Flow's Contractor / outside-help role. They are temporary bounded scouts, not durable visible lanes. Treat them like short-term contractors: useful for speed and parallel evidence gathering, but not the source of truth for project ownership, user-visible progress, long-running memory, or final acceptance.
 
-Use subagents for:
+Use contractors/subagents for:
 
 - one-shot codebase exploration;
 - read-only audit or comparison;
 - quick independent verification;
 - disposable research that does not need user-visible thread continuity;
 - bounded implementation only when the write-set is disjoint, the result can be reviewed/integrated by CEO, and the user/tool contract allows subagent delegation.
+- sidecar work that a visible CEO or worker lane can summarize into evidence without needing the contractor's full private context later.
 
 Prefer visible Codex threads for:
 
@@ -76,9 +77,55 @@ Prefer visible Codex threads for:
 - implementation ownership across multiple turns;
 - any task where callback, roster, workspace anchoring, or lifecycle policy matters.
 
-Subagents must not replace lane roster, task cards, callback policy, harvest driver, workspace guard, or neutral review gate. If a subagent performs implementation, CEO still owns integration, evidence review, and accept/revise/block.
+Subagents must not replace lane roster, task cards, callback policy, harvest driver, workspace guard, or neutral review gate. If a subagent performs implementation, CEO or the visible worker lane still owns integration, evidence review, and accept/revise/block.
 
 If the host tool contract says current-request subtasks should use subagents unless the user explicitly asks for new threads, follow that contract but record the limitation. When durable lanes are required, ask for or use explicit visible-thread authorization instead of pretending subagents are equivalent.
+
+Durable lane vs contractor decision:
+
+```text
+Needs title/sidebar visibility? -> visible lane.
+Needs later harvest/continuation? -> visible lane.
+Needs Zhixia/Guardian traceability beyond final summary? -> visible lane or write a contractor trace.
+Owns a long-running module, review role, UX role, release role, or memory role? -> visible lane.
+One-shot exploration/audit/verification/research? -> contractor allowed.
+Disjoint bounded patch that CEO can review/integrate now? -> contractor allowed if authorized.
+```
+
+CEO-created visible lanes may use contractors only when their task card explicitly grants it:
+
+```text
+Contractor/subagent policy:
+  May use contractors: yes/no
+  Allowed contractor scope:
+  Forbidden contractor scope:
+  Max contractor count:
+  Contractor write-set:
+  Integration owner:
+  Required contractor trace:
+```
+
+Default is `May use contractors: no` for implementation, review, UX, release, and knowledge lanes unless the task card says otherwise. A worker may not silently replace its bounded task with contractor delegation.
+
+Contractor trace requirement:
+
+```text
+ContractorTrace:
+  contractor id or nickname:
+  spawned by:
+  reason for contractor use:
+  assigned scope:
+  files or evidence inspected:
+  files changed, if any:
+  commands/tests run:
+  result summary:
+  limitations:
+  integration owner:
+  source refs:
+  memory candidate:
+```
+
+For Zhixia/Guardian history, assume contractor internals are not durable project history unless captured through a visible lane report, evidence card, handoff, or memory candidate. Do not depend on hidden subagent conversation state for future recovery.
 
 ## Workspace Root Guard
 
@@ -203,6 +250,8 @@ Callback events: completion | blocker | approval_stall | revise_needed
 Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
 Callback priority: queued | interrupt
 Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
+Visual evidence payload: paths + hashes + dimensions + short summary only; no image attachments/base64/data:image
+Contractor trace: required if this lane used any contractor/subagent
 CEO harvest fallback:
 No-stall fallback: continue other ready tasks | reuse another lane | direct CEO fallback if allowed | HOST_APPROVAL_REQUIRED
 ```
@@ -212,7 +261,7 @@ Worker callback rules:
 1. The worker writes its normal final report in its own lane.
 2. If thread messaging is available and the task card includes a CEO thread id, the worker also sends a compact callback to the CEO on completion, blocker, approval stall, or revise-needed.
 3. If thread messaging is unavailable, the worker reports `CALLBACK_UNAVAILABLE` in its own lane and relies on CEO harvest.
-4. The callback must not include long chat history, raw session content, full knowledge bases, or broad logs.
+4. The callback must not include long chat history, raw session content, full knowledge bases, broad logs, image attachments, base64, `data:image`, or full screenshot JSON.
 5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
 6. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
 7. Worker completion does not automatically push to CEO. Callback may fail, queue, or be unavailable; CEO must still harvest by reading the worker lane or evidence source.
@@ -223,6 +272,7 @@ Callback interrupt policy:
 - Interrupt only for a blocker that stops downstream work, approval stall for an in-scope action, safety risk, destructive-risk, urgent user-visible failure, credential/spending/legal/security issue, or conflicting parallel writes.
 - If a worker is unsure whether interruption is justified, use queued priority and state the risk in the payload.
 - Callback priority affects attention only. It does not prove completion, authorize scope changes, or replace CEO evidence review.
+- If a lane used contractors/subagents, its callback or final report must include a compact contractor trace so project memory can preserve what outside help did without reading hidden contractor history.
 
 Approval stall handling:
 
@@ -248,6 +298,7 @@ Treat these as degraded warnings:
 - one empty heartbeat or harvest turn;
 - one context-pressure or auto-compact event;
 - hot session size makes routine harvest noticeably expensive;
+- session contains large image/base64/input_image payloads but still produces useful evidence;
 - the target is slow but still producing useful new evidence.
 
 Treat these as immediate fuse conditions:
@@ -256,16 +307,18 @@ Treat these as immediate fuse conditions:
 - `inProgress` for too long with no useful new output;
 - two consecutive heartbeat/harvest turns with `last_agent_message=null`, empty items, or no new evidence;
 - repeated `ContextLimit`, auto-compact loops, or near-window context pressure on every turn;
+- session size is over about 50 MB or visual payloads make opening/harvesting the thread slow;
+- repeated `data:image`, base64, `input_image`, screenshot, or generated-image payloads make the thread unsafe as a CEO/project-main surface;
 - CEO/project-main thread is unreadable, archived, replaced, or missing.
 
 On fuse:
 
 1. Pause, delete, or supersede heartbeat/automation targeting the broken thread. Record `reason=broken_ceo_thread`.
 2. Do not fork the broken thread.
-3. Do not copy the full old chat, raw session, or giant knowledge dump into a new thread.
+3. Do not copy the full old chat, raw session, giant knowledge dump, image attachments, base64, or `data:image` payloads into a new thread.
 4. Generate or update a compact `ThreadRecoveryPacket`.
 5. Create or designate a clean CEO takeover thread when tools and authorization allow it.
-6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, and Zhixia/Guardian/vault pointers.
+6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and Zhixia/Guardian/vault pointers.
 7. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
 8. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
 9. Write a compact WorkingMemory/evidence card.
@@ -282,6 +335,7 @@ current Program Goal Brief:
 compact project memory:
 known active worker/thread ids:
 vault/sourceRefs pointers:
+visual artifact index:
 paused automation ids:
 replacement CEO thread id:
 next safe action:
@@ -337,7 +391,7 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 
 - A new thread is a separate conversation, not a guaranteed autonomous employee.
 - Existing thread steering requires explicit read/send operations.
-- Subagents are short-lived scouts unless the user/tool contract says otherwise; they are not equivalent to user-visible persistent lanes.
+- Contractor/subagents are short-lived outside-help scouts unless the user/tool contract says otherwise; they are not equivalent to user-visible persistent lanes and are not durable history until summarized into evidence.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
 - Forked workers may inherit CEO context; clean worker creation is safer for bounded implementation.
@@ -345,7 +399,7 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 - Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
 - No-stall worker mode reduces approval stalls but does not bypass host security UI or guarantee every thread has CEO-equivalent permissions.
 - Runtime Goal and project-main heartbeat should not be co-primary harvest drivers. If a bound runtime Goal is active, use heartbeat only for short-lived worker-local monitoring, external reminders, or fallback when goal tooling is unavailable.
-- Broken CEO/project-main threads must be taken over from a compact ThreadRecoveryPacket, not forked or copied wholesale.
+- Broken CEO/project-main threads, including visual-payload-bloated threads, must be taken over from a compact ThreadRecoveryPacket, not forked or copied wholesale.
 - Worker reports are evidence, not proof.
 - Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
 - Memory is not automatic unless a maintained memory provider or writeback routine exists.

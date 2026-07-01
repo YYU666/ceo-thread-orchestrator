@@ -49,6 +49,7 @@ Next task:
 Ready parallel tasks:
 Ready-but-undispatched tasks and reason:
 Evidence refs:
+Visual artifact refs, if any:
 Residual risk:
 ```
 
@@ -64,13 +65,14 @@ Rules:
 Lane ID:
 Thread ID or pending target:
 Planned title:
-Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs
+Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs | Contractor/Subagent
 Workspace:
 Canonical project root:
 Allowed write-set:
 Do not touch:
 Task card path or summary:
 Thread operation permission: worker-only | review-only | may-create-route-fork | read-only
+Contractor/subagent policy:
 Callback policy:
 Stop condition:
 Status: planned | dispatched | running | waitingOnApproval | review | accepted | revise | blocked | superseded | stale | role_contamination | stale_lane_reference | stale_no_evidence
@@ -85,6 +87,7 @@ Rules:
 - Default thread operation permission is `worker-only`, `review-only`, or `read-only`; only CEO/router lanes may create, fork, or route unless explicitly granted.
 - Missing thread ids are `stale_lane_reference` until locator fallback runs.
 - Worker self-routing, delegating, waiting on another worker, or inspecting CEO state without permission is `role_contamination`.
+- Contractor/subagent use is denied by default for durable lanes unless the task card grants bounded outside help and requires a contractor trace.
 
 ## Harvest Driver
 
@@ -146,6 +149,7 @@ Known active worker/review thread ids:
 Latest accepted decisions:
 Open risks/blockers:
 Vault/sourceRefs pointers:
+Visual artifact index:
 Raw/cold evidence gate:
 Replacement CEO thread ID or placeholder:
 Next safe action:
@@ -162,13 +166,16 @@ Rules:
 
 ```text
 Candidate ID:
-Type: decision | handoff | bug | experience | knowledge | preference | tool-skill | cross-project
+Type: decision | handoff | bug | experience | knowledge | preference | tool-skill | cross-project | contractor-trace | visual-evidence
 Lesson / claim:
 Applies to:
 Do not apply to:
 Source refs:
+Visual artifact refs, if any:
 Evidence inspected:
+Visual evidence inspected: paths + hashes + summaries only; no image bytes/base64/data:image
 Tests or artifacts:
+Contractor trace, if applicable:
 Confidence: low | medium | high
 Status: candidate | active | rejected | archived
 Promotion boundary:
@@ -189,11 +196,14 @@ Use these fields when a task card needs resumable state:
 Parent Program Goal ID:
 Lane ID:
 Thread operation:
+Contractor/subagent policy:
 Callback policy:
 Locator anchors:
 Knowledge provider mode:
 Memory Runtime query:
 Context/history budget:
+Visual evidence policy:
+Image budget:
 Retrieved source refs:
 Writeback target:
 Promotion boundary:
