@@ -14,6 +14,7 @@ Create a parallel wave when all are true:
 
 - tasks can complete without waiting on each other's outputs;
 - write-sets are non-overlapping or isolated by approved worktrees;
+- worktree implementation lanes pass the Worktree Readiness Gate: tracked config/source/test files, no critical untracked source dependency, and build/test viability inside the worker worktree;
 - shared contracts, schemas, routes, generated files, migrations, or design tokens are stable or assigned to one owner;
 - each task has its own verification command, screenshot, artifact, or review evidence;
 - command approvals are already planned;

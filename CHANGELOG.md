@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Split context/memory policy into focused `memory-runtime.md` and `guardian-history.md` references while keeping `context-memory.md` as a lightweight router.
+
+- Added a Memory Runtime result envelope with `memoryMode`, hot/warm/skill/cold `memoryLayers`, `recallPlan`, top memory items, and retrieved sourceRefs.
+
+- Added a Memory Trigger Gate so Zhixia or equivalent Memory Runtime retrieval becomes a default lifecycle action for project resume, dispatch, precedent lookup, recovery, and accept/revise/block writeback.
+
+- Added a Worktree Readiness Gate so CEO Flow blocks worktree implementation lanes when critical source/config/test files are untracked, falling back to one canonical writer plus read-only parallel lanes until a repo baseline task fixes it.
+
 - Added visual evidence and image payload safety rules: visual QA remains required, but screenshots/reference/generated images stay in local artifacts while callbacks, memory, FlowSkill candidates, and third-party logs use paths, hashes, summaries, and decisions only.
 
 - Added a Contractor/Subagent outside-help role so temporary subagents can support exploration, audit, verification, or disjoint bounded patches without replacing durable visible lanes; contractor traces preserve history for memory providers.

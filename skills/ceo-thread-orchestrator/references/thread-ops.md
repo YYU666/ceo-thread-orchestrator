@@ -153,6 +153,53 @@ Task cards must include `Workspace`, `Canonical project root`, `Allowed worktree
 
 When a user says a project lives in one folder, treat that as stronger than inferred thread history or old Codex saved-project locations.
 
+## Worktree Readiness Gate
+
+Before dispatching any implementation lane into a Codex worktree, verify the repository baseline can actually produce a complete worker workspace. Parallel worktree execution is unsafe when critical project files are untracked or only exist in the canonical local directory.
+
+Run a lightweight readiness check:
+
+```text
+Worktree readiness:
+- package/config/build files tracked or intentionally included:
+- source directories needed for task tracked:
+- tests needed for task tracked:
+- critical untracked source required by task:
+- install/build/test can run inside worker worktree without reading canonical workspace:
+- required visual artifacts copied/tracked or replaced by artifact index:
+- decision: ready | repo_baseline_required | local_single_writer_only
+```
+
+Evidence examples:
+
+- `git ls-files` covers package/config files such as `package.json`, lockfile, `tsconfig`, Vite/Webpack/Electron config, test config, and app entrypoints;
+- `git ls-files` covers relevant `src/**`, `tests/**`, `app/**`, or equivalent project source roots;
+- `git status --short` does not show critical untracked source, config, test, generated code, or assets required by the task;
+- a fresh worktree can run install/build/test/smoke commands using only tracked or explicitly prepared snapshot files;
+- visual tasks have local artifact paths, hashes, or copied artifacts available to the worker instead of relying on hidden canonical-session state.
+
+If the gate fails:
+
+1. Block worktree implementation lanes for that project wave.
+2. Use a single-writer canonical workspace implementation lane only if safe.
+3. Allow read-only review, audit, planning, test-log review, repo-baseline audit, or architecture lanes in parallel.
+4. Create a Repo Baseline task before parallel code development.
+5. Record the failure as `repo_baseline_required` or `local_single_writer_only`, not as a CEO Flow methodology failure.
+
+Repo Baseline task card:
+
+```text
+Goal: make the project safe for worktree worker lanes.
+Check tracked files: package/config/build, src, tests, scripts, required assets.
+Classify untracked files: source/config/test/assets/artifacts/generated/cache.
+Propose minimal git add or snapshot plan.
+Do not commit secrets, local caches, generated heavy artifacts, node_modules, raw sessions, or private memory.
+Verify a clean worktree can install/build/test.
+Report readiness decision and residual risks.
+```
+
+This gate is not meant to force every project into worktrees. It prevents CEO Flow from treating an incomplete git baseline as a parallel-ready project.
+
 ## Unsaved Source Repo Host Lane
 
 Some Codex hosts can create threads only inside saved projects. If the user's canonical source repo is not a saved project, do not silently switch implementation to a scratch or generated folder.
@@ -316,7 +363,7 @@ On fuse:
 1. Pause, delete, or supersede heartbeat/automation targeting the broken thread. Record `reason=broken_ceo_thread`.
 2. Do not fork the broken thread.
 3. Do not copy the full old chat, raw session, giant knowledge dump, image attachments, base64, or `data:image` payloads into a new thread.
-4. Generate or update a compact `ThreadRecoveryPacket`.
+4. Run or prepare Memory Runtime `retrieve_context(queryType=thread_recovery)` when a provider is available, then generate or update a compact `ThreadRecoveryPacket`.
 5. Create or designate a clean CEO takeover thread when tools and authorization allow it.
 6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and Zhixia/Guardian/vault pointers.
 7. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.

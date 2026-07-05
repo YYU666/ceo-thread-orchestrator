@@ -29,28 +29,30 @@ Use the smallest mode that can safely finish the next objective. When host tool 
 
 1. Confirm newest request, mode, canonical project root, and allowed write-set/worktrees.
 2. Read local instructions/memory/docs needed for the task; discover current tools before promising thread orchestration.
-3. For substantial product/coding/architecture/UI/workflow/creative/PRD-to-implementation work, run a lightweight Reference Scan Gate unless tiny, emergency, explicitly skipped, or local references are enough.
-4. Define done criteria, non-goals, task graph, dependencies, verification evidence, context budget, and memory provider mode.
-5. For complete products, multi-phase programs, or long-running goals, create/update a document-first Program Goal Brief and Completion Dashboard before dispatch. Legacy AutoFlow/workflow-runtime state is historical only unless explicitly configured.
-6. Bind one runtime Codex Goal to the Program Goal Brief when host goal tooling is available. It supports continuity; it does not replace the Program Goal Brief or turn CEO into the implementer.
-7. Treat MVP as a milestone, not the default final state, unless the user explicitly scoped the outcome to MVP-only or a real blocker exists.
-8. After an accepted PRD/task graph or implementation request, leave CEO-only planning and run Core Team execution unless the task is tiny, non-coding, or explicitly direct-current-thread.
-9. Before dispatch, assign a lane roster: one primary role, workspace, write-set, task card, callback policy, stop condition, and thread-operation permission per lane.
-10. Prefer reusable/clean visible lanes over new one-shot threads; prefer clean worker creation/reuse over forking CEO context. Do not fork workers from active/unfinished CEO turns.
-11. Direct CEO fallback for substantial coding is forbidden until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined. Under an active runtime Goal, it is only a bounded one-turn lease with restoration plan.
-12. Dispatch compact task cards only. Do not paste long CEO chat, full knowledge bases, raw sessions, image attachments/base64/data:image payloads, or CEO self-routing instructions into worker prompts.
-13. Require neutral review before final acceptance for substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing/high-risk work, or repeated-fix recovery. UI, game, design, screenshot, and generated-image tasks still require visual inspection from local artifacts.
-14. After dispatching implementation/review lanes, record exactly one primary harvest driver: active runtime Goal, immediate synchronous harvest, explicit next harvest time, or heartbeat automation. Do not run a project-main heartbeat and runtime Goal as co-primary drivers.
-15. Run parallel waves when tasks are independent, write-sets/verification/resources are isolated, contracts are stable, and harvest/review capacity exists. If multiple independent ready tasks exist, dispatch/queue all safe tasks or record why they are serial.
-16. Use Contractor/Subagent lanes only as temporary bounded outside help: exploration, read-only audit, quick verification, disposable research, or disjoint bounded patches that CEO or a visible lane can review and integrate. Do not use contractors as substitutes for durable visible implementation/review/UX/release/memory lanes when user-visible progress, later harvest, or memory traceability matters.
-17. If a visible CEO-created lane is allowed to use contractors, its task card must say so, define contractor scope, forbid contractor self-routing, and require a compact contractor trace in the lane report.
-18. For visual work, use `local-artifacts-only`: screenshots/reference images stay in project artifacts; callbacks, task cards, memory, FlowSkill candidates, and third-party logs carry only paths, hashes, dimensions, short summaries, and decisions. Do not embed image attachments, base64, or `data:image` unless a single user-supplied image is explicitly needed within budget.
-19. Use no-stall worker mode: task cards preauthorize routine in-scope command families; workers report `approval_stall` to CEO instead of asking the user for routine approvals.
-20. For single-writer or non-parallelizable projects, keep one implementation lane plus compact callback to CEO when thread messaging exists; add read-only review/audit lanes only when safe.
-21. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, then decide `accept | revise | block | supersede`. Worker self-routing or waiting on another lane is `role_contamination` unless explicitly authorized.
-22. After any terminal lane/module/subline/heartbeat/runtime sub-goal result, run a Program Goal portfolio check. A module pause is not a project pause while safe product-progress waves remain.
-23. If a rostered lane id is missing, classify `stale_lane_reference` and run the thread locator before retrying. If the CEO/project-main heartbeat target is stream-broken, repeatedly empty, context-exhausted, or unreadable, run the Broken CEO Thread / Heartbeat Fuse and recover from a compact ThreadRecoveryPacket.
-24. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, contractor traces, or knowledge items.
+3. Run the Memory Trigger Gate: if `.codex-knowledge/` exists or the request mentions continuing/resuming a project, taking over an old thread, memory/history, Zhixia, RGS, or previous progress, enable `zhixia-local-docs` or an equivalent Memory Runtime provider. Bootstrap/resume must retrieve `project_resume`; dispatch must retrieve `task_dispatch`; skipped or unavailable memory must be recorded before claiming project state.
+4. Before dispatching any worktree implementation lane, run the Worktree Readiness Gate: tracked package/config/build files, tracked source/test files needed for the task, no critical untracked source dependency, and install/build/test viability inside the worker worktree. If it fails, block worktree implementation and use one canonical single-writer lane plus read-only review/audit until a repo baseline task fixes it.
+5. For substantial product/coding/architecture/UI/workflow/creative/PRD-to-implementation work, run a lightweight Reference Scan Gate unless tiny, emergency, explicitly skipped, or local references are enough.
+6. Define done criteria, non-goals, task graph, dependencies, verification evidence, context budget, and memory provider mode.
+7. For complete products, multi-phase programs, or long-running goals, create/update a document-first Program Goal Brief and Completion Dashboard before dispatch. Legacy AutoFlow/workflow-runtime state is historical only unless explicitly configured.
+8. Bind one runtime Codex Goal to the Program Goal Brief when host goal tooling is available. It supports continuity; it does not replace the Program Goal Brief or turn CEO into the implementer.
+9. Treat MVP as a milestone, not the default final state, unless the user explicitly scoped the outcome to MVP-only or a real blocker exists.
+10. After an accepted PRD/task graph or implementation request, leave CEO-only planning and run Core Team execution unless the task is tiny, non-coding, or explicitly direct-current-thread.
+11. Before dispatch, assign a lane roster: one primary role, workspace, write-set, task card, callback policy, stop condition, and thread-operation permission per lane.
+12. Prefer reusable/clean visible lanes over new one-shot threads; prefer clean worker creation/reuse over forking CEO context. Do not fork workers from active/unfinished CEO turns.
+13. Direct CEO fallback for substantial coding is forbidden until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined. Under an active runtime Goal, it is only a bounded one-turn lease with restoration plan.
+14. Dispatch compact task cards only. Do not paste long CEO chat, full knowledge bases, raw sessions, image attachments/base64/data:image payloads, or CEO self-routing instructions into worker prompts.
+15. Require neutral review before final acceptance for substantial app-code, accepted PRD execution, runtime Goal implementation, direct-fallback output, user-facing/high-risk work, or repeated-fix recovery. UI, game, design, screenshot, and generated-image tasks still require visual inspection from local artifacts.
+16. After dispatching implementation/review lanes, record exactly one primary harvest driver: active runtime Goal, immediate synchronous harvest, explicit next harvest time, or heartbeat automation. Do not run a project-main heartbeat and runtime Goal as co-primary drivers.
+17. Run parallel waves when tasks are independent, write-sets/verification/resources are isolated, contracts are stable, and harvest/review capacity exists. If multiple independent ready tasks exist, dispatch/queue all safe tasks or record why they are serial.
+18. Use Contractor/Subagent lanes only as temporary bounded outside help: exploration, read-only audit, quick verification, disposable research, or disjoint bounded patches that CEO or a visible lane can review and integrate. Do not use contractors as substitutes for durable visible implementation/review/UX/release/memory lanes when user-visible progress, later harvest, or memory traceability matters.
+19. If a visible CEO-created lane is allowed to use contractors, its task card must say so, define contractor scope, forbid contractor self-routing, and require a compact contractor trace in the lane report.
+20. For visual work, use `local-artifacts-only`: screenshots/reference images stay in project artifacts; callbacks, task cards, memory, FlowSkill candidates, and third-party logs carry only paths, hashes, dimensions, short summaries, and decisions. Do not embed image attachments, base64, or `data:image` unless a single user-supplied image is explicitly needed within budget.
+21. Use no-stall worker mode: task cards preauthorize routine in-scope command families; workers report `approval_stall` to CEO instead of asking the user for routine approvals.
+22. For single-writer or non-parallelizable projects, keep one implementation lane plus compact callback to CEO when thread messaging exists; add read-only review/audit lanes only when safe.
+23. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, then decide `accept | revise | block | supersede`. Worker self-routing or waiting on another lane is `role_contamination` unless explicitly authorized.
+24. After any terminal lane/module/subline/heartbeat/runtime sub-goal result, run a Program Goal portfolio check. A module pause is not a project pause while safe product-progress waves remain.
+25. If a rostered lane id is missing, classify `stale_lane_reference` and run the thread locator before retrying. If the CEO/project-main heartbeat target is stream-broken, repeatedly empty, context-exhausted, or unreadable, run the Broken CEO Thread / Heartbeat Fuse and recover from a compact ThreadRecoveryPacket.
+26. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, contractor traces, or knowledge items.
 
 ## Role Contract
 
@@ -87,6 +89,7 @@ Task ID:
 Parent goal ID:
 Role:
 Workspace / canonical project root:
+Worktree readiness:
 Allowed write-set / do not touch:
 Lane ID / planned title:
 Thread operation:
@@ -110,6 +113,8 @@ Forbidden visual payloads:
 Change budget / quality gates:
 Knowledge provider mode:
 Memory Runtime query / context budget:
+Memory Runtime result: memoryMode, memoryLayers, recallPlan, top memory items, retrieved sourceRefs
+Memory skipped or unavailable reason:
 Memory writeback target / promotion boundary:
 Autonomy level:
 Approval route / command approval profile:
@@ -159,7 +164,9 @@ Read only the reference needed for the current task:
 - Thread creation, sidebar hygiene, workspace guard, locator, relay, broken-thread fuse: `references/thread-ops.md`.
 - PRD waves, dependency graph, and safe parallel execution: `references/parallel-waves.md`.
 - Pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
-- Memory Runtime, Zhixia/Guardian, old-thread continuity, context slimming, restore, raw-session gates: `references/context-memory.md`.
+- Context governor and memory/reference routing overview: `references/context-memory.md`.
+- Memory Runtime lifecycle, trigger gate, retrieval/writeback, large-file rule, and Hot/Warm/Skill/Cold result contract: `references/memory-runtime.md`.
+- Guardian history, old-thread evidence, restore dry-run, compact-session safety, and raw-session gates: `references/guardian-history.md`.
 - Visual evidence, image payload budgets, local artifact policy, and third-party visual request limits: `references/visual-evidence.md`.
 - FlowSkill reusable-skill search/capture/score hook: `references/flowskill-hook.md`.
 - Failure-triggered reflection and rule-candidate promotion: `references/self-harness.md`.

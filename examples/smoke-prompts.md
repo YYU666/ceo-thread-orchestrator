@@ -506,3 +506,59 @@ Use CEO Flow. A generated-image review produced several local PNG candidates and
 ```
 
 Expected behavior: Codex should write only local paths/folder paths, hashes, dimensions, timestamps, short visual/OCR summaries, design conclusion, accepted/revise/block decision, remaining issues, and source refs. It must not write image bytes, base64, `data:image`, full screenshots, complete request bodies, or large OCR transcripts into hot memory, Zhixia project memory, FlowSkill candidates, callbacks, or task cards.
+
+## Worktree Readiness Gate
+
+```text
+Use CEO Flow. A project has many critical source files in `git untracked`, and Codex can create either local threads or worktree threads. The user asks for parallel implementation workers. Do not edit files or create threads in this smoke test. Decide whether worktree implementation lanes are allowed and what CEO should do next.
+```
+
+Expected behavior: Codex should not treat this as CEO Flow being unable to parallelize. It should classify the repo as `repo_baseline_required` or `local_single_writer_only`, block worktree implementation lanes, allow only one canonical workspace writer plus parallel read-only review/audit/planning where safe, and dispatch a Repo Baseline task before worktree-based parallel code development. The gate should check tracked package/config/build files, tracked `src/**` and tests needed by the task, critical untracked source, worktree install/build/test viability, and visual artifacts copied/tracked or indexed.
+
+## Memory Trigger Gate Bootstrap
+
+```text
+Use CEO Flow. The canonical project root contains `.codex-knowledge/`, and the user says: "继续这个项目，先接管当前进度。" Do not edit files or create threads in this smoke test. Decide the bootstrap/resume steps and show the required Memory Runtime record.
+```
+
+Expected behavior: Codex should enable `zhixia-local-docs` or equivalent Memory Runtime provider, run or prepare `retrieve_context(task_goal, queryType=project_resume)`, and record provider, query, tokenBudget, retrieved sourceRefs, top memory items, and skipped/unavailable reason. It must not claim it understands project state from model memory alone.
+
+## Memory Dispatch Source Refs
+
+```text
+Use CEO Flow. A Zhixia-enabled project needs a worker task card for a bug fix. Do not create threads or edit files in this smoke test. Produce only the dispatch memory section of the task card.
+```
+
+Expected behavior: Codex should run or prepare `retrieve_context(task_goal, queryType=task_dispatch)` before dispatch. The task card must include Knowledge provider mode, Memory Runtime query/context budget, Memory packet, retrieved sourceRefs or explicit skipped reason, top memory items, and the rule that workers must not read long history, full `.codex-knowledge`, or raw sessions.
+
+## Large Codex Knowledge File Guard
+
+```text
+Use CEO Flow. `.codex-knowledge/project-resume.md` is 180 KB and `knowledge-items.md` is 240 KB. The user asks CEO to resume the project. Do not read those files in full in this smoke test. Decide the safe memory retrieval route.
+```
+
+Expected behavior: Codex should refuse direct full-file context loading for `.codex-knowledge` files over 50 KB and use `zhixia-local-docs` helper/JSON small packets such as `read-project-knowledge.cjs --runtime-context --query-type project_resume --token-budget 1500-3000 --json`, or record helper unavailable. It should not paste giant Markdown into the CEO thread or task card.
+
+## Memory Precedent Required
+
+```text
+Use CEO Flow. The next task is a UI direction correction for a bug that failed twice before and also affects packaging. Do not edit files or create threads. Decide which memory precedent calls are mandatory before dispatch.
+```
+
+Expected behavior: Codex should require `retrieve_precedent(task_type)` before dispatch because this touches UI correction, bug repair, repeated failure, and packaging/release risk. It should use bounded token budgets around 800-1200 and treat precedents as context/risk signals, not scope expansion or authorization.
+
+## Memory Writeback Candidate After Decision
+
+```text
+Use CEO Flow. CEO reviewed a worker result and decided `revise` because tests passed but visual evidence was missing. Memory Runtime is available. Do not edit files. Show the writeback candidate.
+```
+
+Expected behavior: Codex should create or prepare `writeback_evidence(result)` with compact decision, evidence paths/sourceRefs, files/tests, risk, next step, and experience candidate. It must not include raw chat, raw session, image/base64/data:image, full logs, or giant OCR. If writeback cannot run, it must record skipped/unavailable reason.
+
+## Memory Runtime Result Envelope
+
+```text
+Use CEO Flow. A Zhixia-enabled project resume returns hot, warm, skill, and cold memory candidates. Do not edit files or create threads. Show the required Memory Runtime result envelope and default recall plan.
+```
+
+Expected behavior: Codex should report `Memory Runtime result` with `memoryMode`, `memoryLayers.hot/warm/skill/cold`, `recallPlan.defaultReadOrder`, `coldLayer.defaultRead=false` unless thread_recovery/archive/performance/raw-session hard gate applies, top memory items, and retrieved sourceRefs. Hot product status, accepted decisions, active blockers, current module progress, and canonical docs/source refs should be prioritized before archive/Guardian/old-thread maintenance records.

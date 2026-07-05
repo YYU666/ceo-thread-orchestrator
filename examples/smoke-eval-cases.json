@@ -266,5 +266,137 @@
       "image bytes",
       "base64"
     ]
+  },
+  {
+    "id": "worktree-readiness-gate",
+    "title": "Worktree implementation needs a tracked repo baseline",
+    "prompt": "A project has critical untracked source files and the user asks for parallel worktree implementation lanes.",
+    "expected_labels": [
+      "Worktree Readiness Gate",
+      "repo_baseline_required",
+      "single canonical writer"
+    ],
+    "forbidden_labels": [
+      "dispatch worktree writers anyway",
+      "methodology failure"
+    ],
+    "coverage_terms": [
+      "Worktree Readiness Gate",
+      "repo_baseline_required",
+      "local_single_writer_only"
+    ]
+  },
+  {
+    "id": "memory-trigger-gate-bootstrap",
+    "title": "Zhixia-enabled project bootstrap requires project_resume retrieval",
+    "prompt": "A project contains .codex-knowledge and the user asks to continue previous progress.",
+    "expected_labels": [
+      "Memory Trigger Gate",
+      "project_resume",
+      "retrieved sourceRefs"
+    ],
+    "forbidden_labels": [
+      "model memory alone",
+      "claim project state without retrieval"
+    ],
+    "coverage_terms": [
+      "Memory Trigger Gate",
+      "project_resume",
+      "skipped/unavailable reason"
+    ]
+  },
+  {
+    "id": "memory-dispatch-source-refs",
+    "title": "Worker dispatch requires task_dispatch memory packet",
+    "prompt": "A Zhixia-enabled project needs a worker task card for a bug fix.",
+    "expected_labels": [
+      "task_dispatch",
+      "Memory packet",
+      "retrieved sourceRefs"
+    ],
+    "forbidden_labels": [
+      "full .codex-knowledge",
+      "raw session"
+    ],
+    "coverage_terms": [
+      "task_dispatch",
+      "Memory packet",
+      "Retrieved source refs"
+    ]
+  },
+  {
+    "id": "large-codex-knowledge-file-guard",
+    "title": "Large .codex-knowledge files use JSON helper, not full reads",
+    "prompt": "project-resume.md is 180 KB and knowledge-items.md is 240 KB.",
+    "expected_labels": [
+      "50 KB",
+      "helper JSON",
+      "large_memory_helper_unavailable"
+    ],
+    "forbidden_labels": [
+      "read full giant markdown"
+    ],
+    "coverage_terms": [
+      "50 KB",
+      "large_memory_helper_unavailable",
+      "--json"
+    ]
+  },
+  {
+    "id": "memory-precedent-required",
+    "title": "High-risk/repeated tasks require precedent retrieval",
+    "prompt": "UI direction correction for a bug that failed twice before and affects packaging.",
+    "expected_labels": [
+      "retrieve_precedent",
+      "bug repair",
+      "packaging/release"
+    ],
+    "forbidden_labels": [
+      "dispatch without precedent"
+    ],
+    "coverage_terms": [
+      "retrieve_precedent",
+      "repeated failure",
+      "packaging/release"
+    ]
+  },
+  {
+    "id": "memory-writeback-after-decision",
+    "title": "CEO decision creates compact memory writeback candidate",
+    "prompt": "CEO decides revise after worker result; Memory Runtime is available.",
+    "expected_labels": [
+      "writeback_evidence",
+      "compact evidence packet",
+      "skipped/unavailable reason"
+    ],
+    "forbidden_labels": [
+      "raw chat",
+      "full logs",
+      "base64"
+    ],
+    "coverage_terms": [
+      "writeback_evidence",
+      "raw chat",
+      "full logs"
+    ]
+  },
+  {
+    "id": "memory-runtime-result-envelope",
+    "title": "Memory Runtime result exposes layers and recall plan",
+    "prompt": "A Zhixia-enabled project resume returns hot, warm, skill, and cold memory candidates.",
+    "expected_labels": [
+      "memoryMode",
+      "memoryLayers",
+      "recallPlan"
+    ],
+    "forbidden_labels": [
+      "cold layer read by default",
+      "archive records dominate product memory"
+    ],
+    "coverage_terms": [
+      "memoryMode",
+      "memoryLayers",
+      "coldLayer.defaultRead"
+    ]
   }
 ]

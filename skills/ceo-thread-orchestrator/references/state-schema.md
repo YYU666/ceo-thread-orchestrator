@@ -26,6 +26,24 @@ Current blockers:
 Next execution wave:
 Primary harvest driver: see schema below
 Acceptance evidence:
+Memory Runtime result:
+  provider:
+  hook:
+  queryType:
+  query:
+  tokenBudget:
+  memoryMode:
+  memoryLayers:
+    hot:
+    warm:
+    skill:
+    cold:
+  recallPlan:
+    defaultReadOrder:
+    coldLayer.defaultRead:
+  top memory items:
+  retrieved sourceRefs:
+  skipped/unavailable reason:
 Memory / knowledge writeback:
 Lightweight state discipline:
   State source of truth:
@@ -68,6 +86,7 @@ Planned title:
 Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs | Contractor/Subagent
 Workspace:
 Canonical project root:
+Worktree readiness: ready | repo_baseline_required | local_single_writer_only | not_applicable
 Allowed write-set:
 Do not touch:
 Task card path or summary:
@@ -122,7 +141,7 @@ Files or write-set reviewed:
 Residual risk:
 Next owner:
 Next action:
-Memory update needed:
+Memory writeback candidate or skipped reason:
 Timestamp:
 ```
 
@@ -196,15 +215,22 @@ Use these fields when a task card needs resumable state:
 Parent Program Goal ID:
 Lane ID:
 Thread operation:
+Worktree readiness:
 Contractor/subagent policy:
 Callback policy:
 Locator anchors:
 Knowledge provider mode:
 Memory Runtime query:
+Memory Runtime result:
+  memoryMode:
+  memoryLayers:
+  recallPlan:
+Memory Runtime skipped/unavailable reason:
 Context/history budget:
 Visual evidence policy:
 Image budget:
 Retrieved source refs:
+Top memory items:
 Writeback target:
 Promotion boundary:
 Harvest driver:

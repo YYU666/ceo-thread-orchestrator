@@ -374,6 +374,7 @@ Parallel execution is allowed only when all are true:
 
 - dependencies are independent;
 - write-sets do not overlap, or worktrees/owners isolate them;
+- worktree implementation lanes pass the Worktree Readiness Gate when worktrees are used;
 - shared contracts are stable or one owner is assigned;
 - verification is isolated;
 - command approvals are planned;
@@ -387,11 +388,14 @@ Do not select only one workstream from a ready independent wave unless there is 
 
 - dependency blocked;
 - write-set conflict;
+- repo baseline or worktree readiness failed;
 - shared process/resource conflict;
 - approval limit;
 - missing thread tools;
 - missing harvest/review capacity;
 - user explicitly requested single-thread execution.
+
+When repo baseline/worktree readiness fails, do not keep trying to parallelize writer lanes. Use one canonical workspace writer plus parallel read-only review/audit/planning where safe, and dispatch a Repo Baseline task before worktree-based implementation.
 
 ## 5. Pipeline Contract Gate
 
