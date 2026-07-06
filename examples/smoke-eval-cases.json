@@ -398,5 +398,220 @@
       "memoryLayers",
       "coldLayer.defaultRead"
     ]
+  },
+  {
+    "id": "large-project-autopilot-startup",
+    "title": "Large project takeover requires Autopilot Startup Card",
+    "prompt": "A new CEO takes over a large product with PRD, .codex-knowledge, many prior lanes, and an active runtime Goal.",
+    "expected_labels": [
+      "Project Scale Classifier",
+      "CEO Autopilot Startup Card",
+      "Staffing Plan"
+    ],
+    "forbidden_labels": [
+      "continue ad hoc CEO-only"
+    ],
+    "coverage_terms": [
+      "CEO Autopilot Startup Card",
+      "Project Scale Classifier",
+      "Lane count decision"
+    ]
+  },
+  {
+    "id": "bootstrap-exit-gate",
+    "title": "Bootstrap CEO-only expires after state recovery",
+    "prompt": "State recovery is complete after a takeover prompt said not to dispatch workers in the first step.",
+    "expected_labels": [
+      "Bootstrap Exit Decision",
+      "re-evaluate mode"
+    ],
+    "forbidden_labels": [
+      "first step no workers becomes permanent"
+    ],
+    "coverage_terms": [
+      "Bootstrap Exit Gate",
+      "Bootstrap Exit Decision",
+      "state recovery report"
+    ]
+  },
+  {
+    "id": "active-goal-staffing-check",
+    "title": "Active runtime Goal requires staffing check after bounded slice",
+    "prompt": "A runtime Goal is active and CEO proposes another CEO-only proof slice after finishing one proof slice.",
+    "expected_labels": [
+      "staffing check",
+      "bounded CEO-only reason"
+    ],
+    "forbidden_labels": [
+      "Goal means proof runner"
+    ],
+    "coverage_terms": [
+      "staffing check",
+      "active runtime Goal",
+      "CEO-only continuation reason"
+    ]
+  },
+  {
+    "id": "proof-loop-fuse",
+    "title": "Repeated CEO-only proof slices trigger fuse",
+    "prompt": "A large project CEO has completed three CEO-only proof/support slices and proposes another proof-only slice.",
+    "expected_labels": [
+      "Proof Loop Fuse",
+      "Warm Anchor required",
+      "product-facing action"
+    ],
+    "forbidden_labels": [
+      "endless proof loop"
+    ],
+    "coverage_terms": [
+      "Proof Loop Fuse",
+      "consecutive CEO-only proof/support count",
+      "risk of local optimization"
+    ]
+  },
+  {
+    "id": "worktree-blocked-still-lanes",
+    "title": "Worktree blocked does not mean no lanes",
+    "prompt": "Worktree implementation is unsafe but implementation and review work remain.",
+    "expected_labels": [
+      "canonical single-writer",
+      "read-only review"
+    ],
+    "forbidden_labels": [
+      "collapse to CEO-only"
+    ],
+    "coverage_terms": [
+      "worktree blocked != no lanes",
+      "canonical single-writer",
+      "read-only QA"
+    ]
+  },
+  {
+    "id": "long-term-memory-anchor-gate",
+    "title": "Warm Anchor corrects long-term drift without raw history",
+    "prompt": "Hot memory focuses on recent proof tests but user worries the project drifted from original product goals.",
+    "expected_labels": [
+      "Long-Term Memory Anchor Gate",
+      "Direction check",
+      "Cold sourceRefs only"
+    ],
+    "forbidden_labels": [
+      "raw session by default"
+    ],
+    "coverage_terms": [
+      "Long-Term Memory Anchor Gate",
+      "Warm Anchor",
+      "Cold sourceRefs only"
+    ]
+  },
+  {
+    "id": "major-acceptance-warm-anchor",
+    "title": "Major acceptance needs Warm Anchor before readiness change",
+    "prompt": "CEO is about to update completion percentage and readiness wording after a major milestone.",
+    "expected_labels": [
+      "Warm Anchor",
+      "major acceptance",
+      "sourceRefs"
+    ],
+    "forbidden_labels": [
+      "smooth conflicts into accepted"
+    ],
+    "coverage_terms": [
+      "major acceptance",
+      "readiness",
+      "Direction check"
+    ]
+  },
+  {
+    "id": "tiny-task-skips-autopilot-anchor",
+    "title": "Tiny task in large project skips heavy gates",
+    "prompt": "In a large project, user asks for one low-risk markdown typo fix.",
+    "expected_labels": [
+      "Task scale tiny",
+      "smallest safe mode"
+    ],
+    "forbidden_labels": [
+      "full Autopilot for typo"
+    ],
+    "coverage_terms": [
+      "A large project can still receive a tiny task",
+      "tiny task",
+      "skip full Autopilot"
+    ]
+  },
+  {
+    "id": "hot-warm-conflict",
+    "title": "Hot and Warm conflict blocks overclaim acceptance",
+    "prompt": "Hot memory says proof makes product complete, but Warm Anchor and PRD say proof is not playable/commercial readiness.",
+    "expected_labels": [
+      "conflict",
+      "Warm Anchor correction",
+      "canonical docs"
+    ],
+    "forbidden_labels": [
+      "overstate completion"
+    ],
+    "coverage_terms": [
+      "Hot and Warm conflict",
+      "no guessing",
+      "accepted evidence"
+    ]
+  },
+  {
+    "id": "visual-evidence-manifest-required",
+    "title": "Visual tasks require local artifact manifest and evidence card",
+    "prompt": "A UI worker must compare reference, actual, diff, and failure screenshots for one module.",
+    "expected_labels": [
+      "visual-evidence-manifest.json",
+      "evidence card",
+      "local-artifacts-only"
+    ],
+    "forbidden_labels": [
+      "image attachments",
+      "base64 callback"
+    ],
+    "coverage_terms": [
+      "visual-evidence-manifest.json",
+      "Thread return format: evidence card only",
+      "forbiddenPayloadsPresent"
+    ]
+  },
+  {
+    "id": "visual-ocr-json-payload-guard",
+    "title": "Full OCR and screenshot JSON stay out of callbacks and memory",
+    "prompt": "A visual QA worker has full OCR, full screenshot JSON, and visual API response body from many screenshots.",
+    "expected_labels": [
+      "OCR summary budget",
+      "cold sidecar",
+      "forbidden payloads"
+    ],
+    "forbidden_labels": [
+      "full OCR in memory",
+      "full screenshot JSON callback"
+    ],
+    "coverage_terms": [
+      "full OCR",
+      "full screenshot JSON",
+      "OCR summary: 100-200 words"
+    ]
+  },
+  {
+    "id": "multi-image-contact-sheet-return",
+    "title": "Multi-image UI batches return contact sheet path and manifest",
+    "prompt": "A UI target batch has 12 reference images and 12 actual screenshots.",
+    "expected_labels": [
+      "contact sheet",
+      "manifest path",
+      "no long per-image descriptions"
+    ],
+    "forbidden_labels": [
+      "attach all images",
+      "逐图长篇描述"
+    ],
+    "coverage_terms": [
+      "contact sheet",
+      "do not attach 10-20 images",
+      "long per-image descriptions"
+    ]
   }
 ]

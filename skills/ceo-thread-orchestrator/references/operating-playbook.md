@@ -20,6 +20,12 @@ This is the default operating order. Do not invent a heavier process unless the 
 
 If the task is not substantial, do not force CEO ceremony.
 
+## CEO Autopilot Trigger
+
+For large/program project takeover, complete-product continuation, active runtime Goal execution, broken CEO recovery, or repeated CEO-only proof/support drift, run `ceo-autopilot.md` before execution. It provides the Project Scale Classifier, Startup Card, Bootstrap Exit Gate, Staffing Plan, Lane Count Decision, and Proof Loop Fuse.
+
+Do not run Autopilot for casual chat, tiny direct edits, ordinary status reports, or unchanged short polling loops.
+
 ## Reference Scan Gate
 
 Before substantial product, coding, architecture, UI/UX, workflow, video/creative, framework-selection, or PRD-to-implementation work, CEO should run a lightweight reference scan so the plan starts from proven patterns instead of invention from scratch.
@@ -70,6 +76,7 @@ Runtime Goal rules:
 - It does not replace harvest, evidence review, or accept/revise/block.
 - A bound active runtime Goal can be the primary harvest driver, so separate heartbeat/fixed-time harvest is optional while the Goal remains active.
 - It represents the whole Program Goal, not every module, phase, wave, lane, heartbeat, or temporary sub-goal.
+- Under an active runtime Goal, each bounded execution/proof slice must end with a staffing check or recorded reason why CEO-only remains bounded.
 
 If goal tooling is unavailable or blocked by host state, record `runtime_goal_unavailable` or `runtime_goal_host_state_blocked` and continue with Program Goal Brief plus ordinary harvest.
 
@@ -260,7 +267,7 @@ Use those only under `configured workflow` when the project explicitly provides 
 
 ## 3. Choose The Execution Shape
 
-Use the smallest shape that can safely finish the next objective.
+Use the smallest shape that can safely finish the next objective. For large/program tasks, use the Autopilot lane count decision before choosing CEO-only.
 
 ```text
 Is this tiny/direct?
@@ -569,7 +576,7 @@ At every harvest:
 8. For blocked work, resolve as CEO, reroute, or escalate only if truly necessary.
 9. Record memory candidates only when evidence-backed.
 
-Do not final after dispatch unless a harvest driver exists.
+Do not final after dispatch unless a harvest driver exists. If repeated CEO-only proof/audit/support slices are replacing product-facing progress, run the Proof Loop Fuse from `ceo-autopilot.md` before continuing.
 
 Harvest driver freshness:
 

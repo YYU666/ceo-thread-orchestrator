@@ -44,6 +44,10 @@ Memory Runtime result:
   top memory items:
   retrieved sourceRefs:
   skipped/unavailable reason:
+Autopilot Startup Card:
+Staffing Plan:
+Long-Term Memory Anchor Gate:
+Proof Loop Fuse:
 Memory / knowledge writeback:
 Lightweight state discipline:
   State source of truth:
@@ -235,4 +239,101 @@ Writeback target:
 Promotion boundary:
 Harvest driver:
 Stop condition:
+```
+
+
+## Project Scale Record
+
+```text
+Project scale: tiny | small | medium | large | program
+Task scale: tiny | small | medium | large | program
+Scale evidence:
+Operating consequence:
+  Goal required:
+  Memory Runtime required:
+  Warm Anchor required:
+  Staffing Plan required:
+  Lane count target:
+  Harvest driver:
+```
+
+## Autopilot Startup Card
+
+```text
+Project scale:
+Task scale:
+Canonical project root:
+Program Goal Brief:
+Runtime Goal:
+Memory Runtime result:
+Long-Term Memory Anchor Gate:
+Current phase:
+Completion Dashboard:
+Ready task graph:
+Worktree readiness:
+Lane reuse candidates:
+Lane count decision:
+Staffing Plan:
+Harvest driver:
+Review / audit plan:
+Memory writeback plan:
+Bootstrap exit decision:
+```
+
+## Bootstrap Exit Decision
+
+```text
+Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | direct CEO fallback
+Why not continue CEO-only:
+If CEO-only continues, reason:
+Staffing check required:
+Next routed lane/review:
+Stop condition:
+```
+
+## Staffing Plan
+
+```text
+CEO role:
+Implementation lanes:
+Review lanes:
+UX/Product lanes:
+QA/Test lanes:
+Memory/Knowledge lane:
+Contractor/subagent use:
+Lane count decision: 0 | 1 | 2 | 3 | 3-5 | pipeline
+Why not more lanes:
+Why not fewer lanes:
+Thread reuse:
+New thread needed:
+Worktree/canonical mode:
+```
+
+## Proof Loop Fuse Record
+
+```text
+Consecutive CEO-only proof/support count:
+Last product-facing wave:
+Current proof value:
+Risk of local optimization:
+Staffing check:
+Warm Anchor required:
+Next product-facing action:
+Neutral review needed:
+CEO-only continuation reason:
+Max one-slice stop condition:
+Next staffing checkpoint:
+```
+
+## Long-Term Memory Anchor Gate Record
+
+```text
+Hot memory used:
+Warm anchor used:
+Direction check: aligned | drifting | conflict | insufficient evidence
+Correction if drifting:
+Blocked or revised task:
+Source refs:
+Cold history read: yes/no
+Cold read reason/source range/token budget:
 ```

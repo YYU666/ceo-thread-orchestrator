@@ -142,6 +142,83 @@ requiresHumanConfirmation:
 ```
 
 If the provider cannot supply source refs, treat the result as advisory context only.
+
+## Long-Term Memory Anchor Gate
+
+Long-Term Memory Anchor Gate prevents long-running projects from drifting when Hot memory and recent worker callbacks dominate the context. It is event-triggered only. It is not heartbeat, not a background timer, and not every-turn recall.
+
+Trigger when any is true:
+
+- new CEO takeover, thread recovery, or broken CEO recovery;
+- starting a new module, wave, or writer lane;
+- major acceptance that changes product progress, completion percentage, architecture direction, UI direction, release/open-source/commercial readiness, or long-term claims;
+- user questions direction drift, memory loss, over-proofing, over-UI, over-testing, or missing original product goal;
+- three consecutive proof/test/support slices occurred without checking the product anchor;
+- task touches original PRD, product positioning, ordinary-user experience, core architecture principles, immutable constraints, or long-term boundaries;
+- Hot short-term memory conflicts with Warm anchors or seems over-optimistic.
+
+Do not trigger for:
+
+- ordinary status reports;
+- waiting for worker/reviewer callbacks;
+- short polling inside the same unchanged task;
+- tiny local bug fixes;
+- the same task when the gate already ran and no new evidence changes direction;
+- any two-minute heartbeat, background inspection, or always-on patrol.
+
+Read order and budget:
+
+```text
+Hot memory: current goal, recent accepted work, active blockers, current module, next action; 600-1200 tokens.
+Warm Anchor: long-term goal, original PRD/product position, architecture principles, UX principles, immutable boundaries, rejected directions, completion/readiness vocabulary; 500-900 tokens.
+Cold: sourceRefs only by default, 0-300 tokens.
+```
+
+Cold/raw body reads are allowed only for thread recovery, evidence conflict, insufficient summaries, or explicit narrow user recovery request. If cold/raw is read, record reason, source range, provenance, and token budget. Do not read giant Markdown, raw sessions, vault bodies, long transcripts, image/base64, or full logs merely to be complete.
+
+Required output:
+
+```text
+Long-Term Memory Anchor Gate:
+  Hot memory used:
+  Warm anchor used:
+  Direction check: aligned | drifting | conflict | insufficient evidence
+  If drifting:
+    correction:
+    blocked or revised task:
+  Source refs:
+  Cold history read:
+    yes/no
+    reason if yes:
+```
+
+Task-card field:
+
+```text
+Warm Anchor Gate:
+  triggered: yes/no
+  reason:
+  warm query:
+  anchor summary:
+  direction check:
+  sourceRefs:
+  cold read: no by default
+```
+
+Boundary:
+
+- Warm Anchor does not replace current evidence.
+- Warm Anchor does not expand scope or authorize tools.
+- Warm Anchor does not authorize raw history reads.
+- Warm Anchor does not force repeated planning.
+- Its job is to remind CEO why the project exists, what must not be forgotten, which directions were rejected, and which completion/readiness claims cannot be overstated.
+
+Priority when Hot and Warm conflict:
+
+1. newest explicit user goal;
+2. canonical docs and accepted evidence;
+3. Warm Anchor as conflict/correction signal;
+4. no guessing or smoothing conflicts into `accepted`.
 ## Task Card Memory Runtime Fields
 
 For memory-enabled dispatch, include only the fields needed for the task:
@@ -173,6 +250,14 @@ Memory packet:
   compact excerpts:
   constraints:
   warnings:
+Warm Anchor Gate:
+  triggered:
+  reason:
+  warm query:
+  anchor summary:
+  direction check:
+  sourceRefs:
+  cold read:
 Writeback target:
 Promotion boundary:
 ```

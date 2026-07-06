@@ -562,3 +562,99 @@ Use CEO Flow. A Zhixia-enabled project resume returns hot, warm, skill, and cold
 ```
 
 Expected behavior: Codex should report `Memory Runtime result` with `memoryMode`, `memoryLayers.hot/warm/skill/cold`, `recallPlan.defaultReadOrder`, `coldLayer.defaultRead=false` unless thread_recovery/archive/performance/raw-session hard gate applies, top memory items, and retrieved sourceRefs. Hot product status, accepted decisions, active blockers, current module progress, and canonical docs/source refs should be prioritized before archive/Guardian/old-thread maintenance records.
+
+## Large Project Autopilot Startup
+
+```text
+Use CEO Flow. A new CEO thread is taking over a large product project with PRD, .codex-knowledge, many prior worker lanes, and an active runtime Goal. Do not edit files or create threads in this smoke test. Decide what must happen before execution continues.
+```
+
+Expected behavior: Codex should run the Project Scale Classifier and CEO Autopilot Startup Card, not continue ad hoc CEO-only. It should report Project scale, Task scale, Program Goal Brief, Memory Runtime status, Long-Term Memory Anchor Gate, Completion Dashboard, ready task graph, Worktree readiness, lane reuse candidates, Lane count decision, Staffing Plan, one harvest driver, review/audit plan, and Bootstrap Exit Decision.
+
+## Bootstrap Exit Gate
+
+```text
+Use CEO Flow. A takeover prompt said first step only: recover state and do not immediately dispatch workers. State recovery is now complete. Do not edit files or create threads in this smoke test. Decide whether CEO-only may continue.
+```
+
+Expected behavior: Codex should say bootstrap CEO-only expires after state recovery. It should output Bootstrap Exit Decision, re-evaluate Core Team execution/review/parallel wave/bounded CEO-only, and avoid treating "first step no workers" as a continuing execution policy.
+
+## Active Goal Staffing Check
+
+```text
+Use CEO Flow. A runtime Goal is active for a complete product and the CEO has just finished one bounded proof slice. The next proposed action is another proof slice. Do not edit files or create threads in this smoke test. Decide what check is required.
+```
+
+Expected behavior: Codex should run a staffing check under the active runtime Goal. It should not let the runtime Goal turn CEO into the default proof runner. It should consider worker/review routing, lane count decision, and record any bounded CEO-only continuation reason and stop condition.
+
+## Proof Loop Fuse
+
+```text
+Use CEO Flow. A large project CEO has completed R25, R26, and R27 as CEO-only proof/test/support slices and now proposes R28 proof-only. Do not edit files or create threads in this smoke test. Decide whether to continue.
+```
+
+Expected behavior: Codex should trigger the Proof Loop Fuse, report consecutive CEO-only proof/support count, last product-facing wave, risk of local optimization, Warm Anchor required, staffing check, next product-facing action, and whether neutral review is needed. It should not keep rolling proof-only without a one-slice stop condition.
+
+## Worktree Blocked Still Allows Lanes
+
+```text
+Use CEO Flow. A project is not worktree-ready because critical source files are untracked, but the next wave still needs implementation and review. Do not edit files or create threads in this smoke test. Decide the staffing plan.
+```
+
+Expected behavior: Codex should state `worktree blocked != no lanes`. It should block worktree implementation lanes but still consider one canonical single-writer lane plus read-only QA/Test, Product/UX, architecture/preflight, or repo-baseline lanes. It should not collapse to unlimited CEO-only.
+
+## Long-Term Memory Anchor Gate
+
+```text
+Use CEO Flow. A long-running product project has Hot memory about recent proof tests, but the user worries the project is drifting away from the original PRD and ordinary-user experience. Do not edit files or read raw sessions. Decide the memory gate.
+```
+
+Expected behavior: Codex should run the Long-Term Memory Anchor Gate as an event-triggered check. It should read Hot memory and Warm Anchor, keep Cold sourceRefs only by default, output Direction check as aligned/drifting/conflict/insufficient evidence, and avoid raw sessions, giant Markdown, vault bodies, or image/base64.
+
+## Major Acceptance Needs Warm Anchor
+
+```text
+Use CEO Flow. CEO is about to accept a major milestone that updates product completion percentage and readiness wording. Do not edit files or create threads in this smoke test. Decide what memory check is required before acceptance.
+```
+
+Expected behavior: Codex should trigger Long-Term Memory Anchor Gate before major acceptance, compare Hot status with Warm product/architecture/UX/readiness anchors, and refuse to smooth conflicts into accepted. It should record sourceRefs and cold read no by default.
+
+## Tiny Bug Skips Autopilot Anchor
+
+```text
+Use CEO Flow. In a large project, the user asks to fix one typo in a low-risk markdown file. Do not edit files in this smoke test. Decide whether to run full Autopilot and Warm Anchor.
+```
+
+Expected behavior: Codex should distinguish project scale from task scale. Even if the project is large, the task is tiny; use the smallest safe mode and skip full Autopilot/Warm Anchor unless the typo affects product direction, readiness, architecture, or memory policy.
+
+## Hot Warm Conflict
+
+```text
+Use CEO Flow. Hot memory says the latest proof makes the product 100% complete, but Warm Anchor and canonical PRD say proof/test passing does not prove ordinary-user playable completion or commercial readiness. Do not edit files. Decide the acceptance posture.
+```
+
+Expected behavior: Codex should classify direction check as conflict or drifting, prefer newest explicit user goal plus canonical docs/accepted evidence, use Warm Anchor as a correction signal, and avoid accepting or overstating completion until evidence resolves the conflict.
+
+## Visual Evidence Manifest Required
+
+```text
+Use CEO Flow. A UI worker must compare reference, actual, diff, and failure screenshots for one module. Do not attach images or run browsers in this smoke test. Produce the visual task-card evidence policy and callback format.
+```
+
+Expected behavior: Codex should require `Visual evidence policy: local-artifacts-only`, `Screenshot output: artifacts/visual-checks/<task-id>/`, and `Manifest required: artifacts/visual-checks/<task-id>/visual-evidence-manifest.json`. The worker callback should return only an evidence card with manifest path, reference/actual paths, sha256, dimensions, bytes, short summary, result, top issues, and confirmation that no image/base64/data:image payload was included.
+
+## Visual OCR And JSON Payload Guard
+
+```text
+Use CEO Flow. A visual QA worker has full OCR text, full screenshot JSON, and a visual API response body from comparing many screenshots. Do not edit files. Decide what can enter callback, memory, and FlowSkill.
+```
+
+Expected behavior: Codex should forbid full OCR, full screenshot JSON, full visual API request/response bodies, base64, data:image, image attachments, and large per-image descriptions in callback, memory writeback, FlowSkill candidates, and third-party logs. Full OCR may be stored only as a cold artifact sidecar; callback/memory should keep OCR summary to 100-200 words and visible text list to 30 labels.
+
+## Multi-Image Contact Sheet Return
+
+```text
+Use CEO Flow. A UI target batch has 12 reference images and 12 actual screenshots. Do not attach images. Decide how the visual worker should return evidence.
+```
+
+Expected behavior: Codex should split by module/page where practical, generate a contact sheet and visual-evidence manifest under artifacts, and return only contact sheet path plus manifest path, paths/hashes/dimensions/bytes, short summary, decision, and top issues. It should not attach the 12 images or write long per-image descriptions in chat.
