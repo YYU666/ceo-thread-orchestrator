@@ -19,7 +19,7 @@ Current mitigation on main:
 - `smoke_eval.py` is documented as static policy-term coverage only, not LLM behavior evaluation;
 - Codex internal skill/plugin validators remain optional extra release evidence when available.
 
-Stable release now requires a fresh release gate: public CI green, adversarial validator tests green, optional internal validator evidence if available, privacy/path scan, release notes that mark private integrations as optional, and a matching git tag for a non-dev manifest version.
+Stable release now requires a fresh release gate: public CI green, adversarial validator tests green, optional internal validator evidence if available, privacy/path scan, a full-pass E2E behavior smoke report using `docs/CEO_FLOW_E2E_BEHAVIOR_SMOKE_PROTOCOL_2026-07-07.md`, release notes that mark private integrations as optional, and a matching git tag for a non-dev manifest version.
 
 ## Required Evidence
 

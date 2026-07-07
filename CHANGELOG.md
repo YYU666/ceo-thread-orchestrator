@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added an end-to-end CEO Flow behavior smoke protocol for proving CEO -> implementation -> review -> CEO harvest/decision before stable release, and refined visual payload detection to avoid ordinary `base64,` prose false positives.
+
 - Reworked executable guardrails after external audit: structured PyYAML handoff/pipeline validators, adversarial unit tests, GitHub Actions CI, release-state check, and clearer smoke-eval/validator documentation.
 
 - Added hard Repo Baseline Gate rules: dirty budget thresholds, strong worktree blocking for critical untracked files, Slice Closure Gate after accepted implementation slices, file ownership preflight, and controlled baseline task template.

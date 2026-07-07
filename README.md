@@ -290,6 +290,7 @@ ceo-thread-orchestrator/
 - [Runtime Context Governor revision report](docs/CEO_FLOW_RUNTIME_CONTEXT_GOVERNOR_REPORT_2026-06-11.md)
 - [Code-producing smoke report](docs/CEO_FLOW_CODE_SMOKE_REPORT_2026-06-11.md)
 - [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
+- [E2E behavior smoke protocol](docs/CEO_FLOW_E2E_BEHAVIOR_SMOKE_PROTOCOL_2026-07-07.md)
 - [Smoke prompts](examples/smoke-prompts.md)
 - [Pipeline contract reference](skills/ceo-thread-orchestrator/references/pipeline-contract.md)
 - [Operating playbook](skills/ceo-thread-orchestrator/references/operating-playbook.md)
@@ -332,7 +333,7 @@ Before publishing a release, save evidence for:
 - optional skill/plugin validator output if available;
 - privacy/path scan output;
 - provider JSON smoke only when the release claims a specific memory/history integration;
-- one real code-producing CEO -> implementation -> review -> CEO accept/revise smoke on a disposable project.
+- one real code-producing CEO -> implementation -> review -> CEO accept/revise smoke on a disposable project, following the E2E behavior smoke protocol.
 
 ## Contributing
 
@@ -348,7 +349,7 @@ Useful contributions include:
 
 ## Status
 
-This is an experimental community plugin. Manifest versions with a `-dev` suffix are moving main-branch builds, not frozen releases. Codex thread tooling, model routing, worktrees, subagents, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
+This is an experimental community plugin. Manifest versions with a `-dev` suffix are moving main-branch builds, not frozen releases. A stable release requires a full-pass E2E behavior smoke report in addition to green validator/CI checks. Codex thread tooling, model routing, worktrees, subagents, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
 
 ## License
 

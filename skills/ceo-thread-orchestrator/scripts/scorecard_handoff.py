@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -52,7 +53,9 @@ REVIEW_REQUIRED_PATHS = (
     "review.confidence",
 )
 
-FORBIDDEN_PAYLOAD_MARKERS = ("data:image", "base64,")
+DATA_IMAGE_RE = re.compile(r"data:image/[a-z0-9.+-]+", re.IGNORECASE)
+BASE64_DECL_RE = re.compile(r";\s*base64\s*,", re.IGNORECASE)
+LONG_BASE64_RE = re.compile(r"(?<![A-Za-z0-9+/=])(?:[A-Za-z0-9+/]{160,}={0,2})(?![A-Za-z0-9+/=])")
 
 
 def read_text(path: Path) -> str:
@@ -90,9 +93,18 @@ def require_paths(data: dict[str, Any], paths: tuple[str, ...], errors: list[str
 
 
 def has_forbidden_payload(value: Any) -> bool:
+    """Return true when a value appears to contain an embedded visual payload.
+
+    The check intentionally avoids failing ordinary prose such as
+    "we avoided base64, image payloads". It targets actual payload shapes:
+    data:image URLs, explicit ;base64, declarations, or long base64-like blobs.
+    """
     if isinstance(value, str):
-        lower = value.lower()
-        return any(marker in lower for marker in FORBIDDEN_PAYLOAD_MARKERS)
+        return bool(
+            DATA_IMAGE_RE.search(value)
+            or BASE64_DECL_RE.search(value)
+            or LONG_BASE64_RE.search(value)
+        )
     if isinstance(value, dict):
         return any(has_forbidden_payload(item) for item in value.values())
     if isinstance(value, list):

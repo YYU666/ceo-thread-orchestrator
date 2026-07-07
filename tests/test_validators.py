@@ -102,6 +102,64 @@ review:
         self.assertFalse(result["ok"])
         self.assertTrue(any("invalid review.confidence" in err for err in result["errors"]))
 
+
+    def test_base64_policy_allows_plain_prose_but_blocks_payloads(self):
+        prose_path = self.write_temp(
+            """
+review:
+  schema: review_handoff_v1
+  laneId: visual-review
+  decision: accept
+  evidenceInspected: [manifest]
+  reasons:
+    - We avoided base64, image attachments, and raw visual payloads in the callback.
+  missingEvidence: []
+  requiredFixes: []
+  residualRisk: []
+  confidence: medium
+"""
+        )
+        prose_result = scorecard.score(prose_path)
+        self.assertTrue(prose_result["ok"], prose_result)
+
+        payload_path = self.write_temp(
+            """
+review:
+  schema: review_handoff_v1
+  laneId: visual-review
+  decision: revise
+  evidenceInspected: [manifest]
+  reasons:
+    - "Bad payload data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB"
+  missingEvidence: []
+  requiredFixes: []
+  residualRisk: []
+  confidence: medium
+"""
+        )
+        payload_result = scorecard.score(payload_path)
+        self.assertFalse(payload_result["ok"])
+        self.assertTrue(any("forbidden visual payload" in err for err in payload_result["errors"]))
+
+        long_blob_path = self.write_temp(
+            """
+review:
+  schema: review_handoff_v1
+  laneId: visual-review
+  decision: revise
+  evidenceInspected: [manifest]
+  reasons:
+    - "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  missingEvidence: []
+  requiredFixes: []
+  residualRisk: []
+  confidence: medium
+"""
+        )
+        long_blob_result = scorecard.score(long_blob_path)
+        self.assertFalse(long_blob_result["ok"])
+        self.assertTrue(any("forbidden visual payload" in err for err in long_blob_result["errors"]))
+
     def test_pipeline_dependency_cycle_is_error_and_prefix_overlap_warns(self):
         path = self.write_temp(
             """
