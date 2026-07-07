@@ -155,7 +155,7 @@ When a user says a project lives in one folder, treat that as stronger than infe
 
 ## Worktree Readiness Gate
 
-Before dispatching any implementation lane into a Codex worktree, verify the repository baseline can actually produce a complete worker workspace. Parallel worktree execution is unsafe when critical project files are untracked or only exist in the canonical local directory.
+Before dispatching any implementation lane into a Codex worktree, verify the repository baseline can actually produce a complete worker workspace. Parallel worktree execution is unsafe when critical project files are untracked or only exist in the canonical local directory. Use `repo-baseline.md` for the hard Repo Baseline Gate, Dirty Budget, Slice Closure Gate, and controlled baseline task.
 
 Run a lightweight readiness check:
 
@@ -167,7 +167,8 @@ Worktree readiness:
 - critical untracked source required by task:
 - install/build/test can run inside worker worktree without reading canonical workspace:
 - required visual artifacts copied/tracked or replaced by artifact index:
-- decision: ready | repo_baseline_required | local_single_writer_only
+- dirty budget state: green | yellow | red
+- decision: ready | repo_baseline_required | local_single_writer_only | read_only_only
 ```
 
 Evidence examples:
@@ -178,27 +179,27 @@ Evidence examples:
 - a fresh worktree can run install/build/test/smoke commands using only tracked or explicitly prepared snapshot files;
 - visual tasks have local artifact paths, hashes, or copied artifacts available to the worker instead of relying on hidden canonical-session state.
 
-If the gate fails:
+If the gate fails, it is a hard worktree block, not a warning:
 
 1. Block worktree implementation lanes for that project wave.
 2. Use a single-writer canonical workspace implementation lane only if safe.
 3. Allow read-only review, audit, planning, test-log review, repo-baseline audit, or architecture lanes in parallel.
-4. Create a Repo Baseline task before parallel code development.
+4. Create a controlled Repo Baseline task before parallel code development; do not bypass by asking workers to copy or read canonical-only files.
 5. Record the failure as `repo_baseline_required` or `local_single_writer_only`, not as a CEO Flow methodology failure.
 
 Repo Baseline task card:
 
 ```text
-Goal: make the project safe for worktree worker lanes.
+Goal: make the project safe for worktree worker lanes; do not implement product features.
 Check tracked files: package/config/build, src, tests, scripts, required assets.
 Classify untracked files: source/config/test/assets/artifacts/generated/cache.
-Propose minimal git add or snapshot plan.
+Propose explicit pathspec or snapshot plan; do not run broad `git add .`.
 Do not commit secrets, local caches, generated heavy artifacts, node_modules, raw sessions, or private memory.
 Verify a clean worktree can install/build/test.
 Report readiness decision and residual risks.
 ```
 
-This gate is not meant to force every project into worktrees. It prevents CEO Flow from treating an incomplete git baseline as a parallel-ready project.
+This gate is not meant to force every project into worktrees. It prevents CEO Flow from treating an incomplete git baseline as a parallel-ready project. If git cannot reproduce the canonical root, baseline first, then parallelize.
 
 ## Unsaved Source Repo Host Lane
 

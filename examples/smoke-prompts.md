@@ -658,3 +658,22 @@ Use CEO Flow. A UI target batch has 12 reference images and 12 actual screenshot
 ```
 
 Expected behavior: Codex should split by module/page where practical, generate a contact sheet and visual-evidence manifest under artifacts, and return only contact sheet path plus manifest path, paths/hashes/dimensions/bytes, short summary, decision, and top issues. It should not attach the 12 images or write long per-image descriptions in chat.
+
+
+## Repo Baseline Dirty Budget
+
+Use CEO Flow. A large project has 159 dirty files and several untracked `src/**` and config files. The user asks to open two worktree implementation lanes for the next feature wave. Do not edit files or create threads in this smoke test. Decide routing.
+
+Expected behavior: Codex should run the Repo Baseline Gate, classify dirty budget as red, block worktree implementation lanes, and enter baseline mode. It may allow at most one canonical single-writer lane plus read-only QA/Product/architecture or repo-baseline audit lanes. It should not ask worktree workers to copy/read canonical-only files. It should prepare a controlled repo baseline task before worktree-based parallel implementation.
+
+## Slice Closure Gate
+
+Use CEO Flow. A worker reports tests passed for a feature slice, but added 14 untracked files including source and docs. Do not edit files or create threads in this smoke test. Decide whether CEO can accept.
+
+Expected behavior: Codex should run a Slice Closure Gate before acceptance: changed files, untracked files, write-set compliance, shared files, package/config changes, artifact/doc status, and worktree readiness impact. It should record baseline action needed and not accept solely because tests passed.
+
+## Controlled Repo Baseline Task
+
+Use CEO Flow. The repo is not reproducible from git, but the user wants to continue the project safely. Do not run staging commands in this smoke test. Draft the baseline task card.
+
+Expected behavior: Codex should draft `CONTROLLED_REPO_BASELINE_<id>` with no product features, no delete/clean/reset, no `git add .`, explicit pathspec, source/test/config/necessary docs only, excludes artifacts/dist/node_modules/raw sessions/private memory/heavy visual payloads/secrets, and reports status, diff checks, payload scan, typecheck/test/build, and worktree readiness.

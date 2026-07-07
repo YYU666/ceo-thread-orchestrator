@@ -57,6 +57,32 @@ Rules:
 4. If no good reference is found quickly, record `reference_scan_limited` and proceed with explicit risk.
 5. Skip for casual Q&A, tiny direct tasks, small docs edits, urgent emergency unblocks, user-explicit no-research requests, or when current search is unavailable and local references are enough.
 
+
+## Repo Baseline Gate
+
+Before worktree writers, and whenever dirty/untracked growth threatens reproducibility, run the hard Repo Baseline Gate from `repo-baseline.md`. This is not management wording; it changes routing.
+
+CEO must enter baseline mode when critical untracked source/config/test files exist, dirty count is red, a worker produced a large untracked source/doc batch, or three accepted implementation slices occurred without a repo-state audit.
+
+Baseline mode consequences:
+
+- block worktree implementation lanes;
+- allow at most one canonical single-writer implementation lane when the write-set is clear;
+- allow read-only QA/Test, Product/UX, architecture, docs, and repo-baseline audit lanes;
+- dispatch or prepare a controlled repo baseline task;
+- do not ask worktree workers to copy/read canonical-only files to bypass missing git baseline.
+
+Dirty budget:
+
+```text
+dirty < 20: green
+dirty 20-50: yellow; one canonical writer only unless justified
+dirty > 50: red; baseline mode
+untracked critical source/config/test > 0 before worktree writer: hard block
+```
+
+Every accepted implementation slice must pass a Slice Closure Gate: changed files, untracked files, write-set compliance, shared files touched, package/config changes, artifact/doc status, and worktree readiness impact. Continuous acceptance without baseline is a process failure even if tests pass.
+
 ## 2. Goal Mode Trigger
 
 Create or bind a runtime Codex Goal when the user asks to:

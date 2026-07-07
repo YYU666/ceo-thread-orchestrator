@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added hard Repo Baseline Gate rules: dirty budget thresholds, strong worktree blocking for critical untracked files, Slice Closure Gate after accepted implementation slices, file ownership preflight, and controlled baseline task template.
+
 - Strengthened Visual Evidence Local-Artifact Policy with three-layer raw/manifest/evidence-card model, full OCR/screenshot JSON guards, contact-sheet batch returns, and CPA/API payload caps.
 
 - Added large-project CEO Autopilot rules: project/task scale classifier, startup card, bootstrap exit, staffing/lane-count decision, proof-loop fuse, and long-term Warm Anchor memory gate.

@@ -32,7 +32,7 @@ Use the smallest mode that can safely finish the next objective. When host tool 
 3. Classify project and task scale. For large/program projects, complete-product requests, active runtime Goals, new CEO takeover, or broken-thread recovery, run the CEO Autopilot Startup Card before execution.
 4. Run the Memory Trigger Gate: if `.codex-knowledge/` exists or the request mentions continuing/resuming a project, taking over an old thread, memory/history, Zhixia, RGS, or previous progress, enable `zhixia-local-docs` or an equivalent Memory Runtime provider. Bootstrap/resume must retrieve `project_resume`; dispatch must retrieve `task_dispatch`; skipped or unavailable memory must be recorded before claiming project state.
 5. Run the Long-Term Memory Anchor Gate at large-project takeover, new waves/modules/writer lanes, major acceptance, direction disputes, repeated proof/support slices, or Hot/Warm memory conflict. It is event-triggered only, not heartbeat or every-turn recall.
-6. Before dispatching any worktree implementation lane, run the Worktree Readiness Gate: tracked package/config/build files, tracked source/test files needed for the task, no critical untracked source dependency, and install/build/test viability inside the worker worktree. If it fails, block worktree implementation and use one canonical single-writer lane plus read-only review/audit until a repo baseline task fixes it.
+6. Before dispatching any worktree implementation lane or continuing in a dirty project, run the Repo Baseline Gate plus Worktree Readiness Gate. Critical untracked source/config/test files, dirty budget red, or non-reproducible git baseline are hard blockers for worktree implementation lanes; use controlled baseline mode, one canonical single-writer lane, and read-only review/audit until reproducibility is restored.
 7. For substantial product/coding/architecture/UI/workflow/creative/PRD-to-implementation work, run a lightweight Reference Scan Gate unless tiny, emergency, explicitly skipped, or local references are enough.
 8. Define done criteria, non-goals, task graph, dependencies, verification evidence, context budget, and memory provider mode.
 9. For complete products, multi-phase programs, or long-running goals, create/update a document-first Program Goal Brief and Completion Dashboard before dispatch. Legacy AutoFlow/workflow-runtime state is historical only unless explicitly configured.
@@ -40,7 +40,7 @@ Use the smallest mode that can safely finish the next objective. When host tool 
 11. CEO-only bootstrap expires after the state recovery report. Then run Bootstrap Exit Gate and Staffing Plan; do not let "first step no workers" become continuing CEO-only execution.
 12. Treat MVP as a milestone, not the default final state, unless the user explicitly scoped the outcome to MVP-only or a real blocker exists.
 13. After an accepted PRD/task graph or implementation request, leave CEO-only planning and run Core Team execution unless the task is tiny, non-coding, or explicitly direct-current-thread.
-14. Before dispatch, assign a lane roster and lane count decision: one primary role, workspace, write-set, task card, callback policy, stop condition, and thread-operation permission per lane. If worktree lanes are unsafe, still consider one canonical writer plus read-only QA/Product/architecture review lanes.
+14. Before dispatch, assign a lane roster and lane count decision: one primary role, workspace, file ownership/write-set, task card, callback policy, stop condition, and thread-operation permission per lane. If worktree lanes are unsafe, still consider one canonical writer plus read-only QA/Product/architecture review lanes.
 15. Prefer reusable/clean visible lanes over new one-shot threads; prefer clean worker creation/reuse over forking CEO context. Do not fork workers from active/unfinished CEO turns.
 16. Direct CEO fallback for substantial coding is forbidden until thread tools are discovered and route/reuse/create has failed, is unavailable, or is explicitly declined. Under an active runtime Goal, it is only a bounded one-turn lease with restoration plan.
 17. CEO-only proof/audit/test/support slices are bounded. After repeated proof/support slices, run the Proof Loop Fuse, staffing check, and Warm Anchor check before continuing.
@@ -53,7 +53,7 @@ Use the smallest mode that can safely finish the next objective. When host tool 
 24. For visual work, use `local-artifacts-only`: screenshots/reference images stay in project artifacts; callbacks, task cards, memory, FlowSkill candidates, and third-party logs carry only paths, hashes, dimensions, short summaries, and decisions. Do not embed image attachments, base64, or `data:image` unless a single user-supplied image is explicitly needed within budget.
 25. Use no-stall worker mode: task cards preauthorize routine in-scope command families; workers report `approval_stall` to CEO instead of asking the user for routine approvals.
 26. For single-writer or non-parallelizable projects, keep one implementation lane plus compact callback to CEO when thread messaging exists; add read-only review/audit lanes only when safe.
-27. Harvest evidence, inspect diffs/tests/artifacts when risk justifies it, then decide `accept | revise | block | supersede`. Worker self-routing or waiting on another lane is `role_contamination` unless explicitly authorized.
+27. Harvest evidence, inspect diffs/tests/artifacts and run the Slice Closure Gate when implementation changed files, then decide `accept | revise | block | supersede`. Worker self-routing or waiting on another lane is `role_contamination` unless explicitly authorized.
 28. After any terminal lane/module/subline/heartbeat/runtime sub-goal result, run a Program Goal portfolio check. A module pause is not a project pause while safe product-progress waves remain.
 29. If a rostered lane id is missing, classify `stale_lane_reference` and run the thread locator before retrying. If the CEO/project-main heartbeat target is stream-broken, repeatedly empty, context-exhausted, or unreadable, run the Broken CEO Thread / Heartbeat Fuse and recover from a compact ThreadRecoveryPacket.
 30. Write back only evidence-backed memory candidates, decisions, handoffs, bug/experience cards, contractor traces, or knowledge items.
@@ -94,6 +94,8 @@ Parent goal ID:
 Role:
 Workspace / canonical project root:
 Worktree readiness:
+Repo baseline / dirty budget:
+File ownership:
 Allowed write-set / do not touch:
 Lane ID / planned title:
 Thread operation:
@@ -124,6 +126,7 @@ Memory Runtime result: memoryMode, memoryLayers, recallPlan, top memory items, r
 Memory skipped or unavailable reason:
 Warm Anchor Gate: triggered, reason, warm query, anchor summary, direction check, sourceRefs, cold read
 Memory writeback target / promotion boundary:
+Slice Closure Gate:
 Autonomy level:
 Approval route / command approval profile:
 Allowed command families / commands that must not run:
@@ -171,6 +174,7 @@ Read only the reference needed for the current task:
 - Large-project Autopilot, scale classifier, bootstrap exit, staffing/lane count, and proof-loop fuse: `references/ceo-autopilot.md`.
 - Program Goal, dashboard, lane roster, harvest driver, decision, recovery, and memory schemas: `references/state-schema.md`.
 - Thread creation, sidebar hygiene, workspace guard, locator, relay, broken-thread fuse: `references/thread-ops.md`.
+- Repo baseline, dirty budget, strong worktree blocking, file ownership, and slice closure: `references/repo-baseline.md`.
 - PRD waves, dependency graph, and safe parallel execution: `references/parallel-waves.md`.
 - Pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
 - Context governor and memory/reference routing overview: `references/context-memory.md`.

@@ -48,6 +48,7 @@ Autopilot Startup Card:
 Staffing Plan:
 Long-Term Memory Anchor Gate:
 Proof Loop Fuse:
+Repo Baseline Gate:
 Memory / knowledge writeback:
 Lightweight state discipline:
   State source of truth:
@@ -90,7 +91,9 @@ Planned title:
 Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs | Contractor/Subagent
 Workspace:
 Canonical project root:
-Worktree readiness: ready | repo_baseline_required | local_single_writer_only | not_applicable
+Worktree readiness: ready | repo_baseline_required | local_single_writer_only | read_only_only | not_applicable
+Repo baseline / dirty budget:
+File ownership:
 Allowed write-set:
 Do not touch:
 Task card path or summary:
@@ -271,6 +274,7 @@ Current phase:
 Completion Dashboard:
 Ready task graph:
 Worktree readiness:
+Repo Baseline Gate / dirty budget:
 Lane reuse candidates:
 Lane count decision:
 Staffing Plan:
@@ -307,6 +311,7 @@ Why not fewer lanes:
 Thread reuse:
 New thread needed:
 Worktree/canonical mode:
+Repo baseline mode:
 ```
 
 ## Proof Loop Fuse Record
@@ -336,4 +341,36 @@ Blocked or revised task:
 Source refs:
 Cold history read: yes/no
 Cold read reason/source range/token budget:
+```
+
+
+## Repo Baseline Gate Record
+
+```text
+Dirty count:
+Untracked critical source/config/test count:
+Untracked docs/artifacts count:
+Tracked baseline covers package/config/build:
+Tracked baseline covers task source/test roots:
+Worktree can reproduce project without canonical-only files:
+Dirty budget state: green | yellow | red
+Decision: ready | baseline_required | canonical_single_writer_only | read_only_only
+Controlled baseline task needed: yes/no
+Reason:
+```
+
+## Slice Closure Gate Record
+
+```text
+Task ID:
+Changed files:
+Untracked files:
+New untracked source/config/test/docs count:
+Allowed write-set compliance:
+Shared files touched:
+Package/config changed: yes/no
+Artifacts/docs are local evidence only: yes/no
+Worktree readiness impact: improved | unchanged | worse | unknown
+Baseline action needed: none | pathspec proposal | controlled baseline task | block next worktree writer
+Evidence refs:
 ```

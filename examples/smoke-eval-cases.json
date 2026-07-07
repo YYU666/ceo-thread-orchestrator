@@ -613,5 +613,61 @@
       "do not attach 10-20 images",
       "long per-image descriptions"
     ]
+  },
+  {
+    "id": "repo-baseline-dirty-budget-red",
+    "title": "Dirty repo enters baseline mode before worktree writers",
+    "prompt": "A large project has 159 dirty files and untracked src/config files; user asks for worktree implementation lanes.",
+    "expected_labels": [
+      "Repo Baseline Gate",
+      "dirty budget red",
+      "baseline mode"
+    ],
+    "forbidden_labels": [
+      "dispatch worktree writers",
+      "copy canonical-only files"
+    ],
+    "coverage_terms": [
+      "Repo Baseline Gate",
+      "dirty > 50",
+      "baseline mode"
+    ]
+  },
+  {
+    "id": "slice-closure-gate-after-accepted-work",
+    "title": "Accepted implementation slices require repo state closure",
+    "prompt": "Worker tests passed but added many untracked source/docs files.",
+    "expected_labels": [
+      "Slice Closure Gate",
+      "untracked files",
+      "baseline action needed"
+    ],
+    "forbidden_labels": [
+      "accept solely because tests passed"
+    ],
+    "coverage_terms": [
+      "Slice Closure Gate",
+      "worktree readiness impact",
+      "baseline action needed"
+    ]
+  },
+  {
+    "id": "controlled-repo-baseline-task-template",
+    "title": "Baseline task uses explicit pathspec and avoids destructive cleanup",
+    "prompt": "Repo cannot be reproduced from git; CEO needs a baseline task before parallel worktrees.",
+    "expected_labels": [
+      "CONTROLLED_REPO_BASELINE",
+      "explicit pathspec",
+      "no git add ."
+    ],
+    "forbidden_labels": [
+      "delete/reset/clean",
+      "product features"
+    ],
+    "coverage_terms": [
+      "CONTROLLED_REPO_BASELINE",
+      "explicit pathspec",
+      "Do not delete, clean, reset"
+    ]
   }
 ]

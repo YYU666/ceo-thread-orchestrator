@@ -64,6 +64,7 @@ CEO Autopilot Startup Card:
   Completion Dashboard:
   Ready task graph:
   Worktree readiness:
+  Repo Baseline Gate / dirty budget:
   Lane reuse candidates:
   Lane count decision:
   Staffing Plan:
@@ -125,6 +126,7 @@ Staffing Plan:
   Thread reuse:
   New thread needed:
   Worktree/canonical mode:
+  Repo baseline mode:
 ```
 
 Lane count guide:
@@ -136,7 +138,7 @@ Lane count guide:
 - `3-5 lanes`: multiple independent modules with non-overlapping write-sets and enough harvest/review capacity.
 - `pipeline`: broad PRD, dependency graph, fan-out/fan-in, typed handoffs, or scorecard needed.
 
-Hard rule: `worktree blocked != no lanes`. If worktree implementation is unsafe, consider one canonical single-writer lane plus parallel read-only review, QA, UX/Product, architecture/preflight, or repo-baseline lanes.
+Hard rule: `worktree blocked != no lanes`. If worktree implementation is unsafe, consider one canonical single-writer lane plus parallel read-only review, QA, UX/Product, architecture/preflight, or repo-baseline lanes. If dirty budget is red or critical untracked source/config/test exists, enter baseline mode before new feature worktree writers.
 
 ## Proof Loop Fuse
 
