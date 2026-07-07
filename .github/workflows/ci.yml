@@ -1,0 +1,38 @@
+name: CI
+
+"on":
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dev requirements
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Static documentation coverage smoke
+        run: python scripts/smoke_eval.py
+
+      - name: Validator adversarial tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate bundled pipeline template
+        run: python skills/ceo-thread-orchestrator/scripts/validate_pipeline.py skills/ceo-thread-orchestrator/templates/pipeline.yaml --json
+
+      - name: Validate bundled handoff templates
+        run: |
+          python skills/ceo-thread-orchestrator/scripts/scorecard_handoff.py skills/ceo-thread-orchestrator/templates/typed_handoff.yaml --json
+          python skills/ceo-thread-orchestrator/scripts/scorecard_handoff.py skills/ceo-thread-orchestrator/templates/review_handoff.yaml --json
+
+      - name: Release state check
+        run: python scripts/check_release_state.py

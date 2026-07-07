@@ -608,7 +608,7 @@ Harvest driver freshness:
 
 - Do not let heartbeat/harvest prompts keep watching obsolete thread ids.
 - If a CEO/project-main thread or long-running heartbeat target is stream-broken, repeatedly empty, context-exhausted, unreadable, or unsafe as a harvest target, classify it as `broken_ceo_thread`, pause the heartbeat/automation, and run the ThreadRecoveryPacket takeover path in `thread-ops.md`.
-- If a recorded worker/review `threadId` is not found, classify it as `stale_lane_reference` and run the bounded locator path from `thread-ops.md` before retrying, blocking, or declaring the evidence lost. Use locator anchors such as id prefix, title, task id, `source_thread_id`, project/cwd, write-set, latest callback record, recovery package, and Zhixia/Guardian/vault metadata.
+- If a recorded worker/review `threadId` is not found, classify it as `stale_lane_reference` and run the bounded locator path from `thread-ops.md` before retrying, blocking, or declaring the evidence lost. Use locator anchors such as id prefix, title, task id, `source_thread_id`, project/cwd, write-set, latest callback record, recovery package, and memory/history-provider/vault metadata.
 - When a lane is superseded, role-contaminated, archived, or replaced, update or delete its heartbeat.
 - If the real work completed in a nested child thread, harvest that child explicitly and mark the parent `role_contamination` or `superseded`.
 - If locator fallback finds a likely replacement thread, correct the roster and harvest it. If only compact archive/vault evidence exists, recover that evidence and route a fresh lane when needed. If nothing is found, mark `stale_no_evidence` and continue other safe product-progress work.

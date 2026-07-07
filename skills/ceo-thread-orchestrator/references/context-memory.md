@@ -1,6 +1,6 @@
 # Context And Memory Reference
 
-Use this short router when a task involves runtime context size, memory/reference routing, `.codex-knowledge/`, Zhixia, Guardian/history, old-thread continuity, raw sessions, visual payload boundaries, or compact recovery. For detailed rules, load the focused reference below instead of keeping this file as a giant mixed policy.
+Use this short router when a task involves runtime context size, memory/reference routing, `.codex-knowledge/`, memory providers, history providers, old-thread continuity, raw sessions, visual payload boundaries, or compact recovery. For detailed rules, load the focused reference below instead of keeping this file as a giant mixed policy.
 
 ## Runtime Context Governor
 
@@ -25,13 +25,13 @@ Recommended takeover read order:
 3. compact project memory / Memory Runtime `retrieve_context(queryType=project_resume)`;
 4. active lane roster and latest callbacks;
 5. canonical project docs/source files;
-6. Memory Runtime / Zhixia / Guardian / vault sourceRefs;
+6. Memory Runtime / history-provider / vault sourceRefs;
 7. cold/raw session evidence only through the raw-session gate.
 
 ## Reference Router
 
 - Memory Runtime lifecycle, trigger gate, task-card retrieval fields, writeback/promotion, large `.codex-knowledge` file limits, precedent lookup, and Hot/Warm/Skill/Cold result contract: `memory-runtime.md`.
-- Guardian history, old-thread continuity, Thread History Vault/source-backed archive evidence, selected-thread compaction safety, restore dry-run, raw-session gate, and freshness labels: `guardian-history.md`.
+- History-provider old-thread continuity, Thread History Vault/source-backed archive evidence, selected-thread compaction safety, restore dry-run, raw-session gate, and freshness labels: `guardian-history.md`.
 - Visual evidence and image payload budgets: `visual-evidence.md`.
 - FlowSkill search/capture/score bridge: `flowskill-hook.md`.
 - Program Goal, Completion Dashboard, ThreadRecoveryPacket, lane roster, harvest driver, and memory candidate schemas: `state-schema.md`.
@@ -40,8 +40,8 @@ Recommended takeover read order:
 
 - `none`: no durable provider; use newest request, local source files, task cards, reports, and verification.
 - `project-memory`: canonical local memory docs, decision logs, handoff logs, and bug memory.
-- `zhixia-local-docs`: `.codex-knowledge/` and Zhixia compact project knowledge.
-- `guardian-history`: Guardian/source-backed old Codex thread history, paused-task discovery, health, receipts, and restore dry-run evidence.
+- `memory-runtime`: compact project knowledge from a configured provider or `.codex-knowledge/` helper.
+- `history-provider`: source-backed old Codex thread history, paused-task discovery, health, receipts, and restore dry-run evidence.
 - `hybrid`: current project memory plus old-thread/history provenance; preferred when both are configured.
 
 Use canonical project files, source code, tests, decision logs, and worker reports as stronger evidence than summaries when they disagree.
@@ -51,9 +51,9 @@ Use canonical project files, source code, tests, decision logs, and worker repor
 - Bootstrap/resume: retrieve compact project memory first, then inspect only cited sourceRefs.
 - Dispatch: include only the memory packet and sourceRefs the lane needs.
 - Review/harvest: inspect current diffs/tests/artifacts plus compact precedent; do not reload long worker chat.
-- Old-thread recovery: retrieve hot/warm memory before Guardian/vault pointers; cold/raw snippets require the hard gate.
+- Old-thread recovery: retrieve hot/warm memory before history-provider/vault pointers; cold/raw snippets require the hard gate.
 - Visual tasks: preserve visual QA, but keep image bodies out of task cards, callbacks, memory, FlowSkill candidates, and third-party logs.
 
 ## Boundary
 
-CEO Flow may generate compact evidence/writeback packets and decide when memory is needed. The provider, such as Zhixia, owns ingestion, dedupe, layer classification, retrieval implementation, and durable promotion. Guardian or equivalent history systems provide source-backed provenance and recovery evidence, not automatic memory ownership or cleanup authority.
+CEO Flow may generate compact evidence/writeback packets and decide when memory is needed. The configured provider owns ingestion, dedupe, layer classification, retrieval implementation, and durable promotion. History providers supply source-backed provenance and recovery evidence, not automatic memory ownership or cleanup authority.

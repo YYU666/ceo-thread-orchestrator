@@ -212,7 +212,7 @@ Promotion rules:
 
 - Source-backed accepted low-risk evidence may become active/curated through the memory provider policy.
 - Heuristic, history-derived, user-preference, tool-skill, cross-project, security/privacy, archive/compact/restore, or executable/install lessons remain candidate/review unless confirmed.
-- Guardian/equivalent history tools may provide provenance but do not own project memory.
+- History-provider tools may provide provenance but do not own project memory.
 
 ## Task Card State Fields
 

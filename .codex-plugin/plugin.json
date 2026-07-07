@@ -1,7 +1,7 @@
 {
   "name": "ceo-thread-orchestrator",
-  "version": "0.2.6",
-  "description": "CEO Flow: a Codex CEO/PM orchestration skill for turning PRDs into lightweight Core Team execution with result harvest, specialist threads, Zhixia project context, Guardian history evidence, neutral high-reasoning review gates, and unattended command planning.",
+  "version": "0.2.7-dev",
+  "description": "CEO Flow: a Codex CEO/PM orchestration skill for turning PRDs into lightweight Core Team execution with result harvest, specialist lanes, compact memory/history providers, neutral review gates, and unattended command planning.",
   "author": {
     "name": "ceo-thread-orchestrator contributors"
   },
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "CEO Flow",
     "shortDescription": "CEO-style Codex workflow across expert lanes.",
-    "longDescription": "Coordinate Codex work as a CEO/PM/architect: keep one high-reasoning decision lane, treat the PRD/task-graph thread as CEO by default, route accepted plans through a lightweight Core Team of implementation/review/product/knowledge roles, plan unattended-safe command approvals before dispatch, harvest worker results and dispatch the next unblocked tasks, use Zhixia for current project context and Guardian for old Codex history evidence or restore dry-runs when available, keep independent review gates neutral with high reasoning when possible, reuse specialist lanes, maintain team rosters and evidence memory cards, bootstrap knowledge deliberately, and scale threads only when the task graph justifies it.",
+    "longDescription": "Coordinate Codex work as a CEO/PM/architect: keep one decision lane, turn accepted PRDs/task graphs into Core Team execution, route bounded implementation/review/product/knowledge roles when tools allow it, plan unattended-safe approvals, harvest worker results, use compact source-backed memory/history providers when configured, keep neutral review gates, reuse lanes, maintain rosters/evidence cards, and scale threads only when the task graph justifies it.",
     "developerName": "ceo-thread-orchestrator contributors",
     "category": "Productivity",
     "capabilities": [
@@ -31,8 +31,8 @@
       "Use CEO Flow for this project.",
       "Execute this PRD with the CEO Flow Core Team.",
       "Plan an unattended CEO Flow execution wave.",
-      "Run a neutral high-reasoning review gate.",
-      "Use Zhixia-enhanced context slimming.",
+      "Run a neutral evidence-first review gate.",
+      "Use compact memory/history provider context if configured.",
       "Split this work into reusable expert lanes.",
       "Review the team structure and memory plan."
     ]

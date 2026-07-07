@@ -128,23 +128,23 @@ worker 应该避免技术栈漂移、重复逻辑、强耦合、魔法数字、�
 默认记忆顺序是：
 
 1. 项目说明和本地记忆文件
-2. 推荐的 Zhixia / `.codex-knowledge/` 知识库
+2. 推荐的 Memory Runtime / `.codex-knowledge/` 记忆提供方
 3. 当前活跃线程的报告和交接信息
 4. 决策日志、bug 记忆、handoff 记录和生成文档
 
 新建线程或复用旧线程时，CEO 会准备一个精简记忆包。新线程不应该靠猜，也不应该假装自己知道其他线程的上下文。
 
-如果项目有其他本地知识库路径，也可以由项目指定。Zhixia 是 CEO Flow 推荐的官方知识库方案，但不是每个环境都必须具备的硬依赖。
+项目可以指定任意本地知识路径或紧凑记忆提供方；公开版 CEO Flow 不依赖任何私有记忆系统。
 
-CEO Flow 会把这层记忆系统当成 Codex 运行减负控制层。新线程和 worker 任务包默认只拿当前任务、知匣精简摘录、source refs，以及必要时的 Guardian 窄证据；不默认传完整 CEO 聊天、完整 `.codex-knowledge`、长实现线程记录或 raw session。如果用户明确要继续使用老线程，CEO Flow 应先检查知匣/Guardian 的历史卡和 compact receipt，再决定是否需要 fresh-thread handoff。
+CEO Flow 会把这层记忆系统当成 Codex 运行减负控制层。新线程和 worker 任务包默认只拿当前任务、记忆提供方精简摘录、source refs，以及必要时的历史提供方窄证据；不默认传完整 CEO 聊天、完整 `.codex-knowledge`、长实现线程记录或 raw session。如果用户明确要继续使用老线程，CEO Flow 应先检查记忆/历史提供方的历史卡和 compact receipt，再决定是否需要 fresh-thread handoff。
 
 CEO Flow 会区分五种知识库模式：
 
 - `none`：没有知识库，只使用任务卡、交接和源文件做普通编排。
 - `project-memory`：项目内 canonical memory 文档，例如项目记忆、决策、交接和 bug memory。
-- `zhixia-local-docs`：通过知匣或 `.codex-knowledge/` 获取当前项目的摘要优先上下文。
-- `guardian-history`：通过 Guardian 查询旧 Codex 线程、paused task、历史证据、健康摘要和 restore dry-run。
-- `hybrid`：知匣负责当前项目知识，Guardian 负责旧线程历史和 paused-task 恢复。
+- `memory-runtime`：通过配置的记忆提供方或 `.codex-knowledge/` 获取当前项目的摘要优先上下文。
+- `history-provider`：通过配置的历史提供方查询旧 Codex 线程、paused task、历史证据、健康摘要和 restore dry-run。
+- `hybrid`：当前项目记忆 + 历史提供方 source refs，用于旧线程恢复。
 
 ## 兼容性矩阵
 
@@ -155,9 +155,9 @@ CEO Flow 会区分五种知识库模式：
 | 有 Codex app 线程工具 | 在工具合同和授权允许时，可以创建、读取、复用、调度和收取专家线程结果。 |
 | 不能选择模型或 reasoning | 说明期望的模型/推理强度，但不能假装已经设置了不可用的控制项。 |
 | 没有自动化或 heartbeat | 在报告里留下明确的下一次收菜动作，而不是假装创建监控。 |
-| 没有知匣或 Guardian | 作为普通 CEO Flow 使用：任务卡、源文件、worker 报告和项目记忆文档。 |
-| 有知匣 | 使用摘要优先的当前项目上下文，把已接受经验写入 canonical 文档或可被知匣扫描的产物。 |
-| 有 Guardian | 默认只读使用旧线程历史和 restore 证据；选定线程原地瘦身必须有用户明确触发和 receipt；restore 默认 dry-run，实际恢复必须明确批准。 |
+| 没有记忆/历史提供方 | 作为普通 CEO Flow 使用：任务卡、源文件、worker 报告和项目记忆文档。 |
+| 有 Memory Runtime | 使用摘要优先的当前项目上下文，把已接受经验写入 canonical 文档或可被提供方扫描的产物。 |
+| 有历史提供方 | 默认只读使用旧线程历史和 restore 证据；选定线程原地瘦身必须有用户明确触发和 receipt；restore 默认 dry-run，实际恢复必须明确批准。 |
 
 ## 轻量团队登记
 
@@ -176,7 +176,7 @@ CEO Flow 可以为可复用专家线程保留一份小 roster：角色、能力�
 - 不让多个 worker 同时改同一个文件范围
 - 不把高成本模型浪费用在普通重复任务上
 - 不把员工线程报告当成最终事实
-- 不把 Guardian 当成 Windows 定时任务、自动清理日志、自动 prune process manager 或默认 raw session 读取器
+- 不把任何历史提供方当成定时任务、自动清理工具、自动 prune process manager 或默认 raw session 读取器
 - 不在用户明确要优化老线程时强推新线程；要区分“重新打开同一线程”、老线程原地瘦身和 fresh-thread handoff
 
 CEO 必须看证据。worker 的报告只是证据之一，不是结论本身。

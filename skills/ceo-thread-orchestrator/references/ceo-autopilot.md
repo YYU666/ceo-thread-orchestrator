@@ -45,7 +45,7 @@ Corrections:
 
 - A large project can still receive a tiny task. Do not force heavy Autopilot for typo fixes or one-line low-risk edits.
 - Any takeover, complete-product request, active runtime Goal, readiness/progress claim, or major acceptance is at least large for operating purposes.
-- RGS/Zhixia-style complete products with long memory, many lanes, and recovery needs are program/product-scale.
+- Complete products with long memory, many lanes, and recovery needs are program/product-scale.
 
 ## CEO Autopilot Startup Card
 

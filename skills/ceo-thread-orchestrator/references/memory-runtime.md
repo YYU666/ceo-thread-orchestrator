@@ -1,16 +1,16 @@
 # Memory Runtime Reference
 
-Use this reference when CEO Flow must retrieve compact project memory, dispatch source-backed task cards, look up precedents, write back accepted evidence, or coordinate Zhixia/local project memory without reading giant Markdown, raw chats, raw sessions, or visual payload bodies.
+Use this reference when CEO Flow must retrieve compact project memory, dispatch source-backed task cards, look up precedents, write back accepted evidence, or coordinate a configured local Memory Runtime without reading giant Markdown, raw chats, raw sessions, or visual payload bodies.
 
-CEO Flow owns trigger timing, task-card fields, evidence packets, and accept/revise/block decisions. The Memory Runtime provider owns ingestion, dedupe, Hot/Warm/Skill/Cold classification, storage, retrieval behavior, and promotion policy. Zhixia is one possible provider; equivalent local providers may implement the same contract.
+CEO Flow owns trigger timing, task-card fields, evidence packets, and accept/revise/block decisions. The Memory Runtime provider owns ingestion, dedupe, Hot/Warm/Skill/Cold classification, storage, retrieval behavior, and promotion policy. Provider-specific tools are optional examples; equivalent local providers may implement the same contract.
 
 ## Knowledge Provider Modes
 
 - `none`: no durable provider; use newest request, local source files, task cards, reports, and verification.
 - `project-memory`: canonical local memory docs, decision logs, handoff logs, and bug memory.
-- `zhixia-local-docs`: `.codex-knowledge/` and Zhixia compact project knowledge.
-- `guardian-history`: Guardian/source-backed old thread history and restore evidence; see `guardian-history.md`.
-- `hybrid`: Memory Runtime for current project knowledge plus Guardian/sourceRefs for old thread evidence; preferred when both are configured.
+- `memory-runtime`: compact provider for local project knowledge, including `.codex-knowledge/` when available.
+- `history-provider`: source-backed old thread/session history and restore evidence; see `guardian-history.md`.
+- `hybrid`: Memory Runtime for current project knowledge plus a history provider/sourceRefs for old thread evidence; preferred when both are configured.
 
 Use canonical project files, source code, tests, decision logs, and worker reports as stronger evidence than summaries when they disagree.
 
@@ -18,10 +18,10 @@ Use canonical project files, source code, tests, decision logs, and worker repor
 
 Memory Runtime is a default lifecycle action when local memory is present or the user is asking for continuity. It is not merely an optional tool.
 
-Enable `zhixia-local-docs` or an equivalent compact Memory Runtime provider when any trigger is true:
+Enable a configured compact Memory Runtime provider when any trigger is true:
 
 - canonical project root contains `.codex-knowledge/`;
-- user mentions continuing a project, resuming work, taking over an old thread, restoring memory, history, previous progress, RGS, Zhixia, Guardian, or old-thread recovery;
+- user mentions continuing a project, resuming work, taking over an old thread, restoring memory, history, previous progress, a configured memory provider, a history provider, or old-thread recovery;
 - task depends on accepted decisions, active blockers, current module progress, prior bugs, release state, archive/slimming history, or repeated failures.
 
 CEO Flow must not rely on model memory alone to state project status under these triggers. If provider use fails or is skipped, record:
@@ -33,7 +33,7 @@ Memory Runtime result:
   queryType:
   query:
   tokenBudget:
-  memoryMode: none | project-memory | zhixia-local-docs | guardian-history | hybrid
+  memoryMode: none | project-memory | memory-runtime | history-provider | hybrid
   memoryLayers:
     hot:
     warm:
@@ -49,19 +49,19 @@ Memory Runtime result:
 
 If this record is absent, CEO must not claim it already understands project state.
 
-When using `zhixia-local-docs`, prefer the helper JSON modes from that skill, for example:
+When a provider offers a JSON/helper interface, prefer bounded machine packets, for example:
 
-```powershell
-node scripts/read-project-knowledge.cjs <workspace-path> --runtime-context --task-goal "<goal>" --query-type project_resume --token-budget 2000 --limit 6 --json
-node scripts/read-project-knowledge.cjs <workspace-path> --runtime-context --task-goal "<goal>" --query-type task_dispatch --token-budget 1200 --limit 6 --json
-node scripts/read-project-knowledge.cjs <workspace-path> --precedent "<task type>" --token-budget 900 --limit 5 --json
-node scripts/read-project-knowledge.cjs <workspace-path> --recover-thread --thread-id "<thread id>" --query "<keywords>" --json
+```text
+retrieve_context(task_goal, queryType=project_resume, tokenBudget=1500-3000)
+retrieve_context(task_goal, queryType=task_dispatch, tokenBudget=800-1500)
+retrieve_precedent(task_type, tokenBudget=800-1200)
+retrieve_context(queryType=thread_recovery, threadId=<id>, tokenBudget=1500-3000)
 ```
 
-Use equivalent provider APIs when the project has a different Memory Runtime.
+Provider-specific commands belong in optional integration docs, not the core public contract.
 ## Memory Runtime Lifecycle
 
-A compact project memory provider may expose explicit runtime hooks such as `retrieve_context(task_goal)`, `retrieve_precedent(task_type)`, `writeback_evidence(result)`, and `promote_memory(candidate)`. Zhixia is one provider; another project may supply an equivalent local memory runtime.
+A compact project memory provider may expose explicit runtime hooks such as `retrieve_context(task_goal)`, `retrieve_precedent(task_type)`, `writeback_evidence(result)`, and `promote_memory(candidate)`. Any project may supply an equivalent local memory runtime.
 
 CEO Flow uses the provider as a lifecycle service, not as a giant context file:
 
@@ -81,7 +81,7 @@ Lifecycle requirements:
 2. Dispatch to worker/reviewer must run `retrieve_context(task_goal, queryType=task_dispatch)` first. The task card must include `Memory packet`, `Retrieved source refs`, `Memory Runtime query / context budget`, and a no-long-history rule: no full `.codex-knowledge`, no raw session, no long chat transcript.
 3. Review gate should use `queryType=review_gate` and start from task card, diff/tests/artifacts, relevant docs, and compact memory, not implementation-thread chat.
 4. After CEO decides `accept | revise | block | supersede`, create a compact evidence packet. If Memory Runtime is available, call or prepare `writeback_evidence(result)`. If unavailable, record the skipped reason.
-5. Broken-thread or old-thread recovery must retrieve `queryType=thread_recovery` before Guardian/vault fallback. Raw session snippets remain behind the raw-session gate.
+5. Broken-thread or old-thread recovery must retrieve `queryType=thread_recovery` before history-provider/vault fallback. Raw session snippets remain behind the raw-session gate.
 
 Preferred query types:
 
@@ -122,10 +122,10 @@ Memory Runtime result:
 
 - `hot`: current project status, accepted decisions, active blockers, current module progress, same-thread continuation.
 - `warm`: relevant project summaries, prior decisions, bugs, handoffs, release/package notes, and experience cards.
-- `skill`: reusable tool/skill/workflow candidates and FlowSkill/Zhixia skill records; advisory only until approved.
-- `cold`: Guardian/vault/raw-history/archive evidence. Default read is false unless `thread_recovery`, archive/performance, or raw-session hard gate applies.
+- `skill`: reusable tool/skill/workflow candidates and reusable-skill provider records; advisory only until approved.
+- `cold`: history-provider/vault/raw-history/archive evidence. Default read is false unless `thread_recovery`, archive/performance, or raw-session hard gate applies.
 
-`recallPlan.defaultReadOrder` should prefer hot -> warm -> canonical docs/source refs -> skill when relevant -> Guardian/sourceRefs -> cold only under gate.
+`recallPlan.defaultReadOrder` should prefer hot -> warm -> canonical docs/source refs -> skill when relevant -> history-provider/sourceRefs -> cold only under gate.
 
 Item contract:
 
@@ -288,9 +288,9 @@ Forbidden by default:
 - reading raw sessions, screenshots/base64, complete logs, or full old chats to compensate for missing retrieval.
 
 If helper/JSON retrieval is unavailable, record `memory_runtime_unavailable` or `large_memory_helper_unavailable` and continue only from canonical source files, docs, and a bounded manual summary. Do not claim full memory bootstrap.
-## Zhixia Workflow
+## Optional `.codex-knowledge` Provider Workflow
 
-When `.codex-knowledge/` exists, treat the workspace as Zhixia-enabled. Look for `project-knowledge.md`, `context.md`, `knowledge-items.md`, `experience-cards.md`, and `skill-candidates.md`.
+When `.codex-knowledge/` exists, treat the workspace as memory-runtime enabled if a compact helper or bounded index is available. Look for files such as `project-knowledge.md`, `context.md`, `knowledge-items.md`, `experience-cards.md`, and `skill-candidates.md`, but do not read large files wholesale.
 
 Retrieval:
 
@@ -303,10 +303,10 @@ Writeback:
 - Workers report memory update candidates.
 - CEO or active memory provider decides whether the result becomes a Decision, Handoff, Bug/Experience card, or KnowledgeItem.
 - Do not edit `.codex-knowledge/` directly unless the user explicitly asks.
-- Prefer durable updates in canonical markdown/docs that Zhixia can scan.
+- Prefer durable updates in canonical markdown/docs that a memory provider can scan.
 - When a Memory Runtime exists, call writeback only with compact accepted/revise/block evidence packets, not raw chats or raw session bodies.
 
-Skill candidates from Zhixia are draft material only. Install or modify skills from them only with explicit user approval.
+Skill candidates from any memory provider are draft material only. Install or modify skills from them only with explicit user approval.
 ## Precedent Retrieval
 
 Use `retrieve_precedent(task_type)` before tasks where prior experience can prevent repeat mistakes:
@@ -365,7 +365,7 @@ Keep these as `candidate` or `review` unless confirmed by the user, a configured
 - stale, conflict, or low-confidence results;
 - executable, install, archive, compact, restore, security, privacy, credential, spending, or destructive-action recommendations.
 
-Guardian or equivalent history providers may supply provenance and receipts, but they do not own project memory promotion.
+History providers may supply provenance and receipts, but they do not own project memory promotion.
 ## Memory Classification Priority
 
 For default project continuation, bootstrap, and dispatch, prioritize current product/project memory:
@@ -380,7 +380,7 @@ Do not let these categories dominate default project context unless the queryTyp
 
 - thread archive records;
 - one-click slimming/debt-reduction records;
-- Guardian audit records;
+- history-provider audit records;
 - worker task prompts;
 - old thread maintenance logs;
 - raw session or restore metadata.
@@ -393,4 +393,4 @@ Cooling policy:
 - Warm: older same-project or keyword-relevant summaries, decisions, handoffs, bugs, and experience cards; query-bounded.
 - Cold/raw: archival evidence or raw provenance; not read by default.
 
-Do not accept old-thread optimization that only shrinks the session body. Before selected-thread compaction, the full old-thread history must be captured into Zhixia Thread History Vault or an equivalent source-backed archive with provenance and recall pointers.
+Do not accept old-thread optimization that only shrinks the session body. Before selected-thread compaction, the full old-thread history must be captured into a Thread History Vault or equivalent source-backed archive with provenance and recall pointers.

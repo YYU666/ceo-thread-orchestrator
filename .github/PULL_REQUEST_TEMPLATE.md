@@ -15,6 +15,10 @@ What behavior, documentation, or open-source readiness problem does this improve
 Please include validation commands and results when available:
 
 ```text
+python scripts\smoke_eval.py
+python -m unittest discover -s tests -v
+python scripts\check_release_state.py
+# Optional if local Codex validator skills are installed:
 python <path-to-skill-creator>/scripts/quick_validate.py .\skills\ceo-thread-orchestrator
 python <path-to-plugin-creator>/scripts/validate_plugin.py .
 ```

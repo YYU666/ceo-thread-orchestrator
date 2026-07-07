@@ -43,8 +43,8 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Runs a CEO harvest loop after dispatch: collect worker results, classify evidence, request revisions, and send the next unblocked task until the project lands.
 - Supports pipeline execution for broad PRDs: bundled pipeline, handoff, review, and scorecard templates plus lightweight validators help CEO decide safe parallel lanes and reject vague worker reports.
 - Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
-- Uses provider-specific memory modes: project memory for canonical docs, Zhixia local docs for current project context, and Guardian history for old Codex sessions or paused-task recovery.
-- Acts as a runtime context governor: dispatch compact task packets, prefer Zhixia summaries and source refs, avoid long chat transcripts/raw sessions by default, and use Guardian health/history for pressure/evidence plus explicitly authorized old-thread optimization receipts.
+- Uses provider-specific memory modes: project memory for canonical docs, compact Memory Runtime providers for current project context, and optional history providers for old Codex sessions or paused-task recovery.
+- Acts as a runtime context governor: dispatch compact task packets, prefer source-backed summaries and refs, avoid long chat transcripts/raw sessions by default, and use optional history-provider evidence only when relevant.
 - Keeps independent review gates neutral and evidence-first, with high reasoning when the tool surface allows it.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
@@ -54,7 +54,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Captures evidence memory cards before promoting reusable lessons into durable project knowledge.
 - Adds code quality gates to prevent broad speculative rewrites, hidden behavior changes, and repeated low-signal patch attempts.
 - Detects doom-loop symptoms and prefers rollback, fresh bounded task cards, or independent review over larger speculative diffs.
-- Recommends Zhixia/local-doc knowledge exports through `.codex-knowledge/` when available, while allowing projects to specify another local knowledge path.
+- Supports `.codex-knowledge/` or other local project-memory exports when available, without requiring any private provider.
 - Requires evidence before acceptance: diffs, tests, screenshots, reports, or other artifacts depending on task risk.
 - Keeps thread creation, subagents, worktrees, automations, and spending-heavy model lanes behind tool-contract and user-authorization boundaries.
 
@@ -212,15 +212,15 @@ This skill degrades gracefully. It can use these capabilities when available, bu
 - Subagents for explicitly authorized bounded delegation.
 - Automations or heartbeats for follow-up monitoring.
 - Project-defined task pools, external worker systems, or routing scripts.
-- Zhixia/local-doc knowledge exports through `.codex-knowledge/`, or another local knowledge path chosen by the project.
+- Local project-memory exports such as `.codex-knowledge/`, or another local knowledge path chosen by the project.
 
 Knowledge provider modes:
 
 - `none`: pure orchestration with explicit task cards, handoffs, and source files.
 - `project-memory`: canonical local memory docs such as project memory, decisions, handoffs, and bug memory.
-- `zhixia-local-docs`: summary-first current project context from Zhixia or `.codex-knowledge/`.
-- `guardian-history`: old Codex sessions, paused-task discovery, history evidence, health summaries, and restore dry-runs.
-- `hybrid`: Zhixia for current project knowledge plus Guardian for old thread history and paused-task recovery.
+- `memory-runtime`: summary-first current project context from a configured local provider or `.codex-knowledge/` helper.
+- `history-provider`: old Codex sessions, paused-task discovery, history evidence, health summaries, and restore dry-runs from a configured provider.
+- `hybrid`: current project memory plus history-provider source refs for old thread recovery.
 
 ## Compatibility Matrix
 
@@ -231,43 +231,44 @@ Knowledge provider modes:
 | Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when the tool contract and user/project authorization allow it. |
 | No model selection controls | States the intended model/reasoning lane, then uses the closest available mechanism without pretending to set unavailable controls. |
 | No automations or heartbeats | Leaves a concrete next harvest action in the report instead of creating a monitor. |
-| No Zhixia or Guardian | Runs as a normal CEO Flow skill with explicit task cards, source files, worker reports, and project memory docs. |
-| Zhixia available | Uses summary-first current project context and writes accepted learning into canonical docs or Zhixia-scannable artifacts. |
-| Guardian available | Uses old-thread history and restore evidence read-only by default; selected-thread compaction is allowed only after explicit user trigger and safety receipt; restore remains dry-run unless the user explicitly approves actual restore. |
+| No memory/history provider | Runs as a normal CEO Flow skill with explicit task cards, source files, worker reports, and project memory docs. |
+| Memory Runtime available | Uses summary-first current project context and writes accepted learning into canonical docs or provider-scannable artifacts. |
+| History provider available | Uses old-thread history and restore evidence read-only by default; selected-thread compaction is allowed only after explicit user trigger and safety receipt; restore remains dry-run unless the user explicitly approves actual restore. |
 
-Zhixia and Guardian are optional integrations, not prerequisites for the core skill.
-
-## Guardian Command Status
-
-Implemented agent-facing Guardian commands depend on the local Guardian deployment. The current integration contract treats these as implemented in the MVP when Guardian is installed:
-
-- `report -Json`
-- `search-history -Query ... -Limit ... -Json`
-- `get-thread-context -ThreadId ... -TokenBudget ... -Json`
-- `get-project-history -ProjectPath ... -Limit ... -Json`
-- `export-zhixia -SinceDays ... -Json`
-- `restore -ThreadId ... -DryRun -Json`
-
-Planned commands must not be advertised as available until the local Guardian implementation supports them. In particular, `write-memory-candidate` is planned as an adapter only; canonical memory ownership remains with Zhixia or the active CEO memory provider.
-
-Guardian integration is not Windows Task Scheduler, automatic log cleanup, or process-manager pruning. `clean-logs` and `prune-process-manager` remain manual/explicitly authorized maintenance commands and are outside default CEO Flow runtime behavior. When a user explicitly wants to keep using an old thread, CEO Flow should check Zhixia/Guardian history cards and compact receipts before recommending a fresh-thread handoff.
+Memory/history providers are optional integrations, not prerequisites for the core skill. Provider-specific examples live in [Optional Memory And History Providers](docs/optional-integrations/MEMORY_AND_HISTORY_PROVIDERS.md). CEO Flow must not advertise a provider command as available until the local deployment supports it. Cleanup, prune, actual restore, and raw-session mutation remain explicit maintenance actions outside default CEO Flow runtime behavior.
 
 ## Repository Structure
 
 ```text
 ceo-thread-orchestrator/
 ├── .codex-plugin/plugin.json
+├── .github/workflows/ci.yml
+├── requirements-dev.txt
+├── scripts/
+│   ├── smoke_eval.py
+│   ├── check_release_state.py
+│   └── validate.ps1
+├── tests/
+│   └── test_validators.py
 ├── skills/
 │   └── ceo-thread-orchestrator/
 │       ├── SKILL.md
 │       ├── agents/openai.yaml
 │       ├── references/
+│       │   ├── ceo-autopilot.md
+│       │   ├── context-memory.md
+│       │   ├── flowskill-hook.md
+│       │   ├── guardian-history.md
+│       │   ├── memory-runtime.md
 │       │   ├── operating-playbook.md
-│       │   ├── thread-ops.md
 │       │   ├── parallel-waves.md
 │       │   ├── pipeline-contract.md
-│       │   ├── context-memory.md
 │       │   ├── quality-gate.md
+│       │   ├── repo-baseline.md
+│       │   ├── self-harness.md
+│       │   ├── state-schema.md
+│       │   ├── thread-ops.md
+│       │   ├── visual-evidence.md
 │       │   └── open-source-readiness.md
 │       ├── templates/
 │       │   ├── pipeline.yaml
@@ -285,7 +286,7 @@ ceo-thread-orchestrator/
 
 - [English introduction](docs/INTRODUCTION.md)
 - [中文介绍](docs/INTRODUCTION.zh-CN.md)
-- [CEO Flow Guardian integration](docs/CEO_FLOW_GUARDIAN_INTEGRATION.md)
+- [Optional Memory And History Providers](docs/optional-integrations/MEMORY_AND_HISTORY_PROVIDERS.md)
 - [Runtime Context Governor revision report](docs/CEO_FLOW_RUNTIME_CONTEXT_GOVERNOR_REPORT_2026-06-11.md)
 - [Code-producing smoke report](docs/CEO_FLOW_CODE_SMOKE_REPORT_2026-06-11.md)
 - [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
@@ -304,32 +305,33 @@ After installing or updating the plugin, restart or refresh Codex if old threads
 
 ## Validation
 
-For local development, validate the packaged skill:
+Public, reproducible checks:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python scripts\smoke_eval.py
+python -m unittest discover -s tests -v
+python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
+python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
+python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
+python scripts\check_release_state.py
+```
+
+`smoke_eval.py` is a static documentation coverage check. It verifies that smoke cases are well formed and that policy terms exist in the skill/reference corpus; it is not an LLM behavior evaluation. The adversarial validator tests in `tests/` check executable guardrails for typed handoffs and pipeline contracts.
+
+Optional Codex-internal checks, when you have the corresponding local validator skills installed:
 
 ```powershell
 python <path-to-skill-creator>/scripts/quick_validate.py .\skills\ceo-thread-orchestrator
-```
-
-If you have the Codex plugin validator available, also validate the plugin root:
-
-```powershell
 python <path-to-plugin-creator>/scripts/validate_plugin.py .
-```
-
-Pipeline support helpers can also be run directly:
-
-```powershell
-python .\skills\ceo-thread-orchestrator\scripts\validate_pipeline.py .\skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
-python .\skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py .\skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
-python .\skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py .\skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
 ```
 
 Before publishing a release, save evidence for:
 
-- skill validator output;
-- plugin validator output;
+- public CI/reproducible validator output;
+- optional skill/plugin validator output if available;
 - privacy/path scan output;
-- Guardian JSON smoke when the release claims Guardian integration;
+- provider JSON smoke only when the release claims a specific memory/history integration;
 - one real code-producing CEO -> implementation -> review -> CEO accept/revise smoke on a disposable project.
 
 ## Contributing
@@ -346,7 +348,7 @@ Useful contributions include:
 
 ## Status
 
-This is an experimental community plugin. Codex thread tooling, model routing, worktrees, subagents, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
+This is an experimental community plugin. Manifest versions with a `-dev` suffix are moving main-branch builds, not frozen releases. Codex thread tooling, model routing, worktrees, subagents, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
 
 ## License
 

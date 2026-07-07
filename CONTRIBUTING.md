@@ -17,15 +17,19 @@ This project is a Codex plugin/skill for orchestration behavior, so the most use
 1. Keep changes narrow and behavior-focused.
 2. Avoid adding private local paths, private workflow names, account-specific model ids, or secrets.
 3. Prefer concise instruction changes over long process documents.
-4. Run the skill validator when possible:
+4. Run the public reproducible checks:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python scripts\smoke_eval.py
+python -m unittest discover -s tests -v
+python scripts\check_release_state.py
+```
+
+5. If you have Codex internal validator skills installed, optionally run:
 
 ```powershell
 python <path-to-skill-creator>/scripts/quick_validate.py .\skills\ceo-thread-orchestrator
-```
-
-5. Run the plugin validator when available:
-
-```powershell
 python <path-to-plugin-creator>/scripts/validate_plugin.py .
 ```
 

@@ -6,6 +6,21 @@ Decision: accept for release candidate; revise before stable/public claims
 
 The current tree is suitable as an experimental release candidate after this revision wave. It should not be described as a stable public release until the working tree is committed/tagged and the release notes clearly state optional integration limits.
 
+
+## 2026-07-07 External Audit Revision
+
+Decision update: superseded for stable/public-readiness claims. The 2026-06-11 release gate remains useful history, but it must not be used as current proof that main is stable. A 2026-07-07 external audit found that the original executable guardrails were too weak: typed handoff scoring could be bypassed by content fields, pipeline validation used regex-like YAML parsing and missed dependency/write-set hazards, and smoke-eval output was documentation coverage rather than behavior proof.
+
+Current mitigation on main:
+
+- manifest version is `0.2.7-dev`, meaning moving development state rather than a frozen release;
+- public reproducible checks now include `requirements-dev.txt`, unit tests in `tests/`, bundled template validator checks, and `scripts/check_release_state.py`;
+- GitHub Actions CI runs the public checks on push/PR;
+- `smoke_eval.py` is documented as static policy-term coverage only, not LLM behavior evaluation;
+- Codex internal skill/plugin validators remain optional extra release evidence when available.
+
+Stable release now requires a fresh release gate: public CI green, adversarial validator tests green, optional internal validator evidence if available, privacy/path scan, release notes that mark private integrations as optional, and a matching git tag for a non-dev manifest version.
+
 ## Required Evidence
 
 - Skill validator output.

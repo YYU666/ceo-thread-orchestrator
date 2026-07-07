@@ -1,5 +1,8 @@
 # CEO Flow Guardian Integration
 
+> **Status note (2026-07-07):** This is a historical optional-integration document for one local Memory Runtime / History Provider stack. It is not required for public CEO Flow usage, and referenced provider source files or commands may not exist in this repository. The public contract is now summarized in `docs/optional-integrations/MEMORY_AND_HISTORY_PROVIDERS.md`; provider-specific commands must be treated as unavailable unless the local deployment explicitly supplies them.
+
+
 This document defines the formal integration contract between CEO Flow, Zhixia local docs, and Codex History Guardian.
 
 It is a design contract, not an implementation checklist for destructive maintenance. CEO Flow must stay the orchestration layer and runtime context governor. Zhixia remains the local knowledge and document system. Codex History Guardian remains the history evidence, context-pressure, restore-index, and restore dry-run bridge.

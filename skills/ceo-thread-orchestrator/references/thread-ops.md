@@ -86,7 +86,7 @@ Durable lane vs contractor decision:
 ```text
 Needs title/sidebar visibility? -> visible lane.
 Needs later harvest/continuation? -> visible lane.
-Needs Zhixia/Guardian traceability beyond final summary? -> visible lane or write a contractor trace.
+Needs memory/history-provider traceability beyond final summary? -> visible lane or write a contractor trace.
 Owns a long-running module, review role, UX role, release role, or memory role? -> visible lane.
 One-shot exploration/audit/verification/research? -> contractor allowed.
 Disjoint bounded patch that CEO can review/integrate now? -> contractor allowed if authorized.
@@ -125,7 +125,7 @@ ContractorTrace:
   memory candidate:
 ```
 
-For Zhixia/Guardian history, assume contractor internals are not durable project history unless captured through a visible lane report, evidence card, handoff, or memory candidate. Do not depend on hidden subagent conversation state for future recovery.
+For memory/history-provider continuity, assume contractor internals are not durable project history unless captured through a visible lane report, evidence card, handoff, or memory candidate. Do not depend on hidden subagent conversation state for future recovery.
 
 ## Workspace Root Guard
 
@@ -366,7 +366,7 @@ On fuse:
 3. Do not copy the full old chat, raw session, giant knowledge dump, image attachments, base64, or `data:image` payloads into a new thread.
 4. Run or prepare Memory Runtime `retrieve_context(queryType=thread_recovery)` when a provider is available, then generate or update a compact `ThreadRecoveryPacket`.
 5. Create or designate a clean CEO takeover thread when tools and authorization allow it.
-6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and Zhixia/Guardian/vault pointers.
+6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and memory/history-provider/vault pointers.
 7. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
 8. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
 9. Write a compact WorkingMemory/evidence card.
@@ -415,7 +415,7 @@ Use these anchors in order, stopping when confidence is high enough to harvest o
 4. `source_thread_id` / `codex_delegation` source id search when present;
 5. project/cwd plus task id or write-set search;
 6. current project recovery docs, handoff packets, Program Goal Brief, restore/recovery package, or compact memory packet;
-7. Zhixia/Guardian/vault metadata by threadId, project path, title, or task id.
+7. memory/history-provider/vault metadata by threadId, project path, title, or task id.
 
 Keep the raw-session gate closed during locator fallback. Use compact metadata, recovery indexes, vault manifests, and accepted evidence first. Read full raw chat/session only after an explicit narrow recovery need and the normal raw-history policy allows it.
 

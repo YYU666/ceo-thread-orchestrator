@@ -167,7 +167,7 @@ Forbidden in callbacks:
 
 ## Memory And FlowSkill Writeback
 
-Hot memory, project memory, Zhixia memory, FlowSkill candidates, and worker callbacks may store only:
+Hot memory, project memory, project memory, FlowSkill candidates, and worker callbacks may store only:
 
 - artifact path or folder path;
 - hash;
@@ -180,7 +180,7 @@ Hot memory, project memory, Zhixia memory, FlowSkill candidates, and worker call
 
 Raw image files stay in local artifacts. Raw Codex sessions stay in cold vault. Do not write full image bytes, base64, `data:image`, full screenshots, or complete request bodies into hot-readable memory.
 
-Do not mutate raw Codex session files as part of this policy. If a visual-heavy thread needs slimming, generate a sidecar compact recovery packet and artifact index; leave original session handling to explicit Guardian/compaction safety contracts.
+Do not mutate raw Codex session files as part of this policy. If a visual-heavy thread needs slimming, generate a sidecar compact recovery packet and artifact index; leave original session handling to explicit history-provider/compaction safety contracts.
 
 ## Third-Party API / CPA / Model Calls
 

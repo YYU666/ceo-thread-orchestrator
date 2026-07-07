@@ -11,12 +11,12 @@ Use this reference only when preparing `ceo-thread-orchestrator` for public dist
 ## Public Release Checklist
 
 - Remove private project names, local absolute paths, private model ids, personal workflow names, secrets, and private repository references.
-- Keep Zhixia optional. Do not publish `.codex-knowledge/`, user memory files, thread ids, worktree ids, completion ledgers, or private worker reports.
+- Keep memory/history providers optional. Do not publish `.codex-knowledge/`, user memory files, thread ids, worktree ids, completion ledgers, or private worker reports.
 - State capability boundaries plainly: thread tools, model overrides, automations, subagents, worktrees, external worker systems, task pools, and knowledge providers are optional and tool-contract dependent.
 - Require explicit authorization for new persistent threads, automations, subagents, spending-heavy model lanes, and worktree creation when the active tool contract requires it.
 - Include public examples that show CEO-only, one code lane, code plus review, and dynamic rebalancing after a mid-task requirement change.
 - Provide a compatibility note for Codex app, Codex CLI, and other Agent Skills hosts. Mark any Codex-app-only behavior such as thread read/send/create/handoff.
-- Validate the skill with `quick_validate.py` before each release.
+- Run public CI/reproducible checks before each release: `smoke_eval.py`, validator unit tests, bundled template validators, and release-state check. Run Codex internal `quick_validate.py` / plugin validator when available, but do not require external contributors to have private local validator skills.
 - Forward-test with read-only prompts first. Do not let tests create live threads, automations, or external workflow tasks unless the test explicitly authorizes that behavior.
 - Add repo-level release materials outside the skill folder: README, license selection, contribution rules, install instructions, examples, security/reporting contact, and changelog.
 - Prefer a small eval suite or scripted smoke prompts that check triggering, authorization boundaries, memory bootstrap, dynamic lane scaling, and clear-status report parsing.

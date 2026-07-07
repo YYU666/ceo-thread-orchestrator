@@ -1,5 +1,8 @@
 # CEO Flow Runtime Context Governor Report - 2026-06-11
 
+> **Status note (2026-07-07):** This is a historical optional-integration document for one local Memory Runtime / History Provider stack. It is not required for public CEO Flow usage, and referenced provider source files or commands may not exist in this repository. The public contract is now summarized in `docs/optional-integrations/MEMORY_AND_HISTORY_PROVIDERS.md`; provider-specific commands must be treated as unavailable unless the local deployment explicitly supplies them.
+
+
 ## Decision
 
 Decision: accept release-candidate revision

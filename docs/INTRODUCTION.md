@@ -118,23 +118,23 @@ The plugin treats memory as explicit infrastructure.
 Its default stack is:
 
 1. project instructions and canonical local memory files
-2. recommended Zhixia or `.codex-knowledge/` retrieval when available
+2. recommended Memory Runtime or `.codex-knowledge/` retrieval when available
 3. active thread reports and relay packets
 4. decision logs, bug memory, handoff logs, and generated docs
 
 New or revived threads receive a compact memory packet. They should not be expected to infer project history from hidden chat context.
 
-Projects may also specify another local knowledge path. Zhixia is the recommended knowledge provider for CEO Flow, not a hard requirement for every host.
+Projects may specify any local knowledge path or compact provider. No private Memory Runtime is required for the public skill.
 
-CEO Flow uses this memory layer as a runtime context governor. New threads and worker packets should receive compact task context, Zhixia excerpts, source refs, and narrow Guardian evidence only when relevant. They should not receive full CEO chats, full `.codex-knowledge` dumps, long implementation transcripts, or raw sessions by default. If the user wants to keep using an old thread, CEO Flow should check Zhixia/Guardian history cards and compact receipts before recommending a fresh-thread handoff.
+CEO Flow uses this memory layer as a runtime context governor. New threads and worker packets should receive compact task context, provider excerpts, source refs, and narrow history-provider evidence only when relevant. They should not receive full CEO chats, full `.codex-knowledge` dumps, long implementation transcripts, or raw sessions by default. If the user wants to keep using an old thread, CEO Flow should check memory/history-provider cards and compact receipts before recommending a fresh-thread handoff.
 
 CEO Flow uses five knowledge provider modes:
 
 - `none`: pure orchestration with explicit task cards, handoffs, and source files.
 - `project-memory`: canonical local memory docs such as project memory, decisions, handoffs, and bug memory.
-- `zhixia-local-docs`: summary-first current project context from Zhixia or `.codex-knowledge/`.
-- `guardian-history`: old Codex sessions, paused-task discovery, history evidence, health summaries, and restore dry-runs.
-- `hybrid`: Zhixia for current project knowledge plus Guardian for old thread history and paused-task recovery.
+- `memory-runtime`: summary-first current project context from a configured provider or `.codex-knowledge/`.
+- `history-provider`: old Codex sessions, paused-task discovery, history evidence, health summaries, and restore dry-runs.
+- `hybrid`: current project memory plus history-provider source refs for old thread recovery.
 
 ## Compatibility Matrix
 
@@ -145,9 +145,9 @@ CEO Flow uses five knowledge provider modes:
 | Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when authorized. |
 | No model selection controls | States the intended model/reasoning lane without pretending to set unavailable controls. |
 | No automations or heartbeats | Leaves a concrete next harvest action instead of creating a monitor. |
-| No Zhixia or Guardian | Runs with explicit task cards, source files, worker reports, and project memory docs. |
-| Zhixia available | Uses summary-first current project context and writes accepted learning into canonical docs or Zhixia-scannable artifacts. |
-| Guardian available | Uses old-thread history and restore evidence read-only by default; selected-thread compaction requires explicit user trigger and receipt; restore remains dry-run unless explicitly approved. |
+| No memory/history provider | Runs with explicit task cards, source files, worker reports, and project memory docs. |
+| Memory Runtime available | Uses summary-first current project context and writes accepted learning into canonical docs or provider-scannable artifacts. |
+| History provider available | Uses old-thread history and restore evidence read-only by default; selected-thread compaction requires explicit user trigger and receipt; restore remains dry-run unless explicitly approved. |
 
 ## Lightweight Team Records
 
@@ -165,7 +165,7 @@ CEO Flow is deliberately cautious.
 - It does not install or switch memory systems just because one exists.
 - It does not let multiple workers edit the same write-set at the same time.
 - It keeps expensive model lanes for high-risk reasoning, not routine work.
-- It does not treat Guardian as Windows Task Scheduler, automatic log cleanup, process-manager pruning, or a default raw-session reader.
+- It does not treat any history provider as a scheduler, automatic cleanup tool, process-manager pruner, or default raw-session reader.
 - It does not force a new thread when the user explicitly wants old-thread optimization; it distinguishes same-thread reopen, old-thread compaction, and fresh-thread handoff.
 
 ## Who It Is For
