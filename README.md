@@ -46,6 +46,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Uses provider-specific memory modes: project memory for canonical docs, compact Memory Runtime providers for current project context, and optional history providers for old Codex sessions or paused-task recovery.
 - Acts as a runtime context governor: dispatch compact task packets, prefer source-backed summaries and refs, avoid long chat transcripts/raw sessions by default, and use optional history-provider evidence only when relevant.
 - Keeps independent review gates neutral and evidence-first, with high reasoning when the tool surface allows it.
+- Discovers model controls per surface and routes lanes through `fast`, `balanced`, `frontier`, or deliberate `inherit` classes instead of accidentally giving every worker the CEO's most expensive profile.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
@@ -124,7 +125,7 @@ The default PRD path is:
 6. CEO harvests worker results on a cadence, reviews evidence, and decides `accept | revise | block | supersede`.
 7. CEO sends the next unblocked task or revision until the goal lands or has a real external blocker.
 
-The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back. Review/QA lanes should stay neutral: they are not there to flatter the user, defend the worker, or keep momentum by blessing weak evidence. When model or thinking controls are available, independent review gates should use high reasoning. Substantial review results should be saved as documents; chat should show only the decision, link, top risks, and next owner.
+The minimum execution team is usually `CEO + Implementation`. Add `Review/QA` for high-risk or user-facing work, `Product/UX` for meaningful product or interface decisions, and `Knowledge/Memory` only when accepted learning should be written back. Review/QA lanes should stay neutral: they are not there to flatter the user, defend the worker, or keep momentum by blessing weak evidence. When model or thinking controls are available, CEO Flow discovers them per surface: routine implementation normally uses a balanced class, deterministic sidecars use a fast class, and neutral review/architecture uses a frontier class with high reasoning. Omitted settings are treated as inheritance, not automatic role optimization. Substantial review results should be saved as documents; chat should show only the decision, link, top risks, and next owner.
 
 Worker lanes should not ask the user for routine approvals inside an accepted PRD or task graph. They report questions and blockers to the CEO lane. The CEO can approve normal in-scope sequencing, file choices inside the allowed write-set, test selection, and bounded revisions. The user is needed only for out-of-scope changes, credentials, spending beyond the agreed budget, destructive actions, or product/business decisions that change the accepted goal.
 
@@ -229,6 +230,7 @@ Knowledge provider modes:
 | No thread tools | Works as a planning, task-card, document-first review, and acceptance discipline. It must not pretend to create worker lanes. |
 | Manual copy/paste lanes only | Writes task cards, memory packets, and review reports as documents so a user can relay them manually. |
 | Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when the tool contract and user/project authorization allow it. |
+| Different model lists across threads, subagents, and automations | Runs capability discovery per surface and resolves abstract `fast`, `balanced`, `frontier`, or `inherit` classes against the live tool contract. |
 | No model selection controls | States the intended model/reasoning lane, then uses the closest available mechanism without pretending to set unavailable controls. |
 | No automations or heartbeats | Leaves a concrete next harvest action in the report instead of creating a monitor. |
 | No memory/history provider | Runs as a normal CEO Flow skill with explicit task cards, source files, worker reports, and project memory docs. |

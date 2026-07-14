@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added a capability-discovered Model Routing Gate with `inherit`, `auto-class`, `pinned`, and `host-auto` modes; separate fast/balanced/frontier model classes from reasoning effort; prevent accidental frontier/high inheritance across routine fan-out; and record fallback plus actual model/reasoning evidence.
+
 - Added an end-to-end CEO Flow behavior smoke protocol for proving CEO -> implementation -> review -> CEO harvest/decision before stable release, and refined visual payload detection to avoid ordinary `base64,` prose false positives.
 
 - Reworked executable guardrails after external audit: structured PyYAML handoff/pipeline validators, adversarial unit tests, GitHub Actions CI, release-state check, and clearer smoke-eval/validator documentation.

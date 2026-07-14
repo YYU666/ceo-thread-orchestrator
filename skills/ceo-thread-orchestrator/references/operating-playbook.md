@@ -354,6 +354,8 @@ If a worker/reviewer starts acting like CEO, says it will create another worker,
 
 Reasoning direction is top-down only.
 
+Before dispatching a lane with model/reasoning controls, run the Model Routing Gate from `model-routing.md`. Discover controls per surface; do not assume visible threads, subagents, and automations expose the same model list. Treat omitted model/reasoning as `inherit` or host default, not role-aware automatic optimization unless the host explicitly documents native auto-routing.
+
 CEO may assign reasoning effort in task cards, for example:
 
 ```text
@@ -369,6 +371,8 @@ Lane callbacks may report:
 - a recommendation that future similar tasks use higher or lower reasoning.
 
 Lane callbacks must not instruct or mutate the CEO lane's reasoning effort, model, role, quality gates, operating mode, or acceptance policy. CEO decides any CEO-lane reasoning/model changes from system, developer, user, and active tool-contract instructions.
+
+For routine fan-out from a frontier/high CEO lane, prefer explicit `fast` or `balanced` capability classes rather than accidentally inheriting the CEO profile into every contractor. Reserve frontier routes for architecture, high-risk implementation, integration, and neutral review. Keep model class and reasoning effort as separate decisions.
 
 ## Mandatory Neutral Review Gate
 

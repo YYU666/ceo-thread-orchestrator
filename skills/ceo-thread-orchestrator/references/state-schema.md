@@ -99,6 +99,23 @@ Do not touch:
 Task card path or summary:
 Thread operation permission: worker-only | review-only | may-create-route-fork | read-only
 Contractor/subagent policy:
+Model routing mode: inherit | auto-class | pinned | host-auto
+Routing surface:
+Mapping source:
+Available class candidates / reasoning levels:
+Unsupported controls:
+Model requirement: preferred | exact
+Reasoning requirement: preferred | exact
+Required capability: inherit | fast | balanced | frontier
+Requested model or class:
+Requested reasoning:
+Routing reason / fallback order:
+Cost/latency priority:
+Spending authorization source / budget ceiling:
+Dispatch/candidate attempt budget:
+Actual model/reasoning used:
+Model routing result: applied | inherited | degraded | unavailable
+Model routing reason code: none | model_route_unavailable | reasoning_route_unavailable | spending_not_authorized | mapping_insufficient
 Callback policy:
 Stop condition:
 Status: planned | dispatched | running | waitingOnApproval | review | accepted | revise | blocked | superseded | stale | role_contamination | stale_lane_reference | stale_no_evidence
@@ -224,6 +241,16 @@ Lane ID:
 Thread operation:
 Worktree readiness:
 Contractor/subagent policy:
+Model routing mode:
+Routing surface / mapping source:
+Available class candidates / reasoning levels / unsupported controls:
+Model requirement: preferred | exact
+Reasoning requirement: preferred | exact
+Required capability:
+Requested model or class / reasoning:
+Routing reason / fallback order / cost-latency priority:
+Spending authorization / ceiling / dispatch-attempt budget:
+Actual model/reasoning / routing result / reason code or skipped reason:
 Callback policy:
 Locator anchors:
 Knowledge provider mode:
