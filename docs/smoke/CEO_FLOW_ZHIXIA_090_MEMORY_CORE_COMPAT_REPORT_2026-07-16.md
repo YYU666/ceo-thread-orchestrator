@@ -1,7 +1,7 @@
 # CEO Flow ↔ Zhixia 0.9.0 Memory Core Compatibility Report
 
 Date: 2026-07-16  
-Decision: **accept** for the compatibility contract; the isolated recovery fixture itself correctly returned **partial / recoveryReady=false** because its ProjectBrain lacked accepted continuity state.
+Decision: **accept** after audit revision. The probe now proves both a real-project fail-closed recovery and a complete authoritative 14-slot, forced multi-page, `recoveryReady=true` recovery.
 
 ## Scope
 
@@ -40,9 +40,12 @@ The bundled and installed `zhixia-local-docs` copies were compared by SHA-256 an
 
 Both source and installed skills passed the skill validator.
 
-## Isolated Real-Project Recovery Probe
+## Isolated Recovery Probe
 
-The probe copies a bounded snapshot of the real CEO Flow repository into temporary storage, seeds the Zhixia Memory Core project backfill into isolated Electron `userData`, exercises real renderer-to-main IPC, and deletes the temporary data afterward. It does not write the live Zhixia database or mutate the live project.
+The probe creates two isolated scenarios in temporary Electron `userData`, exercises real renderer-to-main IPC, and deletes the temporary data afterward. It does not write the live Zhixia database or mutate the live project.
+
+1. **Real-project safety scenario:** copies a bounded CEO Flow repository snapshot and verifies incomplete/conflicting continuity fails closed.
+2. **Authoritative success scenario:** seeds source-backed records for all 14 slots, enough mandatory records to require eight pages, and an app-owned accepted checkpoint.
 
 Command shape:
 
@@ -50,24 +53,29 @@ Command shape:
 node scripts\zhixia_memory_core_recovery_probe.cjs <zhixia-app-root> <ceo-flow-repo-root>
 ```
 
-Observed result:
+Authoritative success result:
 
 | Check | Result |
 |---|---|
-| Exact project path/id | matched |
-| ProjectBrain slot schema | 14 slots |
-| Mandatory pagination | complete; returned `1/1` existing mandatory records |
-| Retrieval receipt | `retrieve_context`, sourceRefs present |
-| Precedent receipt | `retrieve_precedent`, sourceRefs present |
-| Decision writeback receipt | `writeback_evidence`, 2 sourceRefs, status `queued` |
+| Independent seed project identity | seed ID = status ID = every page ID |
+| ProjectBrain slots | `14/14` filled |
+| Mandatory pagination | eight pages; returned `32/32` mandatory records |
+| First page | `nextCursor` present and `recoveryReady=false` |
+| Final page | no missing/stale/conflict; `recoveryReady=true` |
+| Wrong projectId | rejected |
+| Cross-project path/ID pair | rejected |
+| Tampered cursor | `cursorInvalid=true`, recovery not ready |
+| Retrieval receipt | exact returned receipt ID, hook, query type, project path, thread scope, operation window, counts, partial flag, and sourceRefs matched |
+| Precedent receipt | exact returned receipt ID and full scope matched |
+| Decision writeback receipt | exact returned receipt ID and full scope matched; 2 sourceRefs; status `queued` |
 | Checkpoint event | `recorded` |
 | Thread takeover event | `recorded` |
 | Broken-thread event | `recorded` |
 | User-rule-update event | `recorded` |
-| Required hook receipts | verified |
+| Initialization receipts | baseline IDs excluded from lifecycle-hook verification |
 | Probe compatibility verdict | passed |
 
-The snapshot did not contain accepted Memory Core records for the original product goal, architecture anchors, standing rules, active modules, accepted progress, open tasks/blockers, recent failures, next actions, and thread lineage. Project identity also had a conflict candidate after the governance fixture import. Therefore the correct recovery result was:
+Real-project safety result:
 
 ```text
 partial: yes
@@ -75,7 +83,12 @@ recoveryReady: false
 paginationComplete: true
 ```
 
-This is a safety success, not a failed compatibility result: CEO Flow consumed the complete available mandatory manifest and refused to overclaim recovery readiness when the 14-slot continuity ledger was not authoritative and complete.
+The real snapshot lacks accepted records for several continuity slots and contains an identity conflict candidate after governance import. The probe independently compares every returned ID against the seed-generated expected ID, consumes the complete available manifest, and refuses to overclaim recovery readiness.
+
+Together, the scenarios prove both sides of the contract:
+
+- incomplete or conflicting memory fails closed;
+- complete authoritative memory requires continuation pages and becomes recovery-ready only after all mandatory pages are consumed.
 
 ## Validation Evidence
 
@@ -101,5 +114,7 @@ Zhixia 0.9.0:
 **accept**
 
 Reason: the policy, schemas, smoke coverage, installed provider synchronization, lifecycle events, exact-project continuity traversal, writeback provenance, and trigger-receipt verification are closed. The real-project fixture correctly fails closed to partial rather than falsely declaring `recoveryReady`.
+
+The audit revision also closes the three former P2 evidence gaps: successful 14-slot multi-page recovery, independently seeded project identity, and exact per-call trigger-receipt binding.
 
 Residual operational requirement: a live project becomes `recoveryReady` only after Zhixia holds authoritative, source-backed current records for every required ProjectBrain slot. CEO Flow must continue to report missing/conflict/stale/review slots rather than filling them by inference.
