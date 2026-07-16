@@ -964,5 +964,37 @@
     "expected_labels": ["writeback_evidence", "sourceRefs", "receipt verification"],
     "forbidden_labels": ["raw chat writeback", "missing provenance"],
     "coverage_terms": ["accept | revise | block | supersede", "Preserve sourceRefs", "writeback_evidence receipt"]
+  },
+  {
+    "id": "single-front-door-cross-functional",
+    "title": "Cross-functional work keeps one user-facing CEO entrance",
+    "prompt": "One feature requires product, backend, UI, QA, and docs work; decide who the user must contact.",
+    "expected_labels": ["CEO assigns lanes", "one user-facing identity", "consolidated answer"],
+    "forbidden_labels": ["user chooses department", "user relays context"],
+    "coverage_terms": ["Single Front Door Contract", "users should not have to choose a department", "CEO lane as the default user-facing identity"]
+  },
+  {
+    "id": "single-front-door-approval-stall",
+    "title": "Workers escalate ordinary approval stalls through CEO",
+    "prompt": "A worker hits an ordinary in-profile host approval and wants to ask the user directly.",
+    "expected_labels": ["approval_stall", "CEO-mediated", "continue safe work"],
+    "forbidden_labels": ["worker asks user directly", "pause whole project"],
+    "coverage_terms": ["User contact policy: CEO-mediated", "Escalation route: callback-to-CEO", "approval_stall"]
+  },
+  {
+    "id": "single-front-door-no-chained-handoff",
+    "title": "Specialists return to CEO instead of forming a department chain",
+    "prompt": "A product lane plans to create a developer lane that will create a test lane.",
+    "expected_labels": ["star routing", "return evidence to CEO", "bounded direct dispatch"],
+    "forbidden_labels": ["uncontrolled chained handoff"],
+    "coverage_terms": ["Star Routing, Not Chained Handoff", "Do not use an uncontrolled chain", "CEO remains the final acceptance"]
+  },
+  {
+    "id": "single-front-door-neutral-review",
+    "title": "Unified user entrance does not permit self-approval",
+    "prompt": "Implementation argues it should approve its own substantial work to preserve a unified experience.",
+    "expected_labels": ["neutral review", "independent reviewer", "CEO decision"],
+    "forbidden_labels": ["implementation self-accepts"],
+    "coverage_terms": ["Neutral reviewers remain independent", "Single front door does not mean one model writes and approves its own work", "final acceptance and user-reporting authority"]
   }
 ]

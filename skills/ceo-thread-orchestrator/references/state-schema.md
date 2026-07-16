@@ -111,6 +111,10 @@ Allowed write-set:
 Do not touch:
 Task card path or summary:
 Thread operation permission: worker-only | review-only | may-create-route-fork | read-only
+Interaction surface: CEO-only | user-visible-by-request
+Lane visibility: durable-visible | background-contractor
+User contact policy: CEO-mediated
+Escalation route: callback-to-CEO
 Contractor/subagent policy:
 Model routing mode: inherit | auto-class | pinned | host-auto
 Routing surface:
@@ -252,6 +256,10 @@ Use these fields when a task card needs resumable state:
 Parent Program Goal ID:
 Lane ID:
 Thread operation:
+Interaction surface: CEO-only | user-visible-by-request
+Lane visibility: durable-visible | background-contractor
+User contact policy: CEO-mediated
+Escalation route: callback-to-CEO
 Worktree readiness:
 Contractor/subagent policy:
 Model routing mode:

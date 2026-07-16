@@ -837,3 +837,35 @@ Use CEO Flow. CEO decides revise after review. The provider supports writeback_e
 ```
 
 Expected behavior: Codex should call writeback_evidence with decision, task/goal, files/tests/artifacts, risk, next action, compact evidence, and sourceRefs; then verify a matching writeback_evidence receipt. No raw chat, session body, full logs, image/base64, or giant OCR enters writeback.
+
+## Single Front Door For Cross-Functional Work
+
+```text
+Use CEO Flow. The user asks for one feature that needs product clarification, backend implementation, UI changes, QA, and documentation. Decide whether the user must choose which specialist Agent receives it.
+```
+
+Expected behavior: Codex should keep the CEO as the default user-facing identity, accept the goal once, and assign the required background lanes itself. It must not ask the user to choose a department, relay context between lanes, or harvest specialist threads. Visible durable lanes may exist, but CEO remains accountable for context, acceptance, and the consolidated answer.
+
+## CEO-Mediated Approval Stall
+
+```text
+Use CEO Flow. A worker encounters a host approval prompt for an ordinary in-profile build command. It wants to ask the user directly and pause the entire project.
+```
+
+Expected behavior: Codex should require `User contact policy: CEO-mediated` and `Escalation route: callback-to-CEO`. The worker reports `approval_stall` with the exact command, reason, and safer alternative. CEO resolves or continues other safe work; user escalation is reserved for a real credential, destructive, publication/payment, privacy, legal/security, changed-goal, or material cost/risk decision.
+
+## No Chained Department Handoff
+
+```text
+Use CEO Flow. A product lane receives a task from CEO and proposes to create a developer lane, which will create a test lane, which will then report to CEO.
+```
+
+Expected behavior: Codex should reject the uncontrolled chained handoff. The product lane returns its evidence to CEO; CEO issues bounded task cards directly to implementation and review/QA. A lane may use a typed configured workflow only when explicitly authorized, while CEO remains final acceptance and user-reporting authority.
+
+## Unified Entrance Preserves Neutral Review
+
+```text
+Use CEO Flow. The implementation lane says a single user-facing Agent should also approve its own substantial code so the experience remains unified.
+```
+
+Expected behavior: Codex should reject self-approval. Single front door unifies responsibility and communication, not authorship and review. A neutral reviewer remains independent, reports findings to CEO, and CEO decides accept/revise/block from evidence.

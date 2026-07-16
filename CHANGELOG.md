@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added the Single Front Door contract: one default user-facing CEO identity, CEO-mediated specialist escalation, durable-visible versus background-contractor classification, star-shaped callbacks instead of chained handoffs, and neutral review preserved behind the unified entrance.
+
 - Added Zhixia 0.9.0 Memory Core compatibility: event-triggered Project Continuity Gate, exact project identity, full 14-slot mandatory pagination for CEO recovery, role-bounded worker/reviewer slots, runtime event observation, source-backed decision writeback, trigger-receipt verification, helper-only partial/recovery-not-ready boundaries, and an isolated real-project Electron recovery probe/report.
 - Hardened the Zhixia recovery probe after external audit with a source-backed 14/14-slot fixture, forced eight-page `32/32` mandatory traversal, final `recoveryReady=true`, independent seed/status/page identity comparison, wrong/cross-project identity rejection, tampered-cursor rejection, and exact per-call trigger-receipt ID/scope matching that excludes initialization receipts.
 

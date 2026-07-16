@@ -55,6 +55,60 @@ Sidebar cleanup:
 - Archive/retire stale or superseded lanes only after a compact handoff, memory pointer, or reason is recorded.
 - Prefer one stable implementation lane per project/domain, one review lane for high-risk work, and one knowledge lane only when durable memory work is active.
 
+## Single Front Door Contract
+
+CEO Flow uses one default responsibility entrance for the user: the CEO lane. Background specialization remains valuable, but users should not have to choose a department, understand the lane roster, relay context, or coordinate handoffs before work can start.
+
+Default contract:
+
+```text
+Interaction surface: CEO-only
+Lane visibility: durable-visible | background-contractor
+User contact policy: CEO-mediated
+Escalation route: callback-to-CEO
+```
+
+Meanings:
+
+- `CEO-only`: the CEO is the normal conversational identity, project context owner, acceptance authority, and final reporter.
+- `user-visible-by-request`: the user explicitly asks to inspect, continue, or speak directly with a specialist lane.
+- `durable-visible`: a persistent implementation/review/UX/release/memory lane may appear in the host sidebar for continuity, but the user is not responsible for routing or harvesting it.
+- `background-contractor`: a temporary subagent/contractor performs bounded work and returns a compact trace to its integration owner.
+- `CEO-mediated`: workers, reviewers, auditors, researchers, memory providers, and contractors escalate to CEO rather than transferring coordination work to the user.
+
+Host tools may expose durable specialist threads in the sidebar. This does not turn them into separate product entrances. CEO still owns lane selection, task cards, context packets, harvest, evidence review, and consolidated user reporting.
+
+### Star Routing, Not Chained Handoff
+
+Prefer a star-shaped responsibility graph:
+
+```text
+CEO -> implementation / review / QA / UX / research / memory / contractor
+implementation / review / QA / UX / research / memory / contractor -> CEO
+```
+
+Do not use an uncontrolled chain such as `CEO -> product lane -> implementation lane -> test lane -> CEO`. A worker/reviewer must not forward the task, create the next department, ask another worker to continue, or make the user repeat context. It returns evidence or a typed escalation to CEO; CEO revises the task card and dispatches the next bounded action.
+
+Exceptions require an explicit configured workflow or task-card permission with typed handoff ownership. Even then, CEO remains the final acceptance and user-reporting authority.
+
+### User Contact Boundary
+
+Lanes report one of these signals to CEO instead of asking the user directly:
+
+```text
+completion
+approval_stall
+decision_required
+missing_context
+permission_blocked
+evidence_insufficient
+revise_needed
+```
+
+CEO should resolve, reroute, narrow, or continue around the issue when possible. Escalate to the user only for a real product choice, changed goal, irreversible/destructive action, credential/privacy grant, external account/publication/payment, legal/security boundary, or materially different cost/risk tradeoff.
+
+Neutral reviewers remain independent. Single front door does not mean one model writes and approves its own work; reviewer findings return to CEO and cannot be suppressed merely to preserve a unified user experience.
+
 ## Contractor / Subagent Gate
 
 Subagents are CEO Flow's Contractor / outside-help role. They are temporary bounded scouts, not durable visible lanes. Treat them like short-term contractors: useful for speed and parallel evidence gathering, but not the source of truth for project ownership, user-visible progress, long-running memory, or final acceptance.
@@ -291,6 +345,10 @@ Every implementation or review task card should state:
 
 ```text
 CEO thread id:
+Interaction surface: CEO-only unless user explicitly requests direct lane contact
+Lane visibility: durable-visible | background-contractor
+User contact policy: CEO-mediated
+Escalation route: callback-to-CEO
 Thread operation: worker execution only; do not create/fork/route threads unless explicitly asked
 Locator anchors: lane title, task id, source_thread_id, project/cwd, write-set, expected callback signature
 Role contamination guard: execute this bounded task directly; report blocker instead of delegating
@@ -311,8 +369,9 @@ Worker callback rules:
 3. If thread messaging is unavailable, the worker reports `CALLBACK_UNAVAILABLE` in its own lane and relies on CEO harvest.
 4. The callback must not include long chat history, raw session content, full knowledge bases, broad logs, image attachments, base64, `data:image`, or full screenshot JSON.
 5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
-6. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
-7. Worker completion does not automatically push to CEO. Callback may fail, queue, or be unavailable; CEO must still harvest by reading the worker lane or evidence source.
+6. The worker must not ask the user to choose another lane, repeat context, approve ordinary in-profile commands, or manage the workflow. It reports a typed escalation to CEO.
+7. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
+8. Worker completion does not automatically push to CEO. Callback may fail, queue, or be unavailable; CEO must still harvest by reading the worker lane or evidence source.
 
 Callback interrupt policy:
 
