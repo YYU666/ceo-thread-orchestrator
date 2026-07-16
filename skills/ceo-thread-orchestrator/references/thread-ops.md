@@ -364,12 +364,13 @@ On fuse:
 1. Pause, delete, or supersede heartbeat/automation targeting the broken thread. Record `reason=broken_ceo_thread`.
 2. Do not fork the broken thread.
 3. Do not copy the full old chat, raw session, giant knowledge dump, image attachments, base64, or `data:image` payloads into a new thread.
-4. Run or prepare Memory Runtime `retrieve_context(queryType=thread_recovery)` when a provider is available, then generate or update a compact `ThreadRecoveryPacket`.
+4. Run the event-triggered Project Continuity Gate with exact `projectPath/projectId`. For CEO takeover/recovery, consume the full mandatory 14-slot pagination before any recovery-ready claim. Then run Memory Runtime `retrieve_context(queryType=thread_recovery)` and generate/update a compact `ThreadRecoveryPacket`. Helper-only or incomplete pagination remains `partial` with `recoveryReady=false`.
 5. Create or designate a clean CEO takeover thread when tools and authorization allow it.
 6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and memory/history-provider/vault pointers.
 7. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
 8. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
 9. Write a compact WorkingMemory/evidence card.
+10. Call `observe_event(thread_takeover|broken_thread|stale_lane_reference|heartbeat_fuse)` when the app-owned Memory Runtime exposes it, and verify retrieve/writeback execution through project-scoped trigger receipts when available.
 
 `ThreadRecoveryPacket` fields:
 

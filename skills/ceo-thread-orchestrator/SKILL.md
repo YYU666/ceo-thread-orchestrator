@@ -31,7 +31,7 @@ Use this 10-step path as the default decision tree. Load detailed references onl
 
 1. **Frame the request.** Confirm newest request, mode, canonical project root, allowed write-set/worktrees, local instructions, and current tool surface before promising thread orchestration.
 2. **Classify scale and continuity.** Classify project/task scale. For large/program work, complete-product requests, active runtime Goals, takeover, or recovery, run CEO Autopilot; create/update Program Goal Brief, Completion Dashboard, and one runtime Goal when available.
-3. **Load compact context.** Run Memory Trigger Gate when local project memory exists or the user asks to continue/resume/recover. Use a configured Memory Runtime or equivalent compact provider; record query/sourceRefs/skipped reason. Run Warm Anchor and Reference Scan only at their event triggers.
+3. **Load compact context and continuity.** Run Memory Trigger Gate when local project memory exists or the user asks to continue/resume/recover. At takeover, recovery, or major direction correction, run the event-triggered Project Continuity Gate with exact project identity, required role slots, complete mandatory pagination, and trigger-receipt evidence; incomplete or helper-only continuity stays partial and cannot claim `recoveryReady`. Run Warm Anchor and Reference Scan only at their event triggers.
 4. **Guard the workspace.** Verify canonical root, workspace match, repo baseline, dirty budget, worktree readiness, visual-evidence policy, and file ownership before implementation dispatch. Non-reproducible git baseline blocks worktree writers.
 5. **Choose staffing and model route.** After bootstrap, leave CEO-only unless the task is tiny, non-coding, explicitly direct, or routing is unavailable. Decide lane count, single-writer vs parallel, review/UX/QA/memory roles, contractor allowance, capability class/reasoning route, fan-out cost posture, and MVP/full-version continuation.
 6. **Dispatch compact, bounded work.** Send task cards with role, write-set, stop condition, callback policy, no-stall approval profile, context budget, trust boundary, and forbidden payloads. Do not paste raw CEO chat, raw sessions, giant memory files, image/base64/data:image, or self-routing instructions.
@@ -114,6 +114,10 @@ Knowledge provider mode:
 Memory Runtime query / context budget:
 Memory Runtime result: memoryMode, memoryLayers, recallPlan, top memory items, retrieved sourceRefs
 Memory skipped or unavailable reason:
+Project Continuity Gate: triggered, reason, role coverage, required slots, exact projectPath/projectId, page/token bounds
+Project Continuity result: covered/missing/conflict/stale/review slots, pages, mandatory returned/total, partial reason, recoveryReady, sourceRefs
+Memory Runtime trigger receipts: retrieve_context, retrieve_precedent, writeback_evidence or unavailable reason
+Runtime event observation: checkpoint, thread invalidation, takeover, user-rule change, receipt/sourceRefs
 Warm Anchor Gate: triggered, reason, warm query, anchor summary, direction check, sourceRefs, cold read
 Memory writeback target / promotion boundary:
 Slice Closure Gate:

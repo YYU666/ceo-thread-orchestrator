@@ -44,6 +44,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Supports pipeline execution for broad PRDs: bundled pipeline, handoff, review, and scorecard templates plus lightweight validators help CEO decide safe parallel lanes and reject vague worker reports.
 - Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
 - Uses provider-specific memory modes: project memory for canonical docs, compact Memory Runtime providers for current project context, and optional history providers for old Codex sessions or paused-task recovery.
+- Supports an event-triggered Memory Core continuity gate: CEO takeover/recovery consumes exact-project mandatory ProjectBrain pagination, workers/reviewers receive role-bounded slots, lifecycle changes emit bounded events, and trigger receipts prove retrieve/precedent/writeback execution when the provider exposes them.
 - Acts as a runtime context governor: dispatch compact task packets, prefer source-backed summaries and refs, avoid long chat transcripts/raw sessions by default, and use optional history-provider evidence only when relevant.
 - Keeps independent review gates neutral and evidence-first, with high reasoning when the tool surface allows it.
 - Discovers model controls per surface and routes lanes through `fast`, `balanced`, `frontier`, or deliberate `inherit` classes instead of accidentally giving every worker the CEO's most expensive profile.
@@ -293,6 +294,7 @@ ceo-thread-orchestrator/
 - [Code-producing smoke report](docs/CEO_FLOW_CODE_SMOKE_REPORT_2026-06-11.md)
 - [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
 - [E2E behavior smoke protocol](docs/CEO_FLOW_E2E_BEHAVIOR_SMOKE_PROTOCOL_2026-07-07.md)
+- [Zhixia 0.9.0 Memory Core compatibility report](docs/smoke/CEO_FLOW_ZHIXIA_090_MEMORY_CORE_COMPAT_REPORT_2026-07-16.md)
 - [Smoke prompts](examples/smoke-prompts.md)
 - [Pipeline contract reference](skills/ceo-thread-orchestrator/references/pipeline-contract.md)
 - [Operating playbook](skills/ceo-thread-orchestrator/references/operating-playbook.md)
@@ -318,6 +320,12 @@ python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-th
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
 python scripts\check_release_state.py
+```
+
+Optional isolated Zhixia 0.9.0 provider smoke, when the local Zhixia app source and dependencies are available:
+
+```powershell
+node scripts\zhixia_memory_core_recovery_probe.cjs <zhixia-app-root> <ceo-flow-repo-root>
 ```
 
 `smoke_eval.py` is a static documentation coverage check. It verifies that smoke cases are well formed and that policy terms exist in the skill/reference corpus; it is not an LLM behavior evaluation. The adversarial validator tests in `tests/` check executable guardrails for typed handoffs and pipeline contracts.

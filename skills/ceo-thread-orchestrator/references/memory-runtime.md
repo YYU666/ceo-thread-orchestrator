@@ -59,6 +59,163 @@ retrieve_context(queryType=thread_recovery, threadId=<id>, tokenBudget=1500-3000
 ```
 
 Provider-specific commands belong in optional integration docs, not the core public contract.
+
+## Project Continuity Gate
+
+Project Continuity Gate is an event-triggered lifecycle gate for a Memory Core provider that exposes a ProjectBrain/continuity ledger. It is not a heartbeat, timer, polling loop, startup patrol, or every-turn recall.
+
+Trigger when any is true:
+
+- CEO project bootstrap, takeover, broken-thread takeover, or old-thread recovery;
+- user asks for a major direction correction because the project drifted, forgot its purpose, or recovered with conflicting confidence;
+- a major acceptance changes original product goal, architecture anchors, current phase, completion/readiness language, release direction, or another long-term project anchor;
+- a new module, wave, or writer lane needs an anchor check that has not already run for the unchanged task.
+
+Do not trigger for:
+
+- ordinary status updates;
+- waiting for worker/reviewer callbacks;
+- polling/harvesting inside one unchanged task;
+- every conversation turn;
+- heartbeat, cron, background scan, raw-history embedding, or minute-level recall.
+
+For a Memory Core v0.9-compatible provider, the fixed continuity slots are:
+
+```text
+project_identity
+original_product_goal
+architecture_anchors
+standing_rules
+active_modules
+current_phase
+accepted_progress
+open_tasks
+open_blockers
+latest_failures
+next_actions
+thread_lineage
+canonical_docs
+last_valid_checkpoint
+```
+
+Role coverage:
+
+- `ceo_project`: all 14 slots; required for CEO takeover, old-thread recovery, and major project-direction correction.
+- `worker_module`: project identity, original goal, relevant architecture/standing rules, current phase, selected module, task-related open task/blocker/failure/next action/checkpoint/canonical docs.
+- `reviewer_acceptance`: original goal, relevant architecture, standing rules, current phase, accepted progress, canonical docs, last valid checkpoint, and acceptance-risk precedent.
+
+Workers and reviewers must not receive the full ProjectBrain merely because the CEO retrieved it. Dispatch only the role-required slots, compact excerpts, and sourceRefs.
+
+### Exact Identity And Mandatory Pagination
+
+For CEO full recovery:
+
+1. Resolve the exact canonical `projectPath` and expected `projectId`; do not use title-only, alias-only, parent-path, or fuzzy project matching for a recovery-ready claim.
+2. Request continuity with both exact identifiers when the provider supports them. A foreign project id/path mismatch fails closed.
+3. Consume `nextCursor` sequentially until all mandatory pages are read and both are true:
+   - `pagination.complete=true`;
+   - `mandatoryReturned=mandatoryTotal`, or the provider's equivalent complete-mandatory proof.
+4. First page, top-K, slot count, embedded recovery preview, page-local `complete`, or a synthesized cursor is not full recovery.
+5. Stop and mark `partial` when cursor is invalid/non-progressing, manifest changes, source is truncated, schema/provider fails, exact identity fails, page/token bound is reached, or any mandatory page remains unread.
+6. `review`, `conflict`, `stale`, or missing slots go to bounded review queue/canonical source inspection; they do not automatically become authoritative.
+7. Claim `recoveryReady=true` only when the app-owned authority verifier returns it after complete mandatory pagination and all required slots are satisfied.
+
+Packaged/local helpers without app trust context are advisory adapters. Even after their bounded manifest reaches the last page, record `authorityVerification=unavailable`, `partial/advisory`, and `recoveryReady=false`. Do not convert helper page completion into an app-authoritative recovery claim.
+
+Task-card requirement:
+
+```text
+Project Continuity requirement:
+  triggered: yes | no
+  trigger reason:
+  role coverage: ceo_project | worker_module | reviewer_acceptance
+  required slots:
+  project path/id:
+  module scope:
+  precedent query:
+  page size:
+  max pages:
+  token budget:
+  full recovery claim allowed: no unless app result.recoveryReady=true
+```
+
+Result record:
+
+```text
+Project Continuity result:
+  schema/version:
+  project path/id:
+  role coverage:
+  covered/missing/conflict/stale/review slots:
+  pages read:
+  pagination complete:
+  mandatory returned/total:
+  authority verification:
+  bounded stop/failure reason:
+  partial: yes/no
+  recoveryReady:
+  sourceRefs:
+  review queue consulted:
+  diagnostics consulted:
+```
+
+Cold/raw escalation is allowed only after a role-required slot remains missing after compact continuity plus canonical sourceRefs. Record the missing slot, one narrow source range or 1-3 sourceRefs, reason, and 300-800 token budget. `conflict`, `stale`, or `review` by itself does not authorize raw history.
+
+## Runtime Event Observation
+
+When the configured app-owned Memory Runtime exposes `observe_event(event)`, call it on these state changes:
+
+- `task_checkpoint`: a meaningful checkpoint, accepted slice boundary, or resume point changed;
+- `broken_thread` or `stale_lane_reference`: a CEO/worker/reviewer thread became unreadable, invalid, superseded, or no longer resolves;
+- `thread_takeover`: a clean replacement CEO/project-main thread took ownership;
+- `user_rule_update`: the user changed a durable project/CEO rule or corrected a previously remembered rule;
+- `heartbeat_fuse`: a heartbeat/monitor was stopped because it targeted a broken or wasteful thread.
+
+Observation is event-triggered only. It must not start a timer, heartbeat, vault scan, full-history scan, raw-session read, archive, compact, delete, move, restore, installation, model change, reasoning change, or routing-permission change.
+
+Record event type, exact project identity, affected thread/checkpoint, compact summary, decisions, open risks, next action, and safe sourceRefs. If app-owned observation is unavailable, write a compact local candidate and record `observe_event_unavailable`; do not pretend the event was persisted.
+
+## Trigger Receipt Verification
+
+For app-owned providers that expose lifecycle trigger receipts, verify actual execution instead of trusting prompt intent or a prepared command.
+
+After `retrieve_context`, `retrieve_precedent`, and `writeback_evidence`, require the returned trigger receipt or query the bounded project-scoped receipt list. Match at least:
+
+```text
+hook:
+projectPath:
+thread/task scope:
+createdAt / current operation window:
+returnedCount:
+tokenEstimate:
+durationMs:
+partial:
+warnings:
+sourceRefs:
+```
+
+Receipt decision:
+
+- `verified`: matching receipt exists and the hook/project/time scope matches.
+- `partial`: receipt exists but reports partial/warnings, incomplete sourceRefs, or incomplete continuity.
+- `unverified`: no matching receipt or receipt capability is unavailable.
+
+`unverified` means CEO Flow must not claim the hook actually executed. Packaged helpers that do not possess the app-owned receipt verifier may return data, but their receipt status remains unavailable/unverified.
+
+Task/result field:
+
+```text
+MemoryRuntimeTriggerReceipt:
+  hook: retrieve_context | retrieve_precedent | writeback_evidence
+  verification: verified | partial | unverified
+  receipt id/time:
+  projectPath:
+  returnedCount/tokenEstimate/durationMs:
+  partial/warnings:
+  sourceRefs:
+  unavailable reason:
+```
+
 ## Memory Runtime Lifecycle
 
 A compact project memory provider may expose explicit runtime hooks such as `retrieve_context(task_goal)`, `retrieve_precedent(task_type)`, `writeback_evidence(result)`, and `promote_memory(candidate)`. Any project may supply an equivalent local memory runtime.
@@ -71,7 +228,8 @@ CEO Flow uses the provider as a lifecycle service, not as a giant context file:
 | Dispatch / task card | `retrieve_context(task_goal)` with `queryType=task_dispatch` | build compact `Memory packet` with source-backed excerpts, constraints, and sourceRefs |
 | Pre-task precedent | `retrieve_precedent(task_type)` | check prior bug repairs, UI decisions, packaging/release evidence, archive rules, or tool-skill boundaries |
 | Review gate | `retrieve_context(...)` or `retrieve_precedent(...)` with `queryType=review_gate` | give reviewer task card, diff/tests/artifacts, relevant docs, and compact memory; do not start from long worker chat |
-| Harvest | `writeback_evidence(result)` candidate | capture CEO decision, evidence, missing evidence, blocker, revise reason, or accepted outcome |
+| Runtime checkpoint/change | `observe_event(event)` | preserve checkpoint, thread invalidation/takeover, heartbeat fuse, stale lane reference, or user rule update as bounded hot state |
+| Harvest | `writeback_evidence(result)` | capture CEO accept/revise/block/supersede decision, evidence, missing evidence, blocker, revise reason, or accepted outcome with sourceRefs |
 | Handoff | `writeback_evidence(result)` candidate plus compact Handoff | preserve next action and source refs instead of whole chat history |
 | Old-thread recovery | `retrieve_context(...)` with `queryType=thread_recovery` | retrieve hot/warm history by threadId, parent CEO, project path, and query before cold/raw gated recovery |
 
@@ -80,8 +238,9 @@ Lifecycle requirements:
 1. Bootstrap/resume/takeover must run `retrieve_context(task_goal, queryType=project_resume)` when the Memory Trigger Gate fires. Output must record provider, query, token budget, memoryMode, memoryLayers, recallPlan, top memory items, retrieved sourceRefs, and skipped/unavailable reason.
 2. Dispatch to worker/reviewer must run `retrieve_context(task_goal, queryType=task_dispatch)` first. The task card must include `Memory packet`, `Retrieved source refs`, `Memory Runtime query / context budget`, and a no-long-history rule: no full `.codex-knowledge`, no raw session, no long chat transcript.
 3. Review gate should use `queryType=review_gate` and start from task card, diff/tests/artifacts, relevant docs, and compact memory, not implementation-thread chat.
-4. After CEO decides `accept | revise | block | supersede`, create a compact evidence packet. If Memory Runtime is available, call or prepare `writeback_evidence(result)`. If unavailable, record the skipped reason.
-5. Broken-thread or old-thread recovery must retrieve `queryType=thread_recovery` before history-provider/vault fallback. Raw session snippets remain behind the raw-session gate.
+4. After CEO decides `accept | revise | block | supersede`, create a compact evidence packet and call `writeback_evidence(result)` when the app-owned Memory Runtime is available. Preserve sourceRefs and verify the matching trigger receipt. If unavailable, record the skipped/unverified reason.
+5. Checkpoint, thread invalidation, thread takeover, heartbeat fuse, stale lane reference, and user-rule changes call `observe_event(event)` when available.
+6. Broken-thread or old-thread recovery must run the Project Continuity Gate plus `queryType=thread_recovery` before history-provider/vault fallback. Raw session snippets remain behind the raw-session gate.
 
 Preferred query types:
 

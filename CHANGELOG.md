@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added Zhixia 0.9.0 Memory Core compatibility: event-triggered Project Continuity Gate, exact project identity, full 14-slot mandatory pagination for CEO recovery, role-bounded worker/reviewer slots, runtime event observation, source-backed decision writeback, trigger-receipt verification, helper-only partial/recovery-not-ready boundaries, and an isolated real-project Electron recovery probe/report.
+
 - Added a capability-discovered Model Routing Gate with `inherit`, `auto-class`, `pinned`, and `host-auto` modes; separate fast/balanced/frontier model classes from reasoning effort; prevent accidental frontier/high inheritance across routine fan-out; and record fallback plus actual model/reasoning evidence.
 
 - Added an end-to-end CEO Flow behavior smoke protocol for proving CEO -> implementation -> review -> CEO harvest/decision before stable release, and refined visual payload detection to avoid ordinary `base64,` prose false positives.

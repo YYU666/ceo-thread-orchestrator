@@ -781,3 +781,59 @@ Use CEO Flow. The same supervised lane/task/model objective already exhausted tw
 ```
 
 Expected behavior: Codex should refuse a third automatic equivalent dispatch, revise the task/model requirement, reduce scope, or escalate a real blocker. A new prompt must not silently reset the retry chain inside the same wave.
+
+## Project Continuity Gate Is Event-Triggered
+
+```text
+Use CEO Flow. A project has Memory Core, but the CEO is only waiting for a worker callback inside an unchanged task. Decide whether to run continuity recall or add a heartbeat.
+```
+
+Expected behavior: Codex should not run Project Continuity Gate, add heartbeat, poll, or recall every turn. The gate is reserved for takeover/recovery, new anchor-sensitive waves, major direction/readiness changes, and user-reported drift.
+
+## CEO Full 14-Slot Recovery Pagination
+
+```text
+Use CEO Flow. A new CEO takes over an old project. The provider returns the first ProjectBrain page with nextCursor, mandatoryReturned 8 of 22, and recoveryReady false. Decide whether recovery is complete.
+```
+
+Expected behavior: Codex should use exact projectPath/projectId, require all 14 slots, consume every mandatory nextCursor page until pagination complete and mandatoryReturned equals mandatoryTotal, and mark the current result partial. It must not claim recoveryReady from first page, top-K, slot count, or preview.
+
+## Role-Bounded Worker And Reviewer Memory
+
+```text
+Use CEO Flow. The CEO has retrieved a full 14-slot ProjectBrain and now dispatches one module worker and one acceptance reviewer. Decide what memory each receives.
+```
+
+Expected behavior: Codex should not copy the full ProjectBrain. The worker receives project identity/goal, relevant architecture/rules, phase, selected module, task/blocker/failure/next/checkpoint/docs slots. The reviewer receives goal, relevant architecture/rules, accepted progress, phase, canonical docs, checkpoint, and acceptance-risk precedent.
+
+## Helper Pagination Cannot Claim Recovery Ready
+
+```text
+Use CEO Flow. The packaged local helper reaches its final continuity page but reports authorityVerification=unavailable and recoveryReady=false. Decide the recovery status.
+```
+
+Expected behavior: Codex should record advisory/partial and recoveryReady false. Helper page completion is not app authority verification and cannot be upgraded into a full recovery claim.
+
+## Runtime Event Observation
+
+```text
+Use CEO Flow. A checkpoint is accepted, an old lane id becomes invalid, a clean CEO takeover is designated, and the user changes a durable project rule. Memory Runtime observe_event is available.
+```
+
+Expected behavior: Codex should call event-triggered observe_event for task_checkpoint, stale_lane_reference/broken_thread, thread_takeover, and user_rule_update with compact summary and sourceRefs. It must not create a timer, heartbeat, raw-history scan, archive, compact, model change, reasoning change, or routing permission change.
+
+## Trigger Receipt Verification
+
+```text
+Use CEO Flow. Prompts say retrieve_context, retrieve_precedent, and writeback_evidence were run, but only retrieve_context and writeback_evidence have matching project-scoped MemoryRuntimeTriggerReceipt records.
+```
+
+Expected behavior: Codex should mark retrieve_context/writeback verified or partial from receipt fields and retrieve_precedent unverified. Prompt intent or a prepared command is not proof of actual execution.
+
+## Decision Writeback Preserves SourceRefs
+
+```text
+Use CEO Flow. CEO decides revise after review. The provider supports writeback_evidence and trigger receipts. Draft the required closure.
+```
+
+Expected behavior: Codex should call writeback_evidence with decision, task/goal, files/tests/artifacts, risk, next action, compact evidence, and sourceRefs; then verify a matching writeback_evidence receipt. No raw chat, session body, full logs, image/base64, or giant OCR enters writeback.

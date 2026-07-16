@@ -908,5 +908,61 @@
       "must not start a third equivalent dispatch automatically",
       "same lane/task/model objective"
     ]
+  },
+  {
+    "id": "memory-core-continuity-event-trigger",
+    "title": "Project Continuity Gate does not become heartbeat or every-turn recall",
+    "prompt": "CEO is only waiting for a callback inside one unchanged task in a Memory Core project.",
+    "expected_labels": ["event triggered", "no heartbeat", "no every-turn recall"],
+    "forbidden_labels": ["background continuity polling"],
+    "coverage_terms": ["Project Continuity Gate", "not a heartbeat", "every-turn recall"]
+  },
+  {
+    "id": "memory-core-full-mandatory-pagination",
+    "title": "CEO full recovery consumes all mandatory ProjectBrain pages",
+    "prompt": "First continuity page returns nextCursor and only part of the mandatory manifest.",
+    "expected_labels": ["exact project identity", "complete pagination", "partial until complete"],
+    "forbidden_labels": ["first page recovery ready", "top-K full recovery"],
+    "coverage_terms": ["all 14 slots", "mandatoryReturned=mandatoryTotal", "mark `partial`"]
+  },
+  {
+    "id": "memory-core-role-bounded-slots",
+    "title": "Workers and reviewers receive role-required continuity slots only",
+    "prompt": "CEO has full ProjectBrain but dispatches one module worker and one reviewer.",
+    "expected_labels": ["worker_module", "reviewer_acceptance", "compact role slots"],
+    "forbidden_labels": ["copy full ProjectBrain to every lane"],
+    "coverage_terms": ["worker_module", "reviewer_acceptance", "must not receive the full ProjectBrain"]
+  },
+  {
+    "id": "memory-core-helper-not-recovery-ready",
+    "title": "Helper completion remains advisory without app authority",
+    "prompt": "Packaged helper reaches the last continuity page with authorityVerification unavailable.",
+    "expected_labels": ["advisory partial", "recoveryReady false", "app verifier required"],
+    "forbidden_labels": ["helper completion promoted to recovery ready"],
+    "coverage_terms": ["authorityVerification=unavailable", "recoveryReady=false", "app-owned authority verifier"]
+  },
+  {
+    "id": "memory-core-observe-event-lifecycle",
+    "title": "Checkpoint, invalidation, takeover, and user rules emit bounded events",
+    "prompt": "A checkpoint changes, a lane becomes invalid, a takeover occurs, and user rules change.",
+    "expected_labels": ["observe_event", "bounded hot state", "sourceRefs"],
+    "forbidden_labels": ["heartbeat or timer", "model or reasoning mutation"],
+    "coverage_terms": ["task_checkpoint", "thread_takeover", "user_rule_update"]
+  },
+  {
+    "id": "memory-core-trigger-receipt-verification",
+    "title": "Lifecycle hook execution requires matching trigger receipts",
+    "prompt": "Prompt claims three hooks ran but one lacks a matching MemoryRuntimeTriggerReceipt.",
+    "expected_labels": ["verified", "partial or unverified", "prompt intent is not proof"],
+    "forbidden_labels": ["claim all hooks executed"],
+    "coverage_terms": ["MemoryRuntimeTriggerReceipt", "Prepared prompts or intended calls are not execution evidence", "unverified"]
+  },
+  {
+    "id": "memory-core-decision-writeback-source-refs",
+    "title": "Accept revise block writeback preserves evidence source refs",
+    "prompt": "CEO decides revise and app-owned writeback plus receipts are available.",
+    "expected_labels": ["writeback_evidence", "sourceRefs", "receipt verification"],
+    "forbidden_labels": ["raw chat writeback", "missing provenance"],
+    "coverage_terms": ["accept | revise | block | supersede", "Preserve sourceRefs", "writeback_evidence receipt"]
   }
 ]

@@ -22,7 +22,7 @@ Recommended takeover read order:
 
 1. ThreadRecoveryPacket;
 2. Program Goal Brief and Completion Dashboard;
-3. compact project memory / Memory Runtime `retrieve_context(queryType=project_resume)`;
+3. event-triggered Project Continuity Gate with exact project identity and complete mandatory pagination for takeover/recovery, plus compact Memory Runtime `retrieve_context(queryType=project_resume)`;
 4. active lane roster and latest callbacks;
 5. canonical project docs/source files;
 6. Memory Runtime / history-provider / vault sourceRefs;
@@ -49,6 +49,7 @@ Use canonical project files, source code, tests, decision logs, and worker repor
 ## Minimal Context Budget
 
 - Bootstrap/resume: retrieve compact project memory first, then inspect only cited sourceRefs.
+- CEO takeover/recovery/direction correction: retrieve all mandatory ProjectBrain slots through complete pagination; helper-only results remain partial and cannot claim `recoveryReady`.
 - Dispatch: include only the memory packet and sourceRefs the lane needs.
 - Review/harvest: inspect current diffs/tests/artifacts plus compact precedent; do not reload long worker chat.
 - Old-thread recovery: retrieve hot/warm memory before history-provider/vault pointers; cold/raw snippets require the hard gate.

@@ -44,6 +44,19 @@ Memory Runtime result:
   top memory items:
   retrieved sourceRefs:
   skipped/unavailable reason:
+Project Continuity Gate:
+  triggered/reason/role coverage:
+  exact projectPath/projectId:
+  required slots:
+  pages read / pagination complete:
+  mandatory returned/total:
+  partial/recoveryReady:
+  sourceRefs:
+Memory Runtime trigger receipts:
+  retrieve_context:
+  retrieve_precedent:
+  writeback_evidence:
+Runtime event observations:
 Autopilot Startup Card:
 Staffing Plan:
 Long-Term Memory Anchor Gate:
@@ -260,6 +273,24 @@ Memory Runtime result:
   memoryLayers:
   recallPlan:
 Memory Runtime skipped/unavailable reason:
+Project Continuity requirement:
+  triggered/reason/role coverage:
+  required slots:
+  exact projectPath/projectId:
+  module scope / page size / max pages / token budget:
+  full recovery claim allowed:
+Project Continuity result:
+  covered/missing/conflict/stale/review slots:
+  pages / pagination complete / mandatory returned-total:
+  authority verification / partial / recoveryReady:
+  bounded stop reason / sourceRefs:
+MemoryRuntimeTriggerReceipt:
+  hook / verification / receipt id-time:
+  returnedCount / tokenEstimate / durationMs / partial / warnings:
+  sourceRefs / unavailable reason:
+Runtime event observation:
+  event type / project identity / affected thread or checkpoint:
+  receipt / sourceRefs / unavailable reason:
 Context/history budget:
 Visual evidence policy:
 Image budget:
@@ -368,6 +399,72 @@ Blocked or revised task:
 Source refs:
 Cold history read: yes/no
 Cold read reason/source range/token budget:
+```
+
+## Project Continuity Gate Record
+
+```text
+Triggered: yes/no
+Trigger reason:
+Role coverage: ceo_project | worker_module | reviewer_acceptance
+Required slots:
+Exact projectPath/projectId:
+Module scope:
+Page size / max pages / token budget:
+Schema/version:
+Covered/missing/conflict/stale/review slots:
+Pages read:
+Pagination complete:
+Mandatory returned/total:
+Authority verification:
+Partial: yes/no
+Bounded stop/failure reason:
+RecoveryReady:
+SourceRefs:
+Review queue consulted:
+Diagnostics consulted:
+```
+
+Rules:
+
+- CEO takeover, old-thread recovery, and major direction correction use all 14 mandatory slots.
+- Worker/reviewer packets use role-required slots only.
+- Incomplete pagination or helper-only advisory results cannot claim `recoveryReady`.
+- Project identity mismatch, invalid cursor, changed manifest, truncation, or page/token bound fails closed to partial.
+
+## Memory Runtime Trigger Receipt Record
+
+```text
+Hook: retrieve_context | retrieve_precedent | writeback_evidence
+Verification: verified | partial | unverified
+Receipt ID/time:
+Exact projectPath:
+Thread/task scope:
+Returned count:
+Token estimate:
+Duration ms:
+Partial/warnings:
+SourceRefs:
+Unavailable reason:
+```
+
+Rules:
+
+- Prepared prompts or intended calls are not execution evidence.
+- Match receipts by hook, exact project path, operation window, and thread/task scope when present.
+- Missing receipt capability remains unverified; do not claim the hook actually executed.
+
+## Runtime Event Observation Record
+
+```text
+Event type: task_checkpoint | broken_thread | stale_lane_reference | thread_takeover | user_rule_update | heartbeat_fuse
+Exact projectPath/projectId:
+Affected thread/checkpoint:
+Summary:
+Decisions/open risks/next action:
+SourceRefs:
+Receipt/status:
+Unavailable reason:
 ```
 
 
