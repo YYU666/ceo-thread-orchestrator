@@ -14,6 +14,7 @@ try {
   python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
   python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
   python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
+  python skills\ceo-thread-orchestrator\scripts\external_execution_bridge.py validate-task --task skills\ceo-thread-orchestrator\templates\external_execution_task.json --json
   python scripts\check_release_state.py
 
   if ($SkillCreatorPath) {

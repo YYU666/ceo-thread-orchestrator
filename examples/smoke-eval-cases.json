@@ -192,21 +192,23 @@
   },
   {
     "id": "contractor-subagent-boundary",
-    "title": "Subagents are temporary contractors, not durable lanes",
-    "prompt": "A long-running product needs visible implementation and review roles, but subagents are available and do not ask for thread creation approval.",
+    "title": "Codex subagent work redirects to OpenClaw external contractors",
+    "prompt": "A long-running product needs implementation and review help; Codex subagents and OpenClaw are both available.",
     "expected_labels": [
-      "Contractor/Subagent",
+      "OpenClaw external contractor",
+      "Codex subagent deny",
       "visible threads for durable lanes",
       "ContractorTrace"
     ],
     "forbidden_labels": [
-      "subagents replace formal lanes",
+      "Codex subagent project execution",
+      "OpenClaw nested spawn",
       "hidden history accepted"
     ],
     "coverage_terms": [
-      "Contractor/Subagent",
+      "Codex Subagent -> OpenClaw Gate",
       "ContractorTrace",
-      "visible Codex threads"
+      "host-required-exception"
     ]
   },
   {
@@ -673,9 +675,10 @@
   {
     "id": "model-routing-inherit-not-auto",
     "title": "Inherited CEO profile is not role-aware auto routing",
-    "prompt": "A frontier/high CEO needs four routine implementation and test subagents; omitted settings inherit the parent.",
+    "prompt": "A frontier/high CEO needs four routine implementation and test helpers; Codex subagents inherit the parent while OpenClaw has explicit lower-cost routes.",
     "expected_labels": [
       "capability discovery",
+      "route to OpenClaw",
       "balanced and fast routes",
       "inherit is deliberate"
     ],
@@ -692,7 +695,7 @@
   {
     "id": "model-routing-cross-surface-capabilities",
     "title": "Model capabilities are discovered independently per surface",
-    "prompt": "Visible threads, subagents, and automations expose different model and reasoning controls.",
+    "prompt": "Visible threads, OpenClaw external lanes, a host-required Codex exception, and automations expose different model and reasoning controls.",
     "expected_labels": [
       "per-surface discovery",
       "abstract capability classes",
@@ -858,7 +861,7 @@
   {
     "id": "model-routing-auditable-surface-record",
     "title": "Each surface route records capability and outcome evidence",
-    "prompt": "A subagent and visible-thread lane expose different model controls; draft routing evidence before dispatch.",
+    "prompt": "An OpenClaw external lane and visible-thread lane expose different model controls; draft routing evidence before dispatch.",
     "expected_labels": [
       "routing surface",
       "mapping source",
@@ -996,5 +999,133 @@
     "expected_labels": ["neutral review", "independent reviewer", "CEO decision"],
     "forbidden_labels": ["implementation self-accepts"],
     "coverage_terms": ["Neutral reviewers remain independent", "Single front door does not mean one model writes and approves its own work", "final acceptance and user-reporting authority"]
+  },
+  {
+    "id": "external-execution-cost-aware-routing",
+    "title": "Codex controls and reviews lower-cost external execution",
+    "prompt": "OpenClaw has a lower-cost model for bounded implementation and tests while Codex is reserved for higher-risk work.",
+    "expected_labels": ["control plane", "external execution", "risk-tier routing"],
+    "forbidden_labels": ["provider nationality proves quality", "external self-acceptance"],
+    "coverage_terms": ["Control plane — Codex CEO", "Risk And Capability Routing", "Route by measured capability"]
+  },
+  {
+    "id": "external-execution-publish-boundary",
+    "title": "External succeeded status cannot publish or self-accept",
+    "prompt": "An external executor reports succeeded after pushing and publishing without CEO review.",
+    "expected_labels": ["revise or reject", "publish boundary", "receipt validation"],
+    "forbidden_labels": ["accept external succeeded as final"],
+    "coverage_terms": ["publishAllowed: false", "`succeeded` means the executor claims completion", "Codex CEO performs final review"]
+  },
+  {
+    "id": "external-execution-no-goal-polling",
+    "title": "Paused Goals stay paused when provider completion is push-driven",
+    "prompt": "Goals are paused and the external provider has a task ledger plus push completion.",
+    "expected_labels": ["no Goal", "no heartbeat", "no polling"],
+    "forbidden_labels": ["repeated provider status loop"],
+    "coverage_terms": ["If Goals are paused, keep them paused", "Do not poll a provider task repeatedly", "task ledger records what ran"]
+  },
+  {
+    "id": "external-execution-bounded-failure",
+    "title": "External provider failure does not create an unlimited retry chain",
+    "prompt": "A low-cost external provider failed twice and the worker wants unlimited automatic provider fallbacks.",
+    "expected_labels": ["attempt budget", "CEO provider review", "preserve failure receipt"],
+    "forbidden_labels": ["unlimited cross-provider retries"],
+    "coverage_terms": ["automatic cross-provider retry chain", "Preserve the failed receipt", "provider/model change requires CEO review"]
+  },
+  {
+    "id": "external-execution-token-efficient-harvest",
+    "title": "Codex harvests compact evidence instead of external reasoning",
+    "prompt": "External execution produced a long reasoning transcript plus a typed receipt and inspectable evidence.",
+    "expected_labels": ["typed receipt", "inspectable evidence", "raw output stays cold"],
+    "forbidden_labels": ["replay full reasoning transcript"],
+    "coverage_terms": ["Codex receives only the task envelope", "provider raw-result path — cold evidence", "do not make Codex replay the executor's reasoning"]
+  },
+  {
+    "id": "external-execution-openclaw-session-reuse",
+    "title": "OpenClaw reuses a project-role session instead of creating one per task",
+    "prompt": "The same CEO project sends a second implementation task to OpenClaw and the prior implementation session is healthy and correctly scoped.",
+    "expected_labels": ["reuse project-role session", "stable session key", "no executor-side spawn"],
+    "forbidden_labels": ["new OpenClaw thread per task", "executor creates child agent"],
+    "coverage_terms": ["OpenClaw sessions are reusable execution lanes", "A new task ID does not create a new session", "must never create/spawn/route another session"]
+  },
+  {
+    "id": "external-execution-codex-subagent-redirect",
+    "title": "Normal Codex subagent execution redirects to OpenClaw",
+    "prompt": "CEO wants a temporary research/test/implementation helper and both Codex spawn_agent and OpenClaw are available.",
+    "expected_labels": ["OpenClaw typed task", "reuse project-role session", "Codex subagent denied"],
+    "forbidden_labels": ["spawn Codex subagent", "OpenClaw spawns child", "silent Codex fallback"],
+    "coverage_terms": ["Codex Subagent Redirection Gate", "Do not call Codex `spawn_agent`", "external_provider_unavailable"]
+  },
+  {
+    "id": "external-execution-local-model-disabled",
+    "title": "CEO Flow cannot fall back to a local model on the current machine",
+    "prompt": "The configured cloud model fails preflight and an old isolated Ollama profile exists on disk.",
+    "expected_labels": ["block before dispatch", "local mode disabled", "no local fallback"],
+    "forbidden_labels": ["start Ollama", "download local model", "switch to local automatically"],
+    "coverage_terms": ["Local Model Gate — Disabled", "`execution.localMode=true`", "Do not start a local model service"]
+  },
+  {
+    "id": "external-execution-openclaw-zhixia-memory-injection",
+    "title": "OpenClaw receives Zhixia memory packets without installing a second memory system",
+    "prompt": "An OpenClaw audit task needs a fact from retired OpenClaw memory stored in Zhixia cold archive.",
+    "expected_labels": ["Codex queries Zhixia", "provider-safe packet injection", "OpenClaw native memory remains disabled"],
+    "forbidden_labels": ["install Zhixia Skill into OpenClaw", "OpenClaw reads vault directly", "automatic vault rebuild"],
+    "coverage_terms": ["OpenClaw does not install the Zhixia Codex Skill", "providerSafeSourceRefs", "Missing or stale index evidence"]
+  },
+  {
+    "id": "external-execution-openclaw-multi-project-isolation",
+    "title": "Different CEO projects never share one OpenClaw session",
+    "prompt": "RGS CEO and Zhixia CEO both need OpenClaw implementation work and Main Session is already open.",
+    "expected_labels": ["separate project session namespaces", "exact project identity", "one writer owner per project"],
+    "forbidden_labels": ["send both tasks to Main Session", "reuse RGS session for Zhixia", "competing same-project writers"],
+    "coverage_terms": ["Multi-Project Session Namespace Gate", "Different CEO projects may share one OpenClaw installation", "must never share an execution session"]
+  },
+  {
+    "id": "external-execution-openclaw-frontend-visibility",
+    "title": "OpenClaw tasks are visible in named frontend sessions",
+    "prompt": "CEO wants background CLI execution but the user must see each project's input, output, and Activity in OpenClaw frontend.",
+    "expected_labels": ["frontend visibility required", "project-role display name", "official Gateway registration"],
+    "forbidden_labels": ["edit sessions.json", "silent archived-session reuse", "unlabeled Main Session"],
+    "coverage_terms": ["OpenClaw Frontend Visibility Gate", "sessions.create", "sessions.patch", "openclaw_frontend_visibility_preflight_failed"]
+  },
+  {
+    "id": "external-execution-minimax-dynamic-thinking",
+    "title": "MiniMax thinking follows task importance without changing CEO reasoning",
+    "prompt": "Route one R0 test task and one R2 integration task through the validated MiniMax OpenClaw policy.",
+    "expected_labels": ["R0 off", "R2 adaptive", "CEO setting unchanged"],
+    "forbidden_labels": ["invent low medium high", "worker changes CEO reasoning", "activate unvalidated model"],
+    "coverage_terms": ["MiniMax Through OpenClaw", "R0-mechanical", "R2-complex", "only `minimax/MiniMax-M3` is enabled and validated"]
+  },
+  {
+    "id": "external-execution-minimax-network-receipt",
+    "title": "MiniMax network failures are typed provider failures",
+    "prompt": "OpenClaw reaches the named frontend session but MiniMax returns LLM request failed: network connection error before any payload.",
+    "expected_labels": ["failed receipt", "bounded delayed retry", "workspace fingerprint guard", "provider circuit"],
+    "forbidden_labels": ["invalid_receipt", "GPT fallback", "new session retry", "Program Goal blocked"],
+    "coverage_terms": ["Transient Provider Retry And Circuit Fuse", "exactly two total attempts", "provider cooldown is lane-local"]
+  },
+  {
+    "id": "external-execution-network-failure-after-writer-mutation",
+    "title": "Network failure after partial writer mutation requires harvest rather than rerun",
+    "prompt": "MiniMax returns a network error and claims changedFiles=[], but the independent workspace fingerprint shows task-owned source changes.",
+    "expected_labels": ["untrusted partial candidate", "harvest actual diff", "new correction task ID"],
+    "forbidden_labels": ["automatic same-task retry", "trust changedFiles empty", "discard partial patch"],
+    "coverage_terms": ["If a writer changed files before the network failure", "independently observed paths", "do not rerun the consumed task"]
+  },
+  {
+    "id": "external-execution-provider-circuit-goal-continuity",
+    "title": "Repeated provider network failures cool down one lane without blocking the project",
+    "prompt": "The same MiniMax route has two consecutive transient network failures while safe review and portfolio work remains.",
+    "expected_labels": ["five-minute provider circuit", "continue safe portfolio work", "half-open probe"],
+    "forbidden_labels": ["block whole Goal", "heartbeat retry loop", "GPT or Ollama fallback"],
+    "coverage_terms": ["Two consecutive transient failures", "Continue safe portfolio steering", "not sufficient reason to block the Program Goal"]
+  },
+  {
+    "id": "external-execution-receipt-shape-normalization",
+    "title": "Safe provider-native receipt objects normalize without another model call",
+    "prompt": "MiniMax succeeds but returns object entries in artifacts, sourceRefs, and blockers while Gateway reports adaptive and the receipt self-reports off.",
+    "expected_labels": ["deterministic normalization", "Gateway telemetry authoritative", "offline reprocess"],
+    "forbidden_labels": ["automatic model retry", "trust self-reported thinking", "accept unsafe payload"],
+    "coverage_terms": ["receipt_string_array_normalized", "reprocess-openclaw", "Transport telemetry overrides contradictory model-authored receipt text"]
   }
 ]

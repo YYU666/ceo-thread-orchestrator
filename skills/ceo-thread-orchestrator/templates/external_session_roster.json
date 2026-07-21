@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ceoflow.external_session_roster.v1",
+  "project": {
+    "projectId": "example-project",
+    "projectDisplayName": "Example Project",
+    "canonicalRoot": "/absolute/path/to/example-project",
+    "projectIdentitySha256": "6f029d5d855b2bff3a34f673582e6891ae6c70fb49257912395d0a4aa707fa8e"
+  },
+  "ceoOwnerId": "codex-ceo-example",
+  "sessions": [
+    {
+      "laneId": "implementation-main",
+      "role": "implementation",
+      "agentId": "main",
+      "sessionKey": "agent:main:ceoflow:example-project:implementation-main",
+      "sessionId": null,
+      "displayName": "Example Project · Implementation",
+      "category": "Example Project",
+      "frontendVisibility": "required",
+      "frontendVisible": null,
+      "lifecycleState": "active",
+      "status": "idle",
+      "currentTaskId": null,
+      "dispatchLeaseId": null,
+      "writeConcurrency": "single-writer",
+      "lastReceiptPath": null,
+      "updatedAt": null
+    }
+  ],
+  "updatedAt": null
+}

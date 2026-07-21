@@ -1,6 +1,6 @@
 # Model Routing Gate
 
-Use this reference when CEO Flow can choose a model or reasoning effort for a visible thread, subagent/contractor, automation, review lane, research lane, or implementation lane.
+Use this reference when CEO Flow can choose a model or reasoning effort for a visible thread, OpenClaw external contractor, automation, review lane, research lane, or implementation lane.
 
 ## Contents
 
@@ -33,9 +33,11 @@ Do not modify the CEO lane's model or reasoning from worker/reviewer callbacks. 
 Before assigning models for a wave, inspect the active tool contract for each surface being used:
 
 - visible thread create/continue tools;
-- subagent/contractor spawn tools;
+- OpenClaw external-provider tools and reusable project-role sessions;
+- host Codex subagent tools only when a higher-priority contract requires a bounded exception;
 - automation tools;
 - configured workflow or external worker tools.
+- cross-platform external execution providers such as OpenClaw/ACP/MCP/CLI/webhook adapters.
 
 Record:
 
@@ -47,7 +49,7 @@ Default/omitted behavior:
 Unsupported or unknown controls:
 ```
 
-Do not assume all surfaces expose the same models or reasoning levels. A model available to subagents may be unavailable to visible threads or automations.
+Do not assume all surfaces expose the same models or reasoning levels. A model available to OpenClaw may be unavailable to visible threads or automations. Codex subagent model availability is not a fallback route for normal project execution.
 
 Omitting a model commonly means `inherit current/default settings`. It must not be described as role-aware automatic optimization unless the current host explicitly documents native automatic routing.
 
@@ -120,7 +122,11 @@ Do not invent cost, latency, or quality rankings when the host does not provide 
 | Test/verification sidecar | `fast` | `low` or `medium` |
 | Memory summary/index/evidence formatting | `fast` | `low` or `medium` |
 | Memory promotion or cross-project lesson review | `balanced` | `high` |
-| Contractor/subagent exploration | `fast` or `balanced` | smallest sufficient level |
+| OpenClaw external contractor exploration | `fast` or `balanced` | smallest sufficient provider-supported level |
+| External R0 mechanical execution | `fast` | provider-supported low/off/medium as required |
+| External R1 bounded implementation/test | `balanced` | `medium`, with Codex evidence review |
+| External R2 complex integration | strongest adequate measured route | `high` when supported, plus independent assurance |
+| R3 architecture/security/release decision | Codex CEO/frontier | preserve CEO setting; neutral frontier audit |
 
 Increase capability or reasoning when evidence shows the current route is inadequate. Do not upgrade merely because the lane asks for a stronger model.
 
@@ -150,23 +156,57 @@ If the reasoning requirement is `exact`, do not use this fallback table. Return 
 
 ## Surface-Specific Rules
 
-### Subagents / Contractors
+### OpenClaw External Contractors / Codex Subagent Deny
 
-If the spawn tool says omitted model/reasoning inherits the parent, treat omission as an explicit `inherit` route. For a high-capability CEO, routine fan-out should normally use an explicit `fast` or `balanced` mapping so every contractor does not inherit the CEO's most expensive profile.
+Routine temporary fan-out uses OpenClaw external-provider routing, not Codex host subagent inheritance. Resolve `fast` or `balanced` against the configured OpenClaw model surface and record the actual provider/model in the receipt.
 
-Subagent model overrides require a clear task-specific reason. Role classification, preventing accidental frontier inheritance, and fan-out cost containment are sufficient task-specific reasons. Record the reason in the task card.
+Do not call Codex subagent spawn tools merely because they expose cheaper or inherited variants. If a higher-priority host contract requires a Codex subagent, classify it as `host-required-exception`, select the smallest adequate explicit route when controls exist, and record why OpenClaw could not be used. The exception cannot change CEO reasoning/model or bypass external receipt/evidence expectations.
 
 ### Visible Threads
 
 Reuse an established thread's current model/reasoning by default. Override it only when the new task has been reclassified, the user explicitly asks, or evidence shows the existing profile is inadequate or wasteful.
 
-Do not assume a visible-thread create/send tool supports the same models as the subagent tool. Resolve the class independently for that surface.
+Do not assume a visible-thread create/send tool supports the same models as OpenClaw. Resolve the class independently for that surface.
 
 ### Automations
 
 Automations have their own model/reasoning contract. Choose a model appropriate to the repeated task, not the CEO thread. Lightweight monitoring and status checks should not default to a frontier profile.
 
 Heartbeat automations attached to a thread are continuity mechanisms, not an excuse to create a second model-routing loop.
+
+### External Execution Providers
+
+Treat provider selection and model selection as separate decisions. First choose an execution provider whose workspace, tool, privacy, provenance, and cost controls satisfy the task; then map `fast | balanced | frontier` to that provider's live model catalog.
+
+Do not classify a model as cheap, safe, private, domestic, frontier, or adequate from its name alone. Use provider-reported capabilities, accepted project policy, measured task outcomes, or user direction. Record data residency and credential boundaries separately from capability class.
+
+Codex should not replay external reasoning. Consume a typed receipt, diff/files, tests, artifacts, sourceRefs, and provider-reported usage. Reserve Codex/frontier tokens for architecture, conflict resolution, independent review, and publish/release gates rather than routine execution transcripts.
+
+### MiniMax Through OpenClaw
+
+When the configured OpenClaw route uses MiniMax, use `auto-class` plus the bundled `openclaw_minimax_model_policy.json` instead of inventing model ranks or `low/medium/high` thinking levels.
+
+MiniMax's current documented reasoning controls are model-specific:
+
+- `MiniMax-M3`: `off`/provider `disabled` or `adaptive`; CEO Flow sends an explicit value so an OpenClaw session default cannot change the task silently.
+- `MiniMax-M2.x`: thinking cannot be disabled. Never route an `off` requirement to M2.x.
+- OpenClaw exposes these controls as `off` and `adaptive`; session capability discovery remains authoritative for whether the installed surface accepts them.
+
+Default importance route:
+
+| Risk/role | Effective class | MiniMax thinking | Assurance |
+| --- | --- | --- | --- |
+| `R0-mechanical` | `fast` | `off` | deterministic checks or bounded sampling |
+| `R1-bounded` implementation/docs/test | `balanced` | `off` | Codex diff/test review |
+| `R1-bounded` research or neutral review | `balanced` | `adaptive` | source/evidence challenge |
+| `R2-complex` | `frontier` | `adaptive` | independent Codex review and targeted rerun |
+| `R3-critical` | `frontier` external execution only when bounded | `adaptive` | Codex CEO keeps the decision; neutral high-capability audit required |
+
+The model policy is capability- and evidence-gated. At present, only `minimax/MiniMax-M3` is enabled and validated across `fast`, `balanced`, and `frontier`; therefore model choice may remain M3 while thinking changes dynamically. `MiniMax-M2.7-highspeed` is a disabled fast-lane candidate until OpenClaw availability, tool calls, typed receipts, latency, coding quality, and provider reliability pass a controlled probe. Merely appearing in official docs or a provider catalog does not activate it.
+
+For `auto-class`, the bridge derives class from `riskTier`, intersects the policy order with `openclaw models list --json`, and selects only an enabled+validated+available candidate. For `pinned`, the task must name the model. Both paths preflight configured fallbacks and supported thinking values. The route result records selected model/thinking, source, class, candidate order, and rejected candidates.
+
+This routing is top-down only. It never changes the Codex CEO lane's model or reasoning. An executor callback may report limitations but cannot promote itself, change the policy, activate an unvalidated model, or request a CEO reasoning mutation that takes effect automatically.
 
 ## Fan-Out And Cost Gate
 
@@ -225,13 +265,17 @@ Record `model_route_unavailable` for an unsupported/unavailable model control an
 
 Treat transient 5xx/timeout/service errors as temporary. Retry a bounded number of times or reroute the affected lane; do not permanently ban a model from one transient incident. Repeated quality failure should create evidence for reclassification, not an automatic global model ban.
 
+For the OpenClaw MiniMax route, the stricter external-execution contract applies: same model/session/task semantics, exactly one delayed network retry only when the workspace fingerprint is unchanged, then a project-scoped provider circuit cooldown. `fallbackPolicy=deny` remains in force, so generic model fallback language here does not authorize GPT, cross-provider, or local/Ollama substitution.
+
 ## Task Card And Callback Contract
 
 Add these fields when model controls are available or material:
 
 ```text
 Model routing mode: inherit | auto-class | pinned | host-auto
-Routing surface: visible-thread | subagent | automation | configured-workflow | other
+Routing surface: visible-thread | external-provider | host-subagent-exception | automation | configured-workflow | other
+Execution provider / adapter / transport:
+Risk tier: R0-mechanical | R1-bounded | R2-complex | R3-critical
 Mapping source: live-tool-schema | host-docs | accepted-project-policy
 Available class candidates:
 Available reasoning levels:

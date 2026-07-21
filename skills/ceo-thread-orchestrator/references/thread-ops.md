@@ -47,7 +47,7 @@ After creating or reusing a lane:
 - Archive or unpin after acceptance, supersession, or retirement, after recording why.
 - Record `threadId`, title, task id, role, workspace, write-set, source CEO thread id, expected callback signature, status, and next harvest action in the roster or operating note.
 - Avoid multiple sibling implementation lanes for the same project/area unless write-sets are non-overlapping and merge/review cost is justified.
-- Do not use subagents as substitutes for visible lanes when the user asked for multi-thread execution, persistent experts, or later harvest.
+- Do not use Codex subagents for normal project execution. Route temporary outside-help work to approved reusable OpenClaw lanes; preserve visible Codex lanes when the user needs persistent sidebar continuity.
 
 Sidebar cleanup:
 
@@ -73,7 +73,7 @@ Meanings:
 - `CEO-only`: the CEO is the normal conversational identity, project context owner, acceptance authority, and final reporter.
 - `user-visible-by-request`: the user explicitly asks to inspect, continue, or speak directly with a specialist lane.
 - `durable-visible`: a persistent implementation/review/UX/release/memory lane may appear in the host sidebar for continuity, but the user is not responsible for routing or harvesting it.
-- `background-contractor`: a temporary subagent/contractor performs bounded work and returns a compact trace to its integration owner.
+- `background-contractor`: an OpenClaw external contractor performs bounded work and returns a typed receipt plus compact trace to its integration owner.
 - `CEO-mediated`: workers, reviewers, auditors, researchers, memory providers, and contractors escalate to CEO rather than transferring coordination work to the user.
 
 Host tools may expose durable specialist threads in the sidebar. This does not turn them into separate product entrances. CEO still owns lane selection, task cards, context packets, harvest, evidence review, and consolidated user reporting.
@@ -109,78 +109,72 @@ CEO should resolve, reroute, narrow, or continue around the issue when possible.
 
 Neutral reviewers remain independent. Single front door does not mean one model writes and approves its own work; reviewer findings return to CEO and cannot be suppressed merely to preserve a unified user experience.
 
-## Contractor / Subagent Gate
+## Codex Subagent -> OpenClaw Gate
 
-Subagents are CEO Flow's Contractor / outside-help role. They are temporary bounded scouts, not durable visible lanes. Treat them like short-term contractors: useful for speed and parallel evidence gathering, but not the source of truth for project ownership, user-visible progress, long-running memory, or final acceptance.
+Codex CEO does not use Codex host subagents as the default project-execution surface. Temporary outside-help work is routed to OpenClaw as a typed external contractor task when OpenClaw is configured and the task is suitable. This applies to one-shot exploration, read-only audit, quick verification, disposable research, documentation, tests, and bounded disjoint implementation.
 
-Use contractors/subagents for:
+Hard rules:
 
-- one-shot codebase exploration;
-- read-only audit or comparison;
-- quick independent verification;
-- disposable research that does not need user-visible thread continuity;
-- bounded implementation only when the write-set is disjoint, the result can be reviewed/integrated by CEO, and the user/tool contract allows subagent delegation.
-- sidecar work that a visible CEO or worker lane can summarize into evidence without needing the contractor's full private context later.
+1. Do not call Codex `spawn_agent`, `multi_agent`, or equivalent subagent tools for normal project execution.
+2. Map temporary work to an approved OpenClaw project-role lane and reuse its deterministic session key. A new task ID does not create another OpenClaw session.
+3. CEO dispatches directly to each OpenClaw lane. OpenClaw must not call `sessions_spawn`, create child Agents/tasks, or delegate again.
+4. OpenClaw output is an untrusted typed receipt. Codex CEO still inspects evidence and decides `accept | revise | block | supersede`.
+5. If OpenClaw is unavailable, blocked, lacks the required capability, or exceeds the approved lane count, do not silently fall back to Codex subagents. Reuse an authorized visible Codex lane, use a bounded direct-CEO fallback only when its gate allows, or report `external_provider_unavailable`.
+6. A higher-priority system/developer/host contract may require a Codex subagent for the current request. Treat that as `host-required-exception`, keep it bounded, record why OpenClaw could not be used, and preserve the same evidence/acceptance boundary. User/project policy never overrides a stricter host contract.
+7. Different CEO projects use different project-scoped sessions. Never route CEO Flow work into OpenClaw `Main Session`, another project's session, or a generic unlabeled session.
+8. OpenClaw execution defaults to frontend-visible sessions named `<Project> · <Role>`. Archived or busy sessions fail closed; restore, ownership transfer, or rotation must be explicit.
 
-Prefer visible Codex threads for:
-
-- user-requested multi-thread execution;
-- persistent expert roles such as implementation, review, UX, release, or knowledge lanes;
-- Program Goals that need later harvest or user-visible progress;
-- work where the user may need to click into the lane and continue;
-- implementation ownership across multiple turns;
-- any task where callback, roster, workspace anchoring, or lifecycle policy matters.
-
-Subagents must not replace lane roster, task cards, callback policy, harvest driver, workspace guard, or neutral review gate. If a subagent performs implementation, CEO or the visible worker lane still owns integration, evidence review, and accept/revise/block.
-
-If the host tool contract says current-request subtasks should use subagents unless the user explicitly asks for new threads, follow that contract but record the limitation. When durable lanes are required, ask for or use explicit visible-thread authorization instead of pretending subagents are equivalent.
-
-Durable lane vs contractor decision:
+OpenClaw contractor mapping:
 
 ```text
-Needs title/sidebar visibility? -> visible lane.
-Needs later harvest/continuation? -> visible lane.
-Needs memory/history-provider traceability beyond final summary? -> visible lane or write a contractor trace.
-Owns a long-running module, review role, UX role, release role, or memory role? -> visible lane.
-One-shot exploration/audit/verification/research? -> contractor allowed.
-Disjoint bounded patch that CEO can review/integrate now? -> contractor allowed if authorized.
+External contractor provider: OpenClaw
+Project ID:
+Project display name / identity SHA-256 / canonical root:
+Project CEO owner / dispatch lease:
+Role / lane ID: implementation-main | test-main | research-main | docs-main | audit-main | approved custom lane
+Session key: agent:<agentId>:ceoflow:<projectId>:<laneId>
+Frontend display name / category: <Project> · <Role> / <Project>
+Frontend visibility: required
+Archived session policy: reject
+Native OpenClaw memory: forbidden
+Session roster path:
+Write concurrency: single-writer | read-only
+Session reuse policy: reuse-project-role
+Approved external session count:
+Allowed scope / write-set:
+Forbidden scope:
+Integration owner: CEO or visible implementation lane
+Required typed receipt / ContractorTrace:
+Codex subagent policy: deny | host-required-exception
 ```
 
-CEO-created visible lanes may use contractors only when their task card explicitly grants it:
+Default external session count is one implementation/execution lane per CEO project. Add a separate test, research, docs, or audit session only when role independence, write ownership, or verification isolation requires it. Do not create one OpenClaw session per small task.
 
-```text
-Contractor/subagent policy:
-  May use contractors: yes/no
-  Allowed contractor scope:
-  Forbidden contractor scope:
-  Max contractor count:
-  Contractor write-set:
-  Integration owner:
-  Required contractor trace:
-```
+One project has one write-dispatch owner at a time. Different projects may run concurrently when their roots and resources are isolated; two CEOs must not issue competing writes into the same project/session. OpenClaw sessions separate conversation context but may share Agent-level configuration/tools, so only the CEO-supplied Zhixia packet and project sourceRefs are valid memory.
 
-Default is `May use contractors: no` for implementation, review, UX, release, and knowledge lanes unless the task card says otherwise. A worker may not silently replace its bounded task with contractor delegation.
+Durable user-visible roles may still use visible Codex threads when the user asks for them or the work requires sidebar continuity, later direct interaction, or Codex-host-specific review. That is not permission to replace OpenClaw execution with hidden Codex subagents.
 
 Contractor trace requirement:
 
 ```text
 ContractorTrace:
-  contractor id or nickname:
-  spawned by:
+  provider: OpenClaw | host-required Codex exception
+  agent/session key and actual session id:
+  dispatched by:
   reason for contractor use:
   assigned scope:
   files or evidence inspected:
   files changed, if any:
   commands/tests run:
+  actual model / usage:
   result summary:
   limitations:
   integration owner:
-  source refs:
+  source refs / receipt path:
   memory candidate:
 ```
 
-For memory/history-provider continuity, assume contractor internals are not durable project history unless captured through a visible lane report, evidence card, handoff, or memory candidate. Do not depend on hidden subagent conversation state for future recovery.
-
+For memory/history continuity, do not depend on hidden contractor conversation state. Persist only the compact task envelope, receipt, evidence paths/source refs, decision, and ContractorTrace.
 ## Workspace Root Guard
 
 Project work must stay anchored to the user's real project folder. Wrong Codex project folders, scratch directories, generated worktrees, or sibling folders cause long-term drift.
@@ -357,7 +351,7 @@ Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVA
 Callback priority: queued | interrupt
 Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
 Visual evidence payload: paths + hashes + dimensions + short summary only; no image attachments/base64/data:image
-Contractor trace: required if this lane used any contractor/subagent
+Contractor trace: required if this lane used an OpenClaw contractor or host-required Codex exception
 CEO harvest fallback:
 No-stall fallback: continue other ready tasks | reuse another lane | direct CEO fallback if allowed | HOST_APPROVAL_REQUIRED
 ```
@@ -379,7 +373,7 @@ Callback interrupt policy:
 - Interrupt only for a blocker that stops downstream work, approval stall for an in-scope action, safety risk, destructive-risk, urgent user-visible failure, credential/spending/legal/security issue, or conflicting parallel writes.
 - If a worker is unsure whether interruption is justified, use queued priority and state the risk in the payload.
 - Callback priority affects attention only. It does not prove completion, authorize scope changes, or replace CEO evidence review.
-- If a lane used contractors/subagents, its callback or final report must include a compact contractor trace so project memory can preserve what outside help did without reading hidden contractor history.
+- If a lane used an OpenClaw contractor or host-required Codex exception, its callback or final report must include a compact contractor trace so project memory can preserve what outside help did without reading hidden contractor history.
 
 Approval stall handling:
 
@@ -499,7 +493,7 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 
 - A new thread is a separate conversation, not a guaranteed autonomous employee.
 - Existing thread steering requires explicit read/send operations.
-- Contractor/subagents are short-lived outside-help scouts unless the user/tool contract says otherwise; they are not equivalent to user-visible persistent lanes and are not durable history until summarized into evidence.
+- OpenClaw contractors are short-lived outside-help roles backed by reusable project-role sessions. Codex subagents are denied for normal execution unless a higher-priority host contract requires a bounded exception. Neither is durable project history until summarized into evidence.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
 - Forked workers may inherit CEO context; clean worker creation is safer for bounded implementation.

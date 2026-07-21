@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "ceoflow.openclaw_model_policy.v1",
+  "policyId": "minimax-validated-v1",
+  "providerFamily": "minimax",
+  "decisionOwner": "codex-ceo",
+  "localModelsAllowed": false,
+  "automaticCrossProviderFallback": false,
+  "routes": {
+    "fast": {
+      "candidateOrder": [
+        "minimax/MiniMax-M2.7-highspeed",
+        "minimax/MiniMax-M3"
+      ],
+      "defaultThinking": "off"
+    },
+    "balanced": {
+      "candidateOrder": [
+        "minimax/MiniMax-M3"
+      ],
+      "defaultThinking": "off"
+    },
+    "frontier": {
+      "candidateOrder": [
+        "minimax/MiniMax-M3"
+      ],
+      "defaultThinking": "adaptive"
+    }
+  },
+  "models": [
+    {
+      "key": "minimax/MiniMax-M3",
+      "enabled": true,
+      "validated": true,
+      "capabilityClasses": ["fast", "balanced", "frontier"],
+      "thinkingOptions": ["off", "adaptive"],
+      "notes": "Validated through the OpenClaw frontend/Gateway bridge. Dynamic thinking is active; provider network reliability remains independently gated."
+    },
+    {
+      "key": "minimax/MiniMax-M2.7-highspeed",
+      "enabled": false,
+      "validated": false,
+      "capabilityClasses": ["fast"],
+      "thinkingOptions": ["adaptive"],
+      "notes": "Official candidate for a faster routine lane, but disabled until OpenClaw availability, tool calls, receipt integrity, latency, and coding quality pass a controlled probe. M2.x thinking cannot be disabled."
+    }
+  ],
+  "officialSources": [
+    "https://platform.minimaxi.com/docs/guides/text-generation",
+    "https://platform.minimaxi.com/docs/api-reference/text-anthropic-api",
+    "https://platform.minimaxi.com/docs/token-plan/openclaw",
+    "https://platform.minimaxi.com/docs/token-plan/faq"
+  ]
+}

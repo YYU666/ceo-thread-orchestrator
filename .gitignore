@@ -15,9 +15,12 @@ tmp/
 temp/
 dist/
 build/
+__pycache__/
+*.pyc
 
 # Project/user memory exports should not be published by accident
 .codex-knowledge/
+.ceoflow/
 state/
 workflow/output/
 workflow/state/

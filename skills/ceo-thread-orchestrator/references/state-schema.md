@@ -101,7 +101,7 @@ Rules:
 Lane ID:
 Thread ID or pending target:
 Planned title:
-Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs | Contractor/Subagent
+Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowledge/Memory | Research/Docs | OpenClaw External Contractor | Host-Required Codex Exception
 Workspace:
 Canonical project root:
 Worktree readiness: ready | repo_baseline_required | local_single_writer_only | read_only_only | not_applicable
@@ -115,9 +115,26 @@ Interaction surface: CEO-only | user-visible-by-request
 Lane visibility: durable-visible | background-contractor
 User contact policy: CEO-mediated
 Escalation route: callback-to-CEO
-Contractor/subagent policy:
+External contractor provider / OpenClaw session key:
+Codex subagent policy: deny | host-required-exception
+OpenClaw nested delegation: forbidden
 Model routing mode: inherit | auto-class | pinned | host-auto
 Routing surface:
+Execution provider / adapter / transport:
+External task schema / task SHA-256 / receipt path:
+External project ID / lane ID:
+External project display name / identity SHA-256 / canonical root:
+Project CEO owner / dispatch lease:
+External session key / actual session ID:
+External session display name / category / frontend visible:
+Archived-session policy / lifecycle state:
+Native memory policy / session roster path:
+Write concurrency: single-writer | read-only
+Session reuse policy: reuse-project-role | reuse-explicit | fresh-isolated
+Session rotation reason / superseded key:
+External task status: prepared | dispatched | running | succeeded | failed | timed_out | cancelled | lost | invalid_receipt
+Risk tier: R0-mechanical | R1-bounded | R2-complex | R3-critical
+Data residency / content exposure:
 Mapping source:
 Available class candidates / reasoning levels:
 Unsupported controls:
@@ -147,7 +164,10 @@ Rules:
 - Default thread operation permission is `worker-only`, `review-only`, or `read-only`; only CEO/router lanes may create, fork, or route unless explicitly granted.
 - Missing thread ids are `stale_lane_reference` until locator fallback runs.
 - Worker self-routing, delegating, waiting on another worker, or inspecting CEO state without permission is `role_contamination`.
-- Contractor/subagent use is denied by default for durable lanes unless the task card grants bounded outside help and requires a contractor trace.
+- Codex subagents are denied for normal project execution. Temporary outside help routes to a reusable OpenClaw project-role session; a higher-priority host-required exception must be bounded and recorded.
+- External OpenClaw lanes default to one reusable project-role session. A task ID change does not create a session; only the CEO/bridge may rotate a session for a recorded safety or isolation reason.
+- Different projects never share an OpenClaw session. Exact project identity, canonical root, owner, frontend label/category, and session key must agree before dispatch; `Main Session` is not a CEO Flow execution lane.
+- A project has one write-dispatch owner and one active writer lease at a time. Archived or busy sessions are not silently reused, and OpenClaw native/global memory is not project memory.
 
 ## Harvest Driver
 
@@ -261,9 +281,18 @@ Lane visibility: durable-visible | background-contractor
 User contact policy: CEO-mediated
 Escalation route: callback-to-CEO
 Worktree readiness:
-Contractor/subagent policy:
+External contractor provider / OpenClaw session key:
+Codex subagent policy: deny | host-required-exception
+OpenClaw nested delegation: forbidden
 Model routing mode:
 Routing surface / mapping source:
+Execution provider / adapter / transport:
+External task schema / task SHA-256 / receipt path / raw result path:
+External task status / provider run ID / session ID:
+External project ID / lane ID / session key:
+Session reuse policy / rotation reason:
+Risk tier:
+Data residency / content exposure:
 Available class candidates / reasoning levels / unsupported controls:
 Model requirement: preferred | exact
 Reasoning requirement: preferred | exact
@@ -370,7 +399,8 @@ Review lanes:
 UX/Product lanes:
 QA/Test lanes:
 Memory/Knowledge lane:
-Contractor/subagent use:
+OpenClaw external contractor lanes / reused session keys:
+Codex subagent policy: deny | host-required-exception
 Lane count decision: 0 | 1 | 2 | 3 | 3-5 | pipeline
 Why not more lanes:
 Why not fewer lanes:

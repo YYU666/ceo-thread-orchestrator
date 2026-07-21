@@ -16,7 +16,7 @@ This is the default operating order. Do not invent a heavier process unless the 
 | Complete product / multi-phase program | Core Team execution + Goal Loop | Program Goal Brief + Completion Dashboard + review gate | lanes by wave + review |
 | Broad separable PRD needing unattended work | Core Team execution + pipeline contract | Program Goal Brief + `pipeline.yaml` or section + review gate | N lanes + review |
 | Worker/reviewer task card from another CEO | Bounded worker/reviewer | report/handoff only | do not self-promote to CEO |
-| One-shot exploration, audit, or verification | CEO-only or Core Team sidecar | contractor trace if used | temporary contractor/subagent allowed |
+| One-shot exploration, audit, or verification | OpenClaw external contractor or CEO-only | typed receipt + contractor trace | reuse approved OpenClaw project-role session; no normal Codex subagent |
 
 If the task is not substantial, do not force CEO ceremony.
 
@@ -143,6 +143,7 @@ Use runtime Goal status narrowly:
 
 Do not mark runtime Goal `blocked` for:
 
+- one or more transient failures from a single external execution provider while safe portfolio/review work or a bounded provider cooldown remains available;
 - module/subline pause;
 - stale heartbeat cleanup;
 - role-contaminated or superseded worker lanes;
@@ -338,7 +339,8 @@ Primary role: CEO/PM/Architect | Implementation | Review/QA | Product/UX | Knowl
 Workspace:
 Allowed write-set:
 Task card:
-Contractor/subagent policy:
+OpenClaw external contractor/session policy:
+Codex subagent policy: deny | host-required-exception
 Callback policy:
 Stop condition:
 May create/route/fork threads: yes/no
@@ -346,7 +348,7 @@ May create/route/fork threads: yes/no
 
 Default `May create/route/fork threads` is `no` for implementation, review, UX, knowledge, and research lanes. Only the CEO/router lane may create or route threads unless the task card explicitly grants that operation.
 
-Default `May use contractors/subagents` is `no` for durable visible lanes unless the task card explicitly grants bounded outside help. Contractors may help with one-shot exploration, audit, verification, disposable research, or disjoint bounded patches. They are not durable lanes, and their hidden context is not project history until the visible lane reports a contractor trace.
+Temporary outside help routes through CEO-issued OpenClaw external tasks and reusable project-role sessions. Codex subagents default to `deny`; only a higher-priority host-required exception may use one, with a bounded trace. OpenClaw cannot spawn children, and hidden contractor context is not project history until the visible lane reports a receipt-backed ContractorTrace.
 
 If a worker/reviewer starts acting like CEO, says it will create another worker, waits for another lane to report, or tries to inspect CEO state without being asked, classify the lane as `role_contamination` and either correct it with a hard role-reset card or supersede it with a clean lane.
 
@@ -354,7 +356,7 @@ If a worker/reviewer starts acting like CEO, says it will create another worker,
 
 Reasoning direction is top-down only.
 
-Before dispatching a lane with model/reasoning controls, run the Model Routing Gate from `model-routing.md`. Discover controls per surface; do not assume visible threads, subagents, and automations expose the same model list. Treat omitted model/reasoning as `inherit` or host default, not role-aware automatic optimization unless the host explicitly documents native auto-routing.
+Before dispatching a lane with model/reasoning controls, run the Model Routing Gate from `model-routing.md`. Discover controls per surface; do not assume visible threads, OpenClaw, host-required exceptions, and automations expose the same model list. Treat omitted model/reasoning as `inherit` or host default, not role-aware automatic optimization unless the host explicitly documents native auto-routing.
 
 CEO may assign reasoning effort in task cards, for example:
 
@@ -512,7 +514,7 @@ For visual/UI/game/design tasks, workers must preserve visual QA by inspecting l
 
 Worker lanes must not create, fork, route, inspect, or wait on other CEO/worker threads unless the task card explicitly asks. If a worker starts acting as a CEO/router, classify it as `role_contamination`.
 
-Worker lanes may use contractor/subagents only when the task card grants that operation. If granted, the worker remains responsible for integration and must report what each contractor did, what evidence/files it touched, what changed, what tests ran, limitations, and source refs. Without that contractor trace, CEO treats the contractor result as insufficient evidence for durable memory or acceptance.
+Worker lanes do not spawn contractors or subagents. They return a contractor request to CEO; CEO may dispatch it directly to an approved OpenClaw lane. The integration owner must report provider/session, evidence/files, changes, commands/tests, actual model/usage, limitations, receipt, and source refs. Without that trace, CEO treats the result as insufficient evidence for durable memory or acceptance.
 
 ## 7. Worker Report / Handoff Rules
 

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YYU666/ceo-thread-orchestrator/schemas/external-session-roster.schema.json",
+  "title": "CEO Flow External Session Roster",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "project", "ceoOwnerId", "sessions", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "ceoflow.external_session_roster.v1" },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectId", "projectDisplayName", "canonicalRoot", "projectIdentitySha256"],
+      "properties": {
+        "projectId": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+        "projectDisplayName": { "type": "string", "minLength": 1 },
+        "canonicalRoot": { "type": "string", "minLength": 1 },
+        "projectIdentitySha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "ceoOwnerId": { "type": "string", "minLength": 1 },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["laneId", "role", "agentId", "sessionKey", "sessionId", "displayName", "category", "frontendVisibility", "lifecycleState", "status", "currentTaskId", "dispatchLeaseId", "writeConcurrency", "lastReceiptPath", "updatedAt"],
+        "properties": {
+          "laneId": { "type": "string" },
+          "role": { "type": "string" },
+          "agentId": { "type": "string" },
+          "sessionKey": { "type": "string" },
+          "sessionId": { "type": ["string", "null"] },
+          "displayName": { "type": "string" },
+          "category": { "type": "string" },
+          "frontendVisibility": { "enum": ["required", "best-effort"] },
+          "frontendVisible": { "type": ["boolean", "null"] },
+          "lifecycleState": { "enum": ["active", "archived", "broken", "superseded"] },
+          "status": { "enum": ["idle", "dispatching", "running", "completed", "failed", "blocked", "timed_out"] },
+          "currentTaskId": { "type": ["string", "null"] },
+          "dispatchLeaseId": { "type": ["string", "null"] },
+          "writeConcurrency": { "enum": ["single-writer", "read-only"] },
+          "lastReceiptPath": { "type": ["string", "null"] },
+          "updatedAt": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "updatedAt": { "type": ["string", "null"] }
+  }
+}

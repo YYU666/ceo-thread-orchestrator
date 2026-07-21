@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ceoflow.external_execution_receipt.v1",
+  "taskId": "EXTERNAL-TASK-001",
+  "taskSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "provider": {
+    "providerId": "openclaw",
+    "adapter": "openclaw-cli",
+    "transport": "cli-json",
+    "runId": null,
+    "sessionId": null,
+    "sessionKey": "agent:main:ceoflow:example-project:implementation-main",
+    "projectId": "example-project",
+    "projectIdentitySha256": "6f029d5d855b2bff3a34f673582e6891ae6c70fb49257912395d0a4aa707fa8e",
+    "sessionDisplayName": "Example Project · Implementation",
+    "frontendVisible": true,
+    "actualModel": null,
+    "actualThinking": null,
+    "attemptedModel": null,
+    "attemptedThinking": null
+  },
+  "status": "succeeded",
+  "startedAt": null,
+  "endedAt": null,
+  "summary": "Replace with the compact execution result.",
+  "changedFiles": [],
+  "writeSetCompliance": "not-applicable",
+  "commands": [],
+  "tests": [],
+  "artifacts": [],
+  "sourceRefs": [],
+  "blockers": [],
+  "residualRisks": [],
+  "nextAction": "CEO should validate this receipt and inspect evidence before acceptance.",
+  "usage": {
+    "reported": false,
+    "inputTokens": null,
+    "outputTokens": null,
+    "cost": null,
+    "currency": null
+  },
+  "provenance": {
+    "rawResultPath": ".ceoflow/exchange/raw/EXTERNAL-TASK-001.provider.json",
+    "transportReceiptId": null
+  },
+  "forbiddenPayloadsPresent": false
+}

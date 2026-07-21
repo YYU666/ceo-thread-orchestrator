@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YYU666/ceo-thread-orchestrator/schemas/external-execution-receipt.schema.json",
+  "title": "CEO Flow External Execution Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "taskSha256", "provider", "status", "summary", "changedFiles", "writeSetCompliance", "commands", "tests", "artifacts", "sourceRefs", "blockers", "residualRisks", "nextAction", "usage", "provenance", "forbiddenPayloadsPresent"],
+  "properties": {
+    "schemaVersion": { "const": "ceoflow.external_execution_receipt.v1" },
+    "taskId": { "type": "string", "minLength": 1 },
+    "taskSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerId", "adapter", "transport", "runId", "sessionId", "sessionKey", "projectId", "projectIdentitySha256", "sessionDisplayName", "frontendVisible", "actualModel", "actualThinking"],
+      "properties": {
+        "providerId": { "type": "string" },
+        "adapter": { "type": "string" },
+        "transport": { "type": "string" },
+        "runId": { "type": ["string", "null"] },
+        "sessionId": { "type": ["string", "null"] },
+        "sessionKey": { "type": ["string", "null"] },
+        "projectId": { "type": "string", "minLength": 1 },
+        "projectIdentitySha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sessionDisplayName": { "type": "string", "minLength": 1 },
+        "frontendVisible": { "type": "boolean" },
+        "actualModel": { "type": ["string", "null"] },
+        "actualThinking": { "type": ["string", "null"] },
+        "attemptedModel": { "type": ["string", "null"] },
+        "attemptedThinking": { "type": ["string", "null"] }
+      }
+    },
+    "status": { "enum": ["succeeded", "failed", "blocked", "timed_out", "cancelled", "invalid_receipt"] },
+    "startedAt": { "type": ["string", "null"] },
+    "endedAt": { "type": ["string", "null"] },
+    "summary": { "type": "string", "maxLength": 4000 },
+    "changedFiles": { "type": "array", "items": { "type": "string" } },
+    "writeSetCompliance": { "enum": ["pass", "fail", "not-applicable"] },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "exitCode", "status"],
+        "properties": {
+          "command": { "type": "string" },
+          "exitCode": { "type": ["integer", "null"] },
+          "status": { "enum": ["passed", "failed", "not-run"] },
+          "evidenceRef": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status", "evidenceRef"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "enum": ["passed", "failed", "not-run"] },
+          "evidenceRef": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "artifacts": { "type": "array", "items": { "type": "string" } },
+    "sourceRefs": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "residualRisks": { "type": "array", "items": { "type": "string" } },
+    "nextAction": { "type": ["string", "null"] },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reported", "inputTokens", "outputTokens", "cost", "currency"],
+      "properties": {
+        "reported": { "type": "boolean" },
+        "inputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "outputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "cost": { "type": ["number", "null"], "minimum": 0 },
+        "currency": { "type": ["string", "null"] }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rawResultPath", "transportReceiptId"],
+      "properties": {
+        "rawResultPath": { "type": "string" },
+        "transportReceiptId": { "type": ["string", "null"] }
+      }
+    },
+    "forbiddenPayloadsPresent": { "const": false }
+  }
+}

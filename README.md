@@ -1,5 +1,9 @@
 # CEO Flow
 
+> **OpenClaw cost-efficient execution branch**
+>
+> This branch, `openclaw-cost-efficient-execution`, preserves Codex as the user-facing CEO, architecture, assurance, acceptance, and publication plane while routing bounded implementation, test, research, and review work through reusable OpenClaw project-role sessions. It is designed to reduce consumption of premium Codex execution tokens by using a separately configured lower-cost model provider where appropriate. The original Codex-internal lane workflow remains unchanged on [`main`](https://github.com/YYU666/ceo-thread-orchestrator/tree/main). See [the branch rationale and operating boundary](docs/OPENCLAW_COST_EFFICIENT_BRANCH.md) before installation.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/YYU666/ceo-thread-orchestrator)](https://github.com/YYU666/ceo-thread-orchestrator/releases)
 [![GitHub stars](https://img.shields.io/github/stars/YYU666/ceo-thread-orchestrator?style=social)](https://github.com/YYU666/ceo-thread-orchestrator/stargazers)
@@ -45,10 +49,12 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Plans unattended-safe command approval profiles before dispatch so routine shell/browser/test prompts do not stall worker lanes mid-run.
 - Uses provider-specific memory modes: project memory for canonical docs, compact Memory Runtime providers for current project context, and optional history providers for old Codex sessions or paused-task recovery.
 - Supports an event-triggered Memory Core continuity gate: CEO takeover/recovery consumes exact-project mandatory ProjectBrain pagination, workers/reviewers receive role-bounded slots, lifecycle changes emit bounded events, and trigger receipts prove retrieve/precedent/writeback execution when the provider exposes them.
-- Uses a Single Front Door contract: the user normally interacts with one accountable CEO identity while implementation, review, research, memory, and temporary contractor lanes remain CEO-mediated behind it; visible specialist threads do not become separate entrances the user must coordinate.
+- Uses a Single Front Door contract: the user normally interacts with one accountable CEO identity while implementation, review, research, memory, and OpenClaw external-contractor lanes remain CEO-mediated behind it; visible specialist threads do not become separate entrances the user must coordinate.
+- Supports cross-platform external execution: Codex stays the control/assurance/publish plane while OpenClaw, ACP, MCP, CLI, webhook, or another provider runs lower-cost typed tasks and returns hash-bound receipts for Codex review. OpenClaw uses exact-project, frontend-visible project-role sessions so related work reuses bounded lanes without mixing projects in `Main Session`.
 - Acts as a runtime context governor: dispatch compact task packets, prefer source-backed summaries and refs, avoid long chat transcripts/raw sessions by default, and use optional history-provider evidence only when relevant.
 - Keeps independent review gates neutral and evidence-first, with high reasoning when the tool surface allows it.
 - Discovers model controls per surface and routes lanes through `fast`, `balanced`, `frontier`, or deliberate `inherit` classes instead of accidentally giving every worker the CEO's most expensive profile.
+- Dynamically routes validated MiniMax/OpenClaw work by risk: routine R0/R1 uses explicit `off`, research/review and R2/R3 use `adaptive`, and unvalidated models cannot auto-activate. The Codex CEO model/reasoning is never changed by this route.
 - Routes implementation, review, QA, product, market, and knowledge work to specialist lanes when tools allow it.
 - Reuses existing specialist threads before creating new ones.
 - Dynamically adjusts thread count when task size or requirements change.
@@ -59,7 +65,7 @@ For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](exam
 - Detects doom-loop symptoms and prefers rollback, fresh bounded task cards, or independent review over larger speculative diffs.
 - Supports `.codex-knowledge/` or other local project-memory exports when available, without requiring any private provider.
 - Requires evidence before acceptance: diffs, tests, screenshots, reports, or other artifacts depending on task risk.
-- Keeps thread creation, subagents, worktrees, automations, and spending-heavy model lanes behind tool-contract and user-authorization boundaries.
+- Routes temporary subagent-style execution to reusable OpenClaw external lanes. Codex host subagents are denied for normal project execution unless a higher-priority host contract requires a bounded recorded exception.
 
 ## Before And After
 
@@ -212,7 +218,7 @@ This skill degrades gracefully. It can use these capabilities when available, bu
 
 - Codex app thread tools such as list/read/send/create/fork/handoff.
 - Codex worktrees for isolated parallel work.
-- Subagents for explicitly authorized bounded delegation.
+- OpenClaw external-provider sessions for bounded contractor-style delegation; Codex subagents only as higher-priority host-required exceptions.
 - Automations or heartbeats for follow-up monitoring.
 - Project-defined task pools, external worker systems, or routing scripts.
 - Local project-memory exports such as `.codex-knowledge/`, or another local knowledge path chosen by the project.
@@ -232,7 +238,7 @@ Knowledge provider modes:
 | No thread tools | Works as a planning, task-card, document-first review, and acceptance discipline. It must not pretend to create worker lanes. |
 | Manual copy/paste lanes only | Writes task cards, memory packets, and review reports as documents so a user can relay them manually. |
 | Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when the tool contract and user/project authorization allow it. |
-| Different model lists across threads, subagents, and automations | Runs capability discovery per surface and resolves abstract `fast`, `balanced`, `frontier`, or `inherit` classes against the live tool contract. |
+| Different model lists across visible threads, OpenClaw, and automations | Runs capability discovery per surface and resolves abstract `fast`, `balanced`, `frontier`, or `inherit` classes against the live tool contract. Codex subagent availability is not a normal fallback. |
 | No model selection controls | States the intended model/reasoning lane, then uses the closest available mechanism without pretending to set unavailable controls. |
 | No automations or heartbeats | Leaves a concrete next harvest action in the report instead of creating a monitor. |
 | No memory/history provider | Runs as a normal CEO Flow skill with explicit task cards, source files, worker reports, and project memory docs. |
@@ -296,6 +302,8 @@ ceo-thread-orchestrator/
 - [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
 - [E2E behavior smoke protocol](docs/CEO_FLOW_E2E_BEHAVIOR_SMOKE_PROTOCOL_2026-07-07.md)
 - [Zhixia 0.9.0 Memory Core compatibility report](docs/smoke/CEO_FLOW_ZHIXIA_090_MEMORY_CORE_COMPAT_REPORT_2026-07-16.md)
+- [Cross-platform external execution upgrade](docs/CEO_FLOW_CROSS_PLATFORM_EXTERNAL_EXECUTION_2026-07-20.md)
+- [OpenClaw multi-project/frontend gate smoke](docs/smoke/CEO_FLOW_OPENCLAW_MULTI_PROJECT_FRONTEND_GATE_2026-07-20.md)
 - [Smoke prompts](examples/smoke-prompts.md)
 - [Pipeline contract reference](skills/ceo-thread-orchestrator/references/pipeline-contract.md)
 - [Operating playbook](skills/ceo-thread-orchestrator/references/operating-playbook.md)
@@ -320,8 +328,24 @@ python -m unittest discover -s tests -v
 python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
+python skills\ceo-thread-orchestrator\scripts\external_execution_bridge.py validate-task --task skills\ceo-thread-orchestrator\templates\external_execution_task.json --json
 python scripts\check_release_state.py
 ```
+
+Provider-neutral external execution and the optional OpenClaw CLI adapter:
+
+```powershell
+python skills\ceo-thread-orchestrator\scripts\external_execution_bridge.py render-openclaw --task skills\ceo-thread-orchestrator\templates\external_execution_task.json --json
+# Execution remains disabled unless run-openclaw also receives --execute.
+```
+
+The optional OpenClaw-side execution contract lives at `integrations/openclaw/skills/ceoflow-external-executor/SKILL.md`. It is intentionally thin: transport/session selection remains in the bridge and CEO roster, while the skill prevents self-routing, cross-project session reuse, self-acceptance, and untyped callbacks. For OpenClaw CLI execution, the bridge pre-registers a `<Project> · <Role>` session through official Gateway `sessions.create`/`sessions.patch`, rejects archived or busy sessions, and verifies frontend-visible routing before model execution.
+
+Different CEO projects use different session namespaces and project identities. One project defaults to one implementation session plus an optional test/review session; additional research lanes require justification. Each task binds project ID, canonical root, identity hash, CEO owner, dispatch lease, frontend label/category, and write concurrency. OpenClaw native/global memory is not project memory; the task receives only a compact Zhixia packet and explicit project source refs.
+
+Local model execution is currently disabled. CEO Flow rejects `localMode=true`, `--local`, isolated `.openclaw-ceoflow` routing, and `ollama/<model>` tasks; use an explicitly configured OpenClaw provider such as the validated MiniMax route instead.
+
+Transient MiniMax connection failures use a bounded fuse rather than stopping the project: one unchanged-workspace retry after 60 seconds, then a five-minute project/provider circuit cooldown. The retry keeps the same visible OpenClaw session, model, thinking route, task semantics, and denied fallback policy. If the provider changed source before disconnecting, CEO Flow harvests the partial diff and issues a new correction task instead of rerunning the consumed writer task. Provider cooldown is lane-local and does not by itself block the Program Goal.
 
 Optional isolated Zhixia 0.9.0 provider smoke, when the local Zhixia app source and dependencies are available:
 
@@ -360,7 +384,7 @@ Useful contributions include:
 
 ## Status
 
-This is an experimental community plugin. Manifest versions with a `-dev` suffix are moving main-branch builds, not frozen releases. A stable release requires a full-pass E2E behavior smoke report in addition to green validator/CI checks. Codex thread tooling, model routing, worktrees, subagents, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
+This is an experimental community plugin. Manifest versions with a `-dev` suffix are moving main-branch builds, not frozen releases. A stable release requires a full-pass E2E behavior smoke report in addition to green validator/CI checks. Codex thread tooling, OpenClaw routing, model controls, worktrees, and automation support may differ by host and version. The skill always follows the active tool contract when it is stricter than the written workflow.
 
 ## License
 

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YYU666/ceo-thread-orchestrator/schemas/external-execution-task.schema.json",
+  "title": "CEO Flow External Execution Task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "project", "role", "riskTier", "objective", "acceptanceCriteria", "requiredVerification", "execution", "permissions", "context", "returnContract"],
+  "properties": {
+    "schemaVersion": { "const": "ceoflow.external_execution_task.v1" },
+    "taskId": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "parentGoalId": { "type": ["string", "null"], "maxLength": 160 },
+    "createdAt": { "type": ["string", "null"] },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectId", "projectDisplayName", "projectIdentitySha256", "ceoOwnerId", "canonicalRoot", "workspaceMode", "baselineRef", "allowedWriteSet", "forbiddenPaths"],
+      "properties": {
+        "projectId": { "type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[A-Za-z0-9._-]+$" },
+        "projectDisplayName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "projectIdentitySha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "ceoOwnerId": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "canonicalRoot": { "type": "string", "minLength": 1 },
+        "workspaceMode": { "enum": ["canonical", "worktree", "prepared-snapshot", "read-only"] },
+        "baselineRef": { "type": ["string", "null"] },
+        "allowedWriteSet": { "type": "array", "items": { "type": "string" } },
+        "forbiddenPaths": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "role": { "enum": ["implementation", "test", "research", "docs", "review-sidecar", "operations"] },
+    "riskTier": { "enum": ["R0-mechanical", "R1-bounded", "R2-complex", "R3-critical"] },
+    "objective": { "type": "string", "minLength": 1, "maxLength": 4000 },
+    "acceptanceCriteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "requiredVerification": { "type": "array", "items": { "type": "string" } },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerId", "adapter", "transport", "capabilityClass", "timeoutSeconds", "attemptBudget"],
+      "properties": {
+        "providerId": { "type": "string", "minLength": 1 },
+        "adapter": { "type": "string", "minLength": 1 },
+        "transport": { "enum": ["cli-json", "acp", "mcp", "file-exchange", "webhook", "other"] },
+        "localMode": { "const": false },
+        "agentId": { "type": ["string", "null"] },
+        "sessionId": { "type": ["string", "null"] },
+        "sessionKey": { "type": ["string", "null"], "maxLength": 240 },
+        "sessionReusePolicy": { "enum": ["reuse-project-role", "reuse-explicit", "fresh-isolated"] },
+        "laneId": { "type": ["string", "null"], "maxLength": 120, "pattern": "^[A-Za-z0-9._-]+$" },
+        "newSessionReason": { "type": ["string", "null"], "maxLength": 500 },
+        "sessionDisplayName": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "sessionCategory": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "frontendVisibility": { "enum": ["required", "best-effort"] },
+        "archivedSessionPolicy": { "enum": ["reject", "explicit-restore-required"] },
+        "nativeMemoryPolicy": { "const": "forbid" },
+        "sessionRosterPath": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "dispatchLeaseId": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "writeConcurrency": { "enum": ["single-writer", "read-only"] },
+        "capabilityClass": { "enum": ["fast", "balanced", "frontier"] },
+        "routingMode": { "enum": ["auto-class", "pinned"] },
+        "modelPolicy": { "type": ["string", "null"] },
+        "requestedModel": { "type": ["string", "null"] },
+        "modelRequirement": { "enum": ["preferred", "exact"] },
+        "reasoningRequirement": { "enum": ["preferred", "exact"] },
+        "fallbackPolicy": { "enum": ["deny", "ceo-approved"] },
+        "approvedFallbackModels": { "type": "array", "items": { "type": "string" }, "maxItems": 8 },
+        "thinking": { "type": ["string", "null"] },
+        "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 86400 },
+        "attemptBudget": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "networkRetryPolicy": { "enum": ["deny", "bounded-backoff"] },
+        "networkRetryBackoffSeconds": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1, "maximum": 900 },
+          "maxItems": 2
+        },
+        "workspaceMutationRetryPolicy": { "const": "require-unchanged" },
+        "providerCircuitBreaker": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled", "failureThreshold", "cooldownSeconds", "statePath"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "failureThreshold": { "type": "integer", "minimum": 2, "maximum": 5 },
+            "cooldownSeconds": { "type": "integer", "minimum": 60, "maximum": 3600 },
+            "statePath": { "type": "string", "minLength": 1, "maxLength": 300 }
+          }
+        },
+        "costPriority": { "enum": ["cost", "balanced", "quality", "latency"] }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["autonomyLevel", "allowedCommandFamilies", "forbiddenCommands", "network", "secrets", "dataResidency", "contentExposure", "publishAllowed", "mergeAllowed", "releaseAllowed", "externalMessagingAllowed", "delegationAllowed"],
+      "properties": {
+        "autonomyLevel": { "enum": ["advise-only", "draft-only", "implement-within-write-set", "operate-workflow"] },
+        "allowedCommandFamilies": { "type": "array", "items": { "type": "string" } },
+        "forbiddenCommands": { "type": "array", "items": { "type": "string" } },
+        "network": { "enum": ["none", "read-only", "task-scoped"] },
+        "secrets": { "enum": ["none", "named-references-only", "task-scoped"] },
+        "dataResidency": { "enum": ["local-only", "region-bound", "provider-policy", "unrestricted"] },
+        "contentExposure": { "enum": ["metadata-only", "selected-files", "task-workspace"] },
+        "publishAllowed": { "const": false },
+        "mergeAllowed": { "const": false },
+        "releaseAllowed": { "const": false },
+        "externalMessagingAllowed": { "const": false },
+        "delegationAllowed": { "const": false }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memoryPacket", "sourceRefs", "tokenBudget"],
+      "properties": {
+        "memoryPacket": { "type": "array", "items": { "type": "string" }, "maxItems": 20 },
+        "sourceRefs": { "type": "array", "items": { "type": "string" }, "maxItems": 40 },
+        "tokenBudget": { "type": "integer", "minimum": 0, "maximum": 20000 }
+      }
+    },
+    "returnContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receiptPath", "rawResultPath", "pathsOnlyArtifacts", "includeUsage", "forbiddenPayloads"],
+      "properties": {
+        "receiptPath": { "type": "string", "minLength": 1 },
+        "rawResultPath": { "type": "string", "minLength": 1 },
+        "pathsOnlyArtifacts": { "const": true },
+        "includeUsage": { "type": "boolean" },
+        "forbiddenPayloads": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

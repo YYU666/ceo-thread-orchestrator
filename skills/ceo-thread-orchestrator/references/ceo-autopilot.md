@@ -119,7 +119,8 @@ Staffing Plan:
   UX/Product lanes:
   QA/Test lanes:
   Memory/Knowledge lane:
-  Contractor/subagent use:
+  OpenClaw external contractor lanes / reused session keys:
+  Codex subagent policy: deny | host-required-exception
   Lane count decision:
   Why not more lanes:
   Why not fewer lanes:
