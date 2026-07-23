@@ -15,6 +15,7 @@ TASK_TEMPLATE = ROOT / "skills" / "ceo-thread-orchestrator" / "templates" / "ext
 TASK_SCHEMA = ROOT / "skills" / "ceo-thread-orchestrator" / "schemas" / "external-execution-task.schema.json"
 RECEIPT_SCHEMA = ROOT / "skills" / "ceo-thread-orchestrator" / "schemas" / "external-execution-receipt.schema.json"
 OPENCLAW_EXECUTOR_SKILL = ROOT / "integrations" / "openclaw" / "skills" / "ceoflow-external-executor" / "SKILL.md"
+OPENCLAW_EXECUTOR_CONFIG = ROOT / "integrations" / "openclaw" / "agents" / "ceoflow-executor" / "openclaw-agent-config.fragment.json"
 
 SPEC = importlib.util.spec_from_file_location("external_execution_bridge", BRIDGE_PATH)
 BRIDGE = importlib.util.module_from_spec(SPEC)
@@ -59,9 +60,72 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             "blockers": [],
             "residualRisks": [],
             "nextAction": "CEO review",
-            "usage": {"reported": True, "inputTokens": 100, "outputTokens": 50, "cost": 0.01, "currency": "CNY"},
+            "usage": {
+                "reported": True,
+                "inputTokens": 100,
+                "uncachedInputTokens": 100,
+                "cachedInputTokens": 0,
+                "grossInputTokens": 100,
+                "lastRequestInputTokens": 100,
+                "outputTokens": 50,
+                "totalTokens": 150,
+                "providerCallCount": 1,
+                "cost": 0.01,
+                "currency": "CNY",
+            },
+            "budgetGovernor": {
+                "required": True,
+                "pluginId": BRIDGE.OPENCLAW_BUDGET_GOVERNOR_PLUGIN_ID,
+                "policyVersion": BRIDGE.OPENCLAW_BUDGET_POLICY_VERSION,
+                "runtimeVerified": True,
+                "telemetryPath": ".ceoflow/exchange/runtime/test.budget.json",
+                "telemetryComplete": True,
+                "fuseTriggered": False,
+                "fuseReason": None,
+                "modelRequestsStarted": 1,
+                "modelRequestsCompleted": 1,
+                "toolCalls": 1,
+                "cumulativeToolResultChars": 100,
+                "observedContextTokenBudget": 25000,
+                "grossTokensLastMinute": 150,
+            },
             "provenance": {"rawResultPath": ".ceoflow/exchange/raw/EXTERNAL-TASK-001.provider.json", "transportReceiptId": "transport-1"},
             "forbiddenPayloadsPresent": False,
+        }
+
+    def budget_telemetry(self, task, *, fuse=False):
+        return {
+            "schemaVersion": BRIDGE.OPENCLAW_BUDGET_TELEMETRY_VERSION,
+            "policyVersion": BRIDGE.OPENCLAW_BUDGET_POLICY_VERSION,
+            "taskId": task["taskId"],
+            "taskSha256": BRIDGE.sha256_json(task),
+            "agentId": task["execution"]["agentId"],
+            "sessionKey": task["execution"]["sessionKey"],
+            "sessionId": "frontend-session-1",
+            "runId": "run-test-1",
+            "armed": True,
+            "telemetryComplete": True,
+            "fuseTriggered": fuse,
+            "fuseReason": "tool_call_budget_exceeded" if fuse else None,
+            "modelRequestsStarted": 1,
+            "modelRequestsCompleted": 1,
+            "toolCalls": 1,
+            "cumulativeToolResultChars": 100,
+            "cumulativeUncachedInputTokens": 100,
+            "cumulativeCachedInputTokens": 0,
+            "cumulativeCacheWriteTokens": 0,
+            "cumulativeInputTokens": 100,
+            "cumulativeOutputTokens": 50,
+            "cumulativeGrossTokens": 150,
+            "lastRequestInputTokens": 100,
+            "peakRequestInputTokens": 100,
+            "observedContextTokenBudget": 25000,
+            "grossTokensLastMinute": 150,
+            "commandTrace": [{
+                "toolName": "exec", "toolCallId": "tool-1",
+                "command": "python -m unittest", "exitCode": 0,
+                "error": None, "durationMs": 10,
+            }],
         }
 
     def zhixia_packet(self):
@@ -87,7 +151,7 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])
 
-    def test_json_schemas_expose_session_reuse_contract(self):
+    def test_json_schemas_expose_single_task_session_contract(self):
         task_schema = json.loads(TASK_SCHEMA.read_text(encoding="utf-8"))
         receipt_schema = json.loads(RECEIPT_SCHEMA.read_text(encoding="utf-8"))
         project_properties = task_schema["properties"]["project"]["properties"]
@@ -96,8 +160,24 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertIn("projectId", project_properties)
         self.assertIn("sessionKey", execution_properties)
         self.assertIn("sessionReusePolicy", execution_properties)
+        self.assertIn("agentContextProfile", execution_properties)
         self.assertIn("laneId", execution_properties)
         self.assertIn("newSessionReason", execution_properties)
+        self.assertIn("sessionGeneration", execution_properties)
+        self.assertIn("sessionContextPolicy", execution_properties)
+        self.assertIn("archiveAfterReceipt", execution_properties)
+        self.assertIn("maxInitialInputTokens", execution_properties)
+        self.assertIn("maxInputTokensPerRequest", execution_properties)
+        self.assertIn("maxCumulativeInputTokens", execution_properties)
+        self.assertIn("maxProviderCalls", execution_properties)
+        self.assertIn("maxModelRequests", execution_properties)
+        self.assertIn("maxToolCalls", execution_properties)
+        self.assertIn("maxToolResultChars", execution_properties)
+        self.assertIn("maxCumulativeToolResultChars", execution_properties)
+        self.assertIn("maxCumulativeUncachedInputTokens", execution_properties)
+        self.assertIn("maxCumulativeCachedInputTokens", execution_properties)
+        self.assertIn("maxCumulativeGrossTokens", execution_properties)
+        self.assertIn("budgetGovernorPolicy", execution_properties)
         self.assertIn("sessionDisplayName", execution_properties)
         self.assertIn("frontendVisibility", execution_properties)
         self.assertIn("archivedSessionPolicy", execution_properties)
@@ -116,14 +196,98 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertIn("frontendVisible", provider_properties)
         self.assertIn("attemptedModel", provider_properties)
         self.assertIn("attemptedThinking", provider_properties)
+        usage_properties = receipt_schema["properties"]["usage"]["properties"]
+        self.assertIn("grossInputTokens", usage_properties)
+        self.assertIn("cachedInputTokens", usage_properties)
+        self.assertIn("lastRequestInputTokens", usage_properties)
+        self.assertIn("providerCallCount", usage_properties)
+        self.assertIn("budgetGovernor", receipt_schema["properties"])
 
     def test_openclaw_executor_skill_blocks_self_routing_and_self_acceptance(self):
         skill = OPENCLAW_EXECUTOR_SKILL.read_text(encoding="utf-8")
         self.assertIn("Never call `sessions_spawn`", skill)
-        self.assertIn("A new task ID does not imply a new session", skill)
+        self.assertIn("one bounded task only", skill)
         self.assertIn("Do not turn `succeeded` into self-acceptance", skill)
         self.assertIn("final visible response must be exactly one JSON object", skill)
         self.assertIn("Codex subagent-style work arrives here", skill)
+
+    def test_openclaw_executor_config_is_minimal_and_budgeted(self):
+        task = self.task()
+        agent = json.loads(OPENCLAW_EXECUTOR_CONFIG.read_text(encoding="utf-8"))
+        profile, errors, warnings = BRIDGE.validate_openclaw_executor_agent_config(
+            task, [agent], prompt_tokens=2_000,
+        )
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [])
+        self.assertTrue(profile["verified"])
+        self.assertLessEqual(profile["conservativeInitialTokens"], task["execution"]["maxInitialInputTokens"])
+        self.assertEqual(profile["contextTokens"], task["execution"]["maxInputTokensPerRequest"])
+        self.assertEqual(agent["tools"]["allow"], ["read", "apply_patch", "exec", "process"])
+
+        bloated = json.loads(json.dumps(agent))
+        bloated.pop("skills")
+        bloated["tools"] = {"profile": "full"}
+        _, errors, _ = BRIDGE.validate_openclaw_executor_agent_config(task, [bloated], prompt_tokens=2_000)
+        self.assertIn("openclaw_executor_skill_allowlist_not_minimal", errors)
+        self.assertIn("openclaw_executor_tool_allowlist_not_bounded", errors)
+
+        oversized_context = json.loads(json.dumps(agent))
+        oversized_context["contextTokens"] = task["execution"]["maxInputTokensPerRequest"] + 1
+        _, errors, _ = BRIDGE.validate_openclaw_executor_agent_config(
+            task, [oversized_context], prompt_tokens=2_000
+        )
+        self.assertIn("openclaw_executor_task_context_cap_not_bounded", errors)
+
+    def test_budget_governor_live_runtime_preflight_fails_closed(self):
+        task = self.task()
+        valid_runtime = {
+            "pluginId": BRIDGE.OPENCLAW_BUDGET_GOVERNOR_PLUGIN_ID,
+            "hooks": sorted(BRIDGE.OPENCLAW_BUDGET_GOVERNOR_REQUIRED_HOOKS),
+            "gatewayMethods": sorted(BRIDGE.OPENCLAW_BUDGET_GOVERNOR_REQUIRED_METHODS),
+        }
+        with patch.object(BRIDGE, "run_openclaw_json_command", return_value=(valid_runtime, None)):
+            profile, errors = BRIDGE.preflight_openclaw_budget_governor(task, ["openclaw"], {})
+        self.assertEqual(errors, [])
+        self.assertTrue(profile["verified"])
+
+        incomplete_runtime = {
+            "pluginId": BRIDGE.OPENCLAW_BUDGET_GOVERNOR_PLUGIN_ID,
+            "hooks": ["before_agent_run"],
+            "gatewayMethods": ["ceoflow.budget.status"],
+        }
+        with patch.object(BRIDGE, "run_openclaw_json_command", return_value=(incomplete_runtime, None)):
+            profile, errors = BRIDGE.preflight_openclaw_budget_governor(task, ["openclaw"], {})
+        self.assertFalse(profile["verified"])
+        self.assertTrue(any(error.startswith("openclaw_budget_governor_hooks_missing") for error in errors))
+        self.assertTrue(any(error.startswith("openclaw_budget_governor_methods_missing") for error in errors))
+
+    def test_retry_budget_governor_uses_remaining_task_budget(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            task = self.task()
+            task["project"]["canonicalRoot"] = temp_dir
+            task["project"]["projectIdentitySha256"] = BRIDGE.project_identity_sha256(
+                task["project"]["projectId"], temp_dir
+            )
+            telemetry = self.budget_telemetry(task)
+            _, telemetry_path = BRIDGE.budget_governor_telemetry_path(task, 1)
+            BRIDGE.write_json_atomic(telemetry_path, telemetry)
+            contract = BRIDGE.budget_governor_contract(task, 2)
+            self.assertEqual(contract["limits"]["maxModelRequests"], 3)
+            self.assertEqual(contract["limits"]["maxToolCalls"], 15)
+            self.assertEqual(
+                contract["limits"]["maxCumulativeInputTokens"],
+                task["execution"]["maxCumulativeInputTokens"] - 100,
+            )
+            self.assertEqual(
+                contract["limits"]["maxCumulativeToolResultChars"],
+                task["execution"]["maxCumulativeToolResultChars"] - 100,
+            )
+
+            telemetry["modelRequestsStarted"] = task["execution"]["maxModelRequests"]
+            BRIDGE.write_json_atomic(telemetry_path, telemetry)
+            arm, errors = BRIDGE.arm_openclaw_budget_governor(task, 2, ["openclaw"], {})
+            self.assertIsNone(arm)
+            self.assertIn("budget_governor_task_budget_exhausted_before_retry", errors)
 
     def test_external_publish_permissions_fail_closed(self):
         task = self.task()
@@ -170,6 +334,8 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertIn("final visible response must be exactly one JSON", prompt)
         self.assertIn("native OpenClaw memory", prompt)
         self.assertIn("RECEIPT_ENTRY_SHAPES", prompt)
+        self.assertIn("PROVIDER_TASK_VIEW", prompt)
+        self.assertNotIn("TASK_ENVELOPE", prompt)
         self.assertIn('"command": string', prompt)
         self.assertIn('"evidenceRef": string|null', prompt)
         self.assertIn("Do not use alternate keys such as cmd, exit, note, passed, failed, or total.", prompt)
@@ -211,20 +377,69 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         result = json.loads(completed.stdout)
         self.assertIn("execution_requires_explicit_--execute", result["errors"])
 
-    def test_openclaw_project_role_session_reuse_is_deterministic(self):
+    def test_openclaw_task_session_generation_is_deterministic(self):
         task = self.task()
         errors, _ = BRIDGE.validate_task(task)
         self.assertEqual(errors, [])
         self.assertEqual(
             task["execution"]["sessionKey"],
-            "agent:main:ceoflow:example-project:implementation-main",
+            BRIDGE.expected_task_session_key(task),
         )
+        self.assertTrue(task["execution"]["sessionKey"].endswith("external-task-001-19102661"))
 
         missing_key = self.task()
         missing_key["execution"]["sessionKey"] = None
         errors, _ = BRIDGE.validate_task(missing_key)
         self.assertIn("openclaw_session_target_required", errors)
-        self.assertIn("openclaw_project_role_session_key_mismatch", errors)
+        self.assertIn("openclaw_single_task_session_key_mismatch", errors)
+
+        next_task = self.task()
+        next_task["taskId"] = "EXTERNAL-TASK-002"
+        next_task["execution"]["sessionGeneration"] = 2
+        next_task["execution"]["sessionKey"] = BRIDGE.expected_task_session_key(next_task)
+        next_task["execution"]["sessionDisplayName"] = "Example Project · Implementation · EXTERNAL-TASK-002"
+        self.assertEqual(BRIDGE.validate_task(next_task)[0], [])
+        self.assertNotEqual(task["execution"]["sessionKey"], next_task["execution"]["sessionKey"])
+
+    def test_openclaw_context_budget_fails_closed(self):
+        task = self.task()
+        task["execution"]["maxInitialInputTokens"] = 30_001
+        errors, _ = BRIDGE.validate_task(task)
+        self.assertIn("invalid_openclaw_context_budget:maxInitialInputTokens", errors)
+
+        task = self.task()
+        task["context"]["tokenBudget"] = 3_001
+        errors, _ = BRIDGE.validate_task(task)
+        self.assertIn("invalid_context_token_budget", errors)
+
+        task = self.task()
+        receipt = self.receipt(task)
+        receipt["usage"]["inputTokens"] = task["execution"]["maxCumulativeInputTokens"] + 1
+        receipt["usage"]["grossInputTokens"] = task["execution"]["maxCumulativeInputTokens"] + 1
+        errors, _ = BRIDGE.validate_receipt(task, receipt)
+        self.assertIn("external_provider_cumulative_context_budget_exceeded", errors)
+
+        receipt = self.receipt(task)
+        receipt["usage"].update({
+            "grossInputTokens": task["execution"]["maxCumulativeInputTokens"] + 1,
+            "lastRequestInputTokens": task["execution"]["maxInputTokensPerRequest"] + 1,
+            "providerCallCount": task["execution"]["maxProviderCalls"] + 1,
+        })
+        errors, _ = BRIDGE.validate_receipt(task, receipt)
+        self.assertIn("external_provider_cumulative_context_budget_exceeded", errors)
+        self.assertIn("external_provider_per_request_context_budget_exceeded", errors)
+        self.assertIn("external_provider_call_budget_exceeded", errors)
+
+        receipt = self.receipt(task)
+        receipt["usage"]["providerCallCount"] = None
+        errors, _ = BRIDGE.validate_receipt(task, receipt)
+        self.assertIn("external_provider_call_count_required", errors)
+
+        task = self.task()
+        task["execution"]["agentId"] = "main"
+        task["execution"]["sessionKey"] = BRIDGE.expected_task_session_key(task)
+        errors, _ = BRIDGE.validate_task(task)
+        self.assertIn("openclaw_default_main_agent_context_forbidden", errors)
 
     def test_multi_project_sessions_are_isolated_by_project_identity(self):
         first = self.task()
@@ -239,17 +454,17 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             second["project"]["projectId"], second["project"]["canonicalRoot"]
         )
         second["execution"].update({
-            "sessionKey": "agent:main:ceoflow:another-project:implementation-main",
-            "sessionDisplayName": "Another Project · Implementation",
+            "sessionDisplayName": "Another Project · Implementation · EXTERNAL-TASK-001",
             "sessionCategory": "Another Project",
             "dispatchLeaseId": "another-project:implementation-main:lease-001",
         })
+        second["execution"]["sessionKey"] = BRIDGE.expected_task_session_key(second)
         self.assertEqual(BRIDGE.validate_task(first)[0], [])
         self.assertEqual(BRIDGE.validate_task(second)[0], [])
         self.assertNotEqual(first["execution"]["sessionKey"], second["execution"]["sessionKey"])
         second["execution"]["sessionKey"] = first["execution"]["sessionKey"]
         errors, _ = BRIDGE.validate_task(second)
-        self.assertIn("openclaw_project_role_session_key_mismatch", errors)
+        self.assertIn("openclaw_single_task_session_key_mismatch", errors)
 
     def test_project_identity_and_frontend_visibility_fail_closed(self):
         task = self.task()
@@ -271,6 +486,7 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertIn("sessions.list", commands["listArchived"])
         self.assertIn("sessions.create", commands["create"])
         self.assertIn("sessions.patch", commands["patch"])
+        self.assertIn("sessions.patch", commands["archive"])
         self.assertNotIn("--deliver", commands["create"])
         self.assertNotIn("--local", commands["create"])
 
@@ -294,7 +510,7 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(warnings, [])
         self.assertTrue(registration["frontendVisible"])
-        self.assertEqual(registration["displayName"], "Example Project · Implementation")
+        self.assertEqual(registration["displayName"], "Example Project · Implementation · EXTERNAL-TASK-001")
 
         task["execution"]["thinking"] = "low"
         active_with_capabilities = {"sessions": [], "defaults": {"thinkingOptions": ["off", "adaptive"]}}
@@ -321,24 +537,59 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             _, errors, _ = BRIDGE.ensure_openclaw_frontend_session(task, ["openclaw"], {})
         self.assertIn("openclaw_session_busy", errors)
 
+    def test_terminal_openclaw_task_session_is_archived_and_verified(self):
+        task = self.task()
+        archived = {
+            "sessions": [{
+                "key": task["execution"]["sessionKey"],
+                "sessionId": "archived-session-1",
+                "archived": True,
+                "archivedAt": 123,
+            }]
+        }
+        with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[
+            ({"ok": True}, None), (archived, None),
+        ]):
+            result, errors = BRIDGE.archive_openclaw_frontend_session(task, ["openclaw"], {})
+        self.assertEqual(errors, [])
+        self.assertTrue(result["archived"])
+        self.assertEqual(result["sessionId"], "archived-session-1")
+
     def test_openclaw_model_fallback_requires_ceo_authorization(self):
         task = self.task()
         status = {
-            "defaultModel": "minimax/MiniMax-M3",
-            "resolvedDefault": "minimax/MiniMax-M3",
+            "defaultModel": "moonshot/kimi-k3",
+            "resolvedDefault": "moonshot/kimi-k3",
             "fallbacks": ["custom-provider/expensive-model"],
         }
-        catalog = {"models": [{"key": "minimax/MiniMax-M3", "available": True, "missing": False}]}
+        catalog = {"models": [{"key": "moonshot/kimi-k3", "available": True, "missing": False}]}
         with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[(status, None), (catalog, None)]):
             route, errors, _ = BRIDGE.preflight_openclaw_model_route(task, ["openclaw"], {})
         self.assertIn("openclaw_unapproved_model_fallbacks_configured", errors)
-        self.assertEqual(route["selectedModel"], "minimax/MiniMax-M3")
+        self.assertEqual(route["selectedModel"], "moonshot/kimi-k3")
 
         task["execution"]["fallbackPolicy"] = "ceo-approved"
         task["execution"]["approvedFallbackModels"] = ["custom-provider/expensive-model"]
         with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[(status, None), (catalog, None)]):
             _, errors, _ = BRIDGE.preflight_openclaw_model_route(task, ["openclaw"], {})
         self.assertEqual(errors, [])
+
+    def test_pinned_model_availability_uses_target_agent_auth(self):
+        model_key = "deepseek/deepseek-v4-flash"
+        catalog = {"models": [{"key": model_key, "available": False, "missing": False}]}
+        status = {
+            "allowed": [model_key],
+            "auth": {
+                "providers": [{
+                    "provider": "deepseek",
+                    "profiles": {"count": 1, "apiKey": 1, "labels": ["deepseek:ceoflow=***"]},
+                }],
+                "unusableProfiles": [],
+            },
+        }
+        self.assertTrue(BRIDGE.target_agent_can_use_model(status, catalog, model_key))
+        status["auth"]["unusableProfiles"] = [{"profileId": "deepseek:ceoflow"}]
+        self.assertFalse(BRIDGE.target_agent_can_use_model(status, catalog, model_key))
 
     def test_minimax_auto_class_routes_importance_to_real_thinking_controls(self):
         status = {
@@ -349,6 +600,7 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         catalog = {"models": [{"key": "minimax/MiniMax-M3", "available": True, "missing": False}]}
 
         routine = self.task()
+        routine["execution"]["modelPolicy"] = "minimax-validated-v1"
         routine["riskTier"] = "R0-mechanical"
         with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[(status, None), (catalog, None)]):
             route, errors, _ = BRIDGE.preflight_openclaw_model_route(routine, ["openclaw"], {})
@@ -360,6 +612,7 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertIn("minimax/MiniMax-M2.7-highspeed:not_validated", route["rejectedCandidates"])
 
         complex_task = self.task()
+        complex_task["execution"]["modelPolicy"] = "minimax-validated-v1"
         complex_task["riskTier"] = "R2-complex"
         with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[(status, None), (catalog, None)]):
             route, errors, _ = BRIDGE.preflight_openclaw_model_route(complex_task, ["openclaw"], {})
@@ -368,6 +621,7 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertEqual(route["selectedThinking"], "adaptive")
 
         reviewer = self.task()
+        reviewer["execution"]["modelPolicy"] = "minimax-validated-v1"
         reviewer["role"] = "review-sidecar"
         reviewer["project"]["allowedWriteSet"] = []
         reviewer["execution"]["writeConcurrency"] = "read-only"
@@ -375,6 +629,43 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             route, errors, _ = BRIDGE.preflight_openclaw_model_route(reviewer, ["openclaw"], {})
         self.assertEqual(errors, [])
         self.assertEqual(route["selectedThinking"], "adaptive")
+
+    def test_kimi_k3_tier1_policy_routes_one_model_with_dynamic_thinking(self):
+        status = {
+            "defaultModel": "moonshot/kimi-k3",
+            "resolvedDefault": "moonshot/kimi-k3",
+            "fallbacks": [],
+        }
+        catalog = {"models": [{"key": "moonshot/kimi-k3", "available": True, "missing": False}]}
+
+        routine = self.task()
+        routine["riskTier"] = "R0-mechanical"
+        with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[(status, None), (catalog, None)]):
+            route, errors, _ = BRIDGE.preflight_openclaw_model_route(routine, ["openclaw"], {})
+        self.assertEqual(errors, [])
+        self.assertEqual(route["modelPolicy"], "kimi-k3-tier1-v1")
+        self.assertEqual(route["selectedModel"], "moonshot/kimi-k3")
+        self.assertEqual(route["selectedThinking"], "off")
+
+        complex_task = self.task()
+        complex_task["riskTier"] = "R2-complex"
+        with patch.object(BRIDGE, "run_openclaw_json_command", side_effect=[(status, None), (catalog, None)]):
+            route, errors, _ = BRIDGE.preflight_openclaw_model_route(complex_task, ["openclaw"], {})
+        self.assertEqual(errors, [])
+        self.assertEqual(route["selectedModel"], "moonshot/kimi-k3")
+        self.assertEqual(route["selectedThinking"], "adaptive")
+
+        policy = BRIDGE.load_openclaw_model_policy(policy_id="kimi-k3-tier1-v1")
+        envelope = policy["ceoFlowSafetyEnvelope"]
+        self.assertEqual(envelope["recommendedMaxConcurrentTasks"], 3)
+        self.assertLess(envelope["maxGrossTokensPerTaskMinute"] * 3, policy["providerLimits"]["tpm"])
+
+        oversized = self.task()
+        oversized["execution"]["maxGrossTokensPerMinute"] = 450000
+        errors, _ = BRIDGE.validate_task(oversized)
+        self.assertIn(
+            "openclaw_model_policy_budget_exceeded:maxGrossTokensPerMinute", errors
+        )
 
     def test_unvalidated_minimax_model_cannot_auto_activate(self):
         policy = BRIDGE.load_openclaw_model_policy()
@@ -405,7 +696,51 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         self.assertEqual(receipt["status"], "failed")
         self.assertEqual(receipt["blockers"], ["external_provider_network_error"])
         self.assertEqual(receipt["provider"]["attemptedModel"], "minimax/MiniMax-M3")
+        receipt, governor_errors = BRIDGE.attach_budget_governor_telemetry(
+            receipt, self.budget_telemetry(task), task, 1
+        )
+        self.assertEqual(governor_errors, [])
         self.assertEqual(BRIDGE.validate_receipt(task, receipt)[0], [])
+
+    def test_upstream_capacity_failures_are_transient_but_auth_and_quota_are_not(self):
+        transient_samples = [
+            "The AI service is temporarily overloaded. Please try again in a moment.",
+            "service unavailable",
+            "server busy",
+            "capacity exceeded",
+            "HTTP 502 Bad Gateway",
+            "HTTP status 503",
+            "gateway returned 504",
+        ]
+        for sample in transient_samples:
+            with self.subTest(sample=sample):
+                failure_code = BRIDGE.classify_openclaw_failure(1, "", sample, {})
+                self.assertEqual(failure_code, "external_provider_capacity_error")
+
+        permanent_samples = [
+            "HTTP 401 invalid API key",
+            "HTTP 403 forbidden",
+            "HTTP 429 rate limit reached",
+            "quota exhausted code 2056",
+            "HTTP 500 internal error",
+        ]
+        for sample in permanent_samples:
+            with self.subTest(sample=sample):
+                failure_code = BRIDGE.classify_openclaw_failure(1, "", sample, {})
+                self.assertEqual(failure_code, "external_provider_process_error")
+
+        task = self.task()
+        allowed, reason = BRIDGE.network_retry_decision(
+            task, "external_provider_capacity_error", False, 1, 2
+        )
+        self.assertTrue(allowed)
+        self.assertEqual(reason, "bounded_network_retry_eligible")
+
+        allowed, reason = BRIDGE.network_retry_decision(
+            task, "external_provider_capacity_error", True, 1, 2
+        )
+        self.assertFalse(allowed)
+        self.assertEqual(reason, "workspace_changed_harvest_required")
 
     def test_transient_network_retry_is_bounded_and_requires_unchanged_workspace(self):
         task = self.task()
@@ -468,6 +803,10 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             )
             self.assertEqual(receipt["changedFiles"], ["src/example/feature.py"])
             self.assertIn("harvest", receipt["nextAction"])
+            receipt, governor_errors = BRIDGE.attach_budget_governor_telemetry(
+                receipt, self.budget_telemetry(task), task, 1
+            )
+            self.assertEqual(governor_errors, [])
             self.assertEqual(BRIDGE.validate_receipt(task, receipt)[0], [])
 
     def test_provider_circuit_opens_without_blocking_program_goal(self):
@@ -536,10 +875,15 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             )
             with (
                 patch.object(BRIDGE, "resolve_openclaw_invocation", return_value=(["openclaw"], {})),
+                patch.object(BRIDGE, "preflight_openclaw_executor_agent", return_value=({"verified": True}, [], [])),
+                patch.object(BRIDGE, "preflight_openclaw_budget_governor", return_value=({"verified": True}, [])),
+                patch.object(BRIDGE, "arm_openclaw_budget_governor", return_value=({"armed": True}, [])),
+                patch.object(BRIDGE, "load_budget_governor_telemetry", return_value=(self.budget_telemetry(task), [])),
                 patch.object(BRIDGE, "preflight_openclaw_model_route", return_value=(route, [], [])),
                 patch.object(BRIDGE, "inspect_provider_circuit", return_value={"state": "closed", "failureCount": 0, "retryAfterSeconds": 0}),
                 patch.object(BRIDGE, "prepare_external_session_roster", return_value=(None, [])),
                 patch.object(BRIDGE, "ensure_openclaw_frontend_session", side_effect=[(registration, [], []), (registration, [], [])]),
+                patch.object(BRIDGE, "archive_openclaw_frontend_session", return_value=({"archived": True}, [])),
                 patch.object(BRIDGE, "update_external_session_roster"),
                 patch.object(BRIDGE, "capture_workspace_fingerprint", return_value=fingerprint),
                 patch.object(BRIDGE.subprocess, "run", side_effect=[network_result, success_result]) as run_mock,
@@ -563,6 +907,50 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             self.assertTrue((root / ".ceoflow/exchange/outbox/EXTERNAL-TASK-001.receipt.json").exists())
             self.assertTrue((root / ".ceoflow/exchange/outbox/EXTERNAL-TASK-001.receipt.attempt-2.json").exists())
 
+    def test_timeout_writes_evidence_and_archives_task_session(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            task = self.task()
+            task["project"]["canonicalRoot"] = temp_dir
+            task["project"]["projectIdentitySha256"] = BRIDGE.project_identity_sha256(
+                task["project"]["projectId"], temp_dir
+            )
+            task_path = root / "task.json"
+            task_path.write_text(json.dumps(task), encoding="utf-8")
+            registration = {
+                "sessionId": "frontend-session-timeout",
+                "frontendVisible": True,
+                "displayName": task["execution"]["sessionDisplayName"],
+                "category": task["execution"]["sessionCategory"],
+            }
+            route = {"selectedModel": "minimax/MiniMax-M3", "selectedThinking": "off"}
+            fingerprint = {"fingerprint": "same", "gitState": "same", "files": {}}
+            args = SimpleNamespace(execute=True, task=str(task_path), raw_output=None, receipt_output=None, json=True)
+            with (
+                patch.object(BRIDGE, "resolve_openclaw_invocation", return_value=(["openclaw"], {})),
+                patch.object(BRIDGE, "preflight_openclaw_executor_agent", return_value=({"verified": True}, [], [])),
+                patch.object(BRIDGE, "preflight_openclaw_budget_governor", return_value=({"verified": True}, [])),
+                patch.object(BRIDGE, "arm_openclaw_budget_governor", return_value=({"armed": True}, [])),
+                patch.object(BRIDGE, "load_budget_governor_telemetry", return_value=(self.budget_telemetry(task), [])),
+                patch.object(BRIDGE, "preflight_openclaw_model_route", return_value=(route, [], [])),
+                patch.object(BRIDGE, "inspect_provider_circuit", return_value={"state": "closed", "failureCount": 0, "retryAfterSeconds": 0}),
+                patch.object(BRIDGE, "prepare_external_session_roster", return_value=(None, [])),
+                patch.object(BRIDGE, "ensure_openclaw_frontend_session", return_value=(registration, [], [])),
+                patch.object(BRIDGE, "archive_openclaw_frontend_session", return_value=({"archived": True}, [])) as archive_mock,
+                patch.object(BRIDGE, "update_external_session_roster"),
+                patch.object(BRIDGE, "capture_workspace_fingerprint", return_value=fingerprint),
+                patch.object(BRIDGE.subprocess, "run", side_effect=subprocess.TimeoutExpired(["openclaw"], 930)),
+                patch.object(BRIDGE, "emit_result") as emit_mock,
+            ):
+                exit_code = BRIDGE.command_run_openclaw(args)
+            self.assertEqual(exit_code, 2)
+            archive_mock.assert_called_once()
+            emitted = emit_mock.call_args.args[0]
+            self.assertEqual(emitted["executionFailureCode"], "external_execution_timed_out")
+            self.assertTrue(emitted["sessionArchive"]["archived"])
+            self.assertTrue((root / ".ceoflow/exchange/raw/EXTERNAL-TASK-001.provider.json").exists())
+            self.assertTrue((root / ".ceoflow/exchange/outbox/EXTERNAL-TASK-001.receipt.json").exists())
+
     def test_project_session_roster_enforces_owner_and_single_writer(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             task = self.task()
@@ -585,10 +973,11 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
             competing_writer = json.loads(json.dumps(task))
             competing_writer["execution"].update({
                 "laneId": "implementation-two",
-                "sessionKey": "agent:main:ceoflow:example-project:implementation-two",
-                "sessionDisplayName": "Example Project · Implementation Two",
+                "sessionGeneration": 2,
+                "sessionDisplayName": "Example Project · Implementation Two · EXTERNAL-TASK-001",
                 "dispatchLeaseId": "example-project:implementation-two:lease-001",
             })
+            competing_writer["execution"]["sessionKey"] = BRIDGE.expected_task_session_key(competing_writer)
             _, errors = BRIDGE.prepare_external_session_roster(competing_writer)
             self.assertIn("openclaw_project_writer_lease_conflict", errors)
 
@@ -599,10 +988,11 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         cross_project = self.task()
         cross_project["project"]["projectId"] = "another-project"
         errors, _ = BRIDGE.validate_task(cross_project)
-        self.assertIn("openclaw_project_role_session_key_mismatch", errors)
+        self.assertIn("openclaw_single_task_session_key_mismatch", errors)
 
         fresh = self.task()
         fresh["execution"]["sessionReusePolicy"] = "fresh-isolated"
+        fresh["execution"]["newSessionReason"] = None
         errors, _ = BRIDGE.validate_task(fresh)
         self.assertIn("fresh_openclaw_session_reason_required", errors)
 
@@ -627,13 +1017,25 @@ class ExternalExecutionBridgeTests(unittest.TestCase):
         receipt["usage"] = {"reported": False, "inputTokens": None, "outputTokens": None, "cost": None, "currency": None}
         enriched = BRIDGE.enrich_openclaw_receipt(receipt, {
             "result": {"meta": {
-                "agentMeta": {"provider": "minimax", "model": "MiniMax-M3", "sessionId": "session-cloud", "usage": {"input": 321, "output": 45}},
+                "agentMeta": {
+                    "provider": "minimax",
+                    "model": "MiniMax-M3",
+                    "sessionId": "session-cloud",
+                    "usage": {"input": 321, "output": 45, "cacheRead": 79, "total": 445},
+                    "lastCallUsage": {"input": 321, "output": 45, "cacheRead": 79, "total": 445},
+                    "promptTokens": 400,
+                },
                 "requestShaping": {"thinking": "adaptive"},
             }}
         })
         self.assertEqual(enriched["provider"]["actualModel"], "minimax/MiniMax-M3")
         self.assertEqual(enriched["provider"]["actualThinking"], "adaptive")
-        self.assertEqual(enriched["usage"]["inputTokens"], 321)
+        self.assertEqual(enriched["usage"]["inputTokens"], 400)
+        self.assertEqual(enriched["usage"]["uncachedInputTokens"], 321)
+        self.assertEqual(enriched["usage"]["cachedInputTokens"], 79)
+        self.assertEqual(enriched["usage"]["grossInputTokens"], 400)
+        self.assertEqual(enriched["usage"]["lastRequestInputTokens"], 321)
+        self.assertIsNone(enriched["usage"]["providerCallCount"])
         self.assertTrue(enriched["usage"]["reported"])
         self.assertEqual(enriched["provenance"]["transportReceiptId"], "transport-1")
 

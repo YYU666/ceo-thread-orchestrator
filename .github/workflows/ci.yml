@@ -26,6 +26,9 @@ jobs:
       - name: Validator adversarial tests
         run: python -m unittest discover -s tests -v
 
+      - name: OpenClaw budget governor tests
+        run: node --test integrations/openclaw/plugins/ceoflow-budget-governor/test/governor.test.mjs
+
       - name: Validate bundled pipeline template
         run: python skills/ceo-thread-orchestrator/scripts/validate_pipeline.py skills/ceo-thread-orchestrator/templates/pipeline.yaml --json
 

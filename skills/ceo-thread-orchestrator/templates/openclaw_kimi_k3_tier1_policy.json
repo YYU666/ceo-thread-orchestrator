@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ceoflow.openclaw_model_policy.v1",
+  "policyId": "kimi-k3-tier1-v1",
+  "providerFamily": "moonshot",
+  "decisionOwner": "codex-ceo",
+  "accountTier": "Tier1",
+  "providerLimits": {
+    "concurrency": 50,
+    "rpm": 200,
+    "tpm": 2000000,
+    "tpd": "unlimited"
+  },
+  "ceoFlowSafetyEnvelope": {
+    "recommendedMaxConcurrentTasks": 3,
+    "maxGrossTokensPerTaskMinute": 300000,
+    "maxProviderCallsPerTask": 4,
+    "maxCumulativeInputTokensPerTask": 90000,
+    "notes": "Conservative scheduling envelope; it is intentionally much lower than the provider Tier1 ceiling."
+  },
+  "localModelsAllowed": false,
+  "automaticCrossProviderFallback": false,
+  "routes": {
+    "fast": {
+      "candidateOrder": ["moonshot/kimi-k3"],
+      "defaultThinking": "off"
+    },
+    "balanced": {
+      "candidateOrder": ["moonshot/kimi-k3"],
+      "defaultThinking": "off"
+    },
+    "frontier": {
+      "candidateOrder": ["moonshot/kimi-k3"],
+      "defaultThinking": "adaptive"
+    }
+  },
+  "models": [
+    {
+      "key": "moonshot/kimi-k3",
+      "enabled": true,
+      "validated": true,
+      "capabilityClasses": ["fast", "balanced", "frontier"],
+      "thinkingOptions": ["off", "adaptive"],
+      "notes": "Validated for one-shot read-only code reasoning. R1 writer work still requires Codex review and focused tests; R2/R3 acceptance remains with Codex."
+    }
+  ]
+}

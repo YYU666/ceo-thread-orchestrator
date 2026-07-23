@@ -44,3 +44,6 @@ The first dispatch was blocked before model generation because the narrower `ope
 The next dispatch exposed an unsupported guessed thinking level (`low`) for MiniMax-M3; the revised task used an advertised supported value (`off`). The real model request then timed out, and OpenClaw automatically attempted its configured higher-cost fallback. No valid receipt or reported token usage was produced. CEO Flow now reads model status before execution and blocks configured fallback routes unless the task explicitly names CEO-approved fallback models.
 
 The remaining E2E requirement is one successful cloud-model response plus user confirmation that the named frontend session rendered the input, Activity, and final output. No further automatic retries are allowed under the probe's one-attempt budget.
+# Supersession note (2026-07-21)
+
+Project isolation remains required, but current policy additionally rotates and archives the physical OpenClaw session after each bounded task while retaining the logical project-role lane.

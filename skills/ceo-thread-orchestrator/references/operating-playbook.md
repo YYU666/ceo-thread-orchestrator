@@ -16,7 +16,7 @@ This is the default operating order. Do not invent a heavier process unless the 
 | Complete product / multi-phase program | Core Team execution + Goal Loop | Program Goal Brief + Completion Dashboard + review gate | lanes by wave + review |
 | Broad separable PRD needing unattended work | Core Team execution + pipeline contract | Program Goal Brief + `pipeline.yaml` or section + review gate | N lanes + review |
 | Worker/reviewer task card from another CEO | Bounded worker/reviewer | report/handoff only | do not self-promote to CEO |
-| One-shot exploration, audit, or verification | OpenClaw external contractor or CEO-only | typed receipt + contractor trace | reuse approved OpenClaw project-role session; no normal Codex subagent |
+| One-shot exploration, audit, or verification | OpenClaw external contractor or CEO-only | typed receipt + contractor trace | reuse logical lane, create/archive one task session; no normal Codex subagent |
 
 If the task is not substantial, do not force CEO ceremony.
 
@@ -348,7 +348,7 @@ May create/route/fork threads: yes/no
 
 Default `May create/route/fork threads` is `no` for implementation, review, UX, knowledge, and research lanes. Only the CEO/router lane may create or route threads unless the task card explicitly grants that operation.
 
-Temporary outside help routes through CEO-issued OpenClaw external tasks and reusable project-role sessions. Codex subagents default to `deny`; only a higher-priority host-required exception may use one, with a bounded trace. OpenClaw cannot spawn children, and hidden contractor context is not project history until the visible lane reports a receipt-backed ContractorTrace.
+Temporary outside help routes through CEO-issued OpenClaw external tasks. Reuse the logical project-role lane, but allocate and archive one clean physical session generation per bounded task. Codex subagents default to `deny`; only a higher-priority host-required exception may use one, with a bounded trace. OpenClaw cannot spawn children, and hidden contractor context is not project history until the visible lane reports a receipt-backed ContractorTrace and CEO writes compact evidence to Zhixia.
 
 If a worker/reviewer starts acting like CEO, says it will create another worker, waits for another lane to report, or tries to inspect CEO state without being asked, classify the lane as `role_contamination` and either correct it with a hard role-reset card or supersede it with a clean lane.
 

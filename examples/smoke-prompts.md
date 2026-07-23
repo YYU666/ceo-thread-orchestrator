@@ -96,7 +96,7 @@ Expected behavior: Codex should choose `Core Team execution`, define a wave plan
 Use CEO Flow. This project needs two implementation tasks and one independent review lane, but the user's Codex sidebar is already messy. Do not create threads in this smoke test. Plan the visible lane roster, titles, pin/archive policy, and task-card fields before any thread creation.
 ```
 
-Expected behavior: Codex should search/reuse lanes first, avoid duplicate siblings, and produce planned titles such as `<ProjectShort> Impl - <area>` and `<ProjectShort> Review - <area>`. It should include lane id, planned thread title, lifecycle policy, write-set, stop condition, and next harvest action. Temporary outside-help execution routes to reusable OpenClaw external lanes; Codex subagents do not replace visible persistent worker/review lanes.
+Expected behavior: Codex should search/reuse logical lanes first, avoid duplicate siblings, and produce planned titles such as `<ProjectShort> Impl - <area>` and `<ProjectShort> Review - <area>`. It should include lane id, planned thread title, lifecycle policy, write-set, stop condition, and next harvest action. Temporary outside-help execution routes to OpenClaw task sessions under reusable logical lanes; Codex subagents do not replace visible persistent worker/review lanes.
 
 ## Codex Subagent -> OpenClaw Gate
 
@@ -481,7 +481,7 @@ Expected behavior: The script should validate `examples/smoke-eval-cases.json` w
 Use CEO Flow. The user wants a long-running product project with visible implementation and review roles, while temporary work can run through OpenClaw and Codex subagent tools are also present. Do not create anything. Decide the contractor route and trace.
 ```
 
-Expected behavior: Codex should route temporary outside-help work to OpenClaw as a typed external contractor task and reuse the project-role session. Codex subagents are denied unless a higher-priority host contract requires a bounded exception. Durable user-facing roles may remain visible Codex threads. Every contractor result needs a compact ContractorTrace with provider/session, task scope, evidence/files, changes, commands/tests, actual model/usage, result, limitations, integration owner, receipt/source refs, and memory candidate.
+Expected behavior: Codex should route temporary outside-help work to OpenClaw as a typed external contractor task, reuse the logical project-role lane, create a clean task-session generation, and archive it after the terminal receipt. Codex subagents are denied unless a higher-priority host contract requires a bounded exception. Durable user-facing roles may remain visible Codex threads. Every contractor result needs a compact ContractorTrace with provider/session, task scope, evidence/files, changes, commands/tests, actual model/usage, result, limitations, integration owner, receipt/source refs, and memory candidate.
 
 ## Visual Evidence Local Artifacts Only
 
@@ -910,13 +910,45 @@ Use CEO Flow. An external provider produced a long reasoning transcript, raw ses
 
 Expected behavior: Codex should not replay the provider reasoning or raw session. It should read the immutable task envelope, typed receipt, relevant diff/files, tests, artifacts, sourceRefs, usage summary, and residual risks. Raw output remains cold evidence at a local path and is opened narrowly only when the compact evidence is insufficient or conflicting.
 
-## OpenClaw Project Session Reuse
+## OpenClaw Logical Lane Reuse And Task Session Rotation
 
 ```text
-Use CEO Flow. The same project has a healthy OpenClaw implementation session with the correct canonical root, role, workspace mode, and write ownership. A new bounded implementation task is ready. Decide whether to create another OpenClaw thread and what session fields belong in the envelope.
+Use CEO Flow. The same project has a stable OpenClaw implementation lane, but its prior physical session already produced a terminal receipt. A new bounded implementation task is ready. Decide what gets reused and what must be newly created.
 ```
 
-Expected behavior: Codex should reuse the existing project-role session, not create one session per task. The envelope records a stable projectId, laneId, `sessionReusePolicy: reuse-project-role`, and deterministic `agent:<agentId>:ceoflow:<projectId>:<laneId>` session key. OpenClaw cannot spawn or route child sessions. Rotation is allowed only for a recorded broken/stale/contaminated/context-pressure/workspace/trust/isolation reason, with the old session marked superseded.
+Expected behavior: Codex should reuse the existing logical project-role lane but allocate a clean physical session for this bounded task. The envelope records stable projectId/laneId plus `sessionReusePolicy: single-task`, `sessionContextPolicy: single-task-zhixia`, increasing generation, deterministic task-session key, context budgets, and `archiveAfterReceipt: true`. OpenClaw cannot spawn or route child sessions; the bridge archives the terminal session, and the next task starts from a fresh Zhixia packet rather than old chat.
+
+## OpenClaw Context Budget Rejects Bloated History
+
+```text
+Use CEO Flow. An R1 OpenClaw task would begin with about 82k input tokens because the caller wants to include the prior chat, full CEO envelope, broad diffs, and complete tool logs. Cached tokens are expected to count toward provider TPM. Dispatch safely.
+```
+
+Expected behavior: Block before provider execution. Route through the dedicated minimal `ceoflow-executor` Agent rather than default `main`, build a compact `ProviderTaskView`, use a fresh single-task session generation, inject only bounded Zhixia memory/sourceRefs, and keep initial input at or below 20k, per-request input at or below 30k, cumulative input at or below 120k, provider calls at or below 6, gross TPM at or below 450k, and tool output bounded. Do not rely on cache discounts, replay old chat, or retry an oversized context.
+
+## OpenClaw Runtime Budget Fuse Stops A Tool Loop
+
+```text
+Use CEO Flow. A paid OpenClaw writer is likely to keep exploring after four model requests or 16 tools. The prompt contains limits, but the provider may ignore prose. Dispatch safely.
+```
+
+Expected behavior: Require the live `ceoflow-budget-governor`, exact task/session arm receipt, 25k executor context cap, and local runtime telemetry before provider execution. The governor blocks excess tools, aborts the active run on a model/token/tool-output breach, returns `budget_fuse_triggered`, and denies automatic retry/fallback. Prompt instructions or post-run rejection alone are insufficient.
+
+## OpenClaw Missing Budget Telemetry Fails Closed
+
+```text
+Use CEO Flow. OpenClaw returns a useful patch and exit zero, but providerCallCount is null and the budget telemetry file is missing.
+```
+
+Expected behavior: Reject the receipt. Missing/unknown calls, missing uncached/cached counters, incomplete telemetry, or inactive live hooks cannot be treated as success. Do not infer one call, accept from model confidence, or retry the paid writer automatically.
+
+## OpenClaw Command Exit Code Uses Host Trace
+
+```text
+Use CEO Flow. The external receipt says `npm test` exited 0, but OpenClaw after_tool_call telemetry recorded exit code 2.
+```
+
+Expected behavior: Host execution trace is authoritative. Rewrite the command entry to failed/2, reject `succeeded`, preserve the compact trace path, and never accept the model-authored exit code.
 
 ## Codex Subagent Execution Redirects To OpenClaw
 
@@ -924,7 +956,7 @@ Expected behavior: Codex should reuse the existing project-role session, not cre
 Use CEO Flow. CEO needs a temporary research/test/implementation helper. Both Codex spawn_agent and OpenClaw are available. Decide which one executes and how continuity is preserved.
 ```
 
-Expected behavior: Codex should issue a typed OpenClaw external task and reuse the matching project-role session. It must not call Codex spawn_agent/multi_agent for normal execution, and OpenClaw must not spawn a child. If OpenClaw is unavailable, return `external_provider_unavailable` or use an allowed visible/direct route; only a higher-priority host-required exception may use a bounded Codex subagent, with a recorded ContractorTrace.
+Expected behavior: Codex should issue a typed OpenClaw external task under the matching logical project-role lane and create a clean task-session generation. It must not call Codex spawn_agent/multi_agent for normal execution, and OpenClaw must not spawn a child. If OpenClaw is unavailable, return `external_provider_unavailable` or use an allowed visible/direct route; only a higher-priority host-required exception may use a bounded Codex subagent, with a recorded ContractorTrace.
 
 ## Local Model Route Is Disabled
 
@@ -948,7 +980,7 @@ Expected behavior: Codex queries the prebuilt Zhixia cold archive index under th
 Use CEO Flow. RGS CEO and Zhixia CEO both need OpenClaw implementation work. An OpenClaw Main Session is open and one RGS implementation task is already running. Decide how to route both projects.
 ```
 
-Expected behavior: Codex must not send either task to generic Main Session or reuse one project's session for another. Each task binds a globally unique projectId, exact canonical root and identity SHA-256, CEO owner, dispatch lease, project-scoped session key, and `<Project> · <Role>` frontend label. Different isolated projects may run concurrently; the same project has one write-dispatch owner and one active writer lease.
+Expected behavior: Codex must not send either task to generic Main Session or reuse one project's session for another. Each task binds a globally unique projectId, exact canonical root and identity SHA-256, CEO owner, dispatch lease, project-scoped session key, and `<Project> · <Role> · <TaskId>` frontend label. Different isolated projects may run concurrently; the same project has one write-dispatch owner and one active writer lease.
 
 ## OpenClaw Frontend Visibility Gate
 
@@ -956,9 +988,17 @@ Expected behavior: Codex must not send either task to generic Main Session or re
 Use CEO Flow. OpenClaw execution uses the background CLI, but the user requires the task input, output, and tool Activity to remain inspectable in OpenClaw frontend. The prior project session may be archived.
 ```
 
-Expected behavior: Before model execution, the bridge lists the exact Agent sessions, rejects archived/busy/mismatched sessions, uses official Gateway `sessions.create` and `sessions.patch` to register `<Project> · <Role>` plus project category, then verifies the exact session key/id and visibility. It does not edit `sessions.json`, use Main Session, silently restore an archive, or use `--deliver`. Required visibility failure blocks before model execution.
+Expected behavior: Before model execution, the bridge lists the exact Agent sessions, rejects archived/busy/mismatched sessions, uses official Gateway `sessions.create` and `sessions.patch` to register `<Project> · <Role> · <TaskId>` plus project category, then verifies the exact session key/id and visibility. It does not edit `sessions.json`, use Main Session, silently restore an archive, or use `--deliver`. Required visibility failure blocks before model execution.
 
-## MiniMax Dynamic Model And Thinking Route
+## Kimi K3 Tier1 Safety Envelope
+
+```text
+Use CEO Flow. The Kimi account is Tier1 (50 concurrency, 200 RPM, 2,000,000 TPM). RGS and one other project both have bounded execution ready. Route them without spending toward the provider ceiling.
+```
+
+Expected behavior: Use the dedicated minimal `ceoflow-executor` with `moonshot/kimi-k3`, a clean single-task session per task, no cross-provider fallback, and no more than three active K3 tasks across projects. Keep one writer per project and enforce the per-task 25k request, 90k cumulative, four-call, and 300k gross-TPM ceilings. R0/ordinary R1 use `off`; review/research and R2/R3 use `adaptive`. Delay work rather than approaching the 2M account TPM ceiling.
+
+## MiniMax Dynamic Model And Thinking Route (Optional Policy)
 
 ```text
 Use CEO Flow. OpenClaw currently exposes validated MiniMax-M3. Route an R0 deterministic test task and an R2 cross-module debugging task without changing the Codex CEO model or reasoning.
@@ -973,6 +1013,14 @@ Use CEO Flow. The OpenClaw frontend session and route preflight pass, then MiniM
 ```
 
 Expected behavior: Preserve a schema-valid attempt-one `status=failed` receipt with `blocker=external_provider_network_error`, attempted model/thinking, raw-result path, independently observed changed files, and unknown usage. If the independent workspace fingerprint is unchanged and the reused session has no active run, wait 60 seconds and make exactly one retry with the same task hash/session/model/thinking/fallback policy. Save attempt two to immutable sibling evidence paths. Never switch to GPT, another provider, Ollama, or a new session. If both attempts fail, open the project-scoped provider circuit for five minutes and continue safe Program Goal portfolio/review work rather than blocking the whole Goal.
+
+## Upstream Capacity Failure Retry
+
+```text
+Use CEO Flow. Kimi K3 returns `The AI service is temporarily overloaded. Please try again in a moment.` before any model payload. The task preflight passed and the workspace fingerprint is unchanged.
+```
+
+Expected behavior: Classify this as `external_provider_capacity_error`, preserve a typed failed attempt, wait 60 seconds, and retry exactly once with the same task/session/model/thinking/write-set and denied fallback. Explicit service unavailable, server busy, capacity exceeded, and HTTP 502/503/504 gateway errors follow the same bounded path. Do not apply this rule to 401/403, HTTP 429/rate-limit, quota exhaustion, HTTP 500, or a writer that changed the workspace.
 
 ## MiniMax Network Failure After Partial Writer Mutation
 
@@ -997,3 +1045,27 @@ Use CEO Flow. MiniMax completed successfully, but artifacts/sourceRefs/blockers 
 ```
 
 Expected behavior: Do not retry the model. The adapter deterministically serializes safe bounded object entries into compact JSON strings, preserves raw output, emits per-field normalization warnings, and validates the normalized receipt. Gateway/request-shaping telemetry overrides the untrusted self-report, so actualThinking becomes adaptive. Unsafe, oversized, secret/base64, or unnormalizable entries still fail. `reprocess-openclaw` may create a new in-project normalized receipt without modifying the raw result.
+
+## OpenClaw Live Minimal Profile Gate
+
+```text
+Use CEO Flow. The task declares agentContextProfile=minimal-ceoflow, but live ceoflow-executor has no per-agent skills list and inherits tools.profile=full.
+```
+
+Expected behavior: Inspect the live `agents.list[]` entry before any provider call. Block with `providerCalled=false` unless the dedicated Agent matches the canonical Skill/tool/bootstrap/context fragment. A separate workspace or task-authored profile label is not sufficient evidence.
+
+## OpenClaw Cache-Conservative Budget Gate
+
+```text
+Use CEO Flow. One K3 request reports 19,443 uncached input, 5,888 cache read, and 1,153 output under maxInputTokensPerRequest=12,000 and maxCumulativeInputTokens=25,000.
+```
+
+Expected behavior: Keep per-request context occupancy separate from cache accounting: compare 19,443 to the 12k request cap, while 19,443 + 5,888 = 25,331 counts toward cumulative input/cost/TPM protection. Mark the receipt invalid for the request cap and cumulative 25k cap. Do not drop cached input from cumulative/rate accounting or mislabel it as one request's context length.
+
+## OpenClaw Target-Agent Authentication
+
+```text
+Use CEO Flow. DeepSeek V4 is configured and allowed for ceoflow-executor with an Agent-scoped API key, while the default OpenClaw main Agent has no DeepSeek credential.
+```
+
+Expected behavior: Resolve availability against `ceoflow-executor`, require the configured model, allowed model key, usable scoped auth profile, and exact route. Do not mark it unavailable solely because `main` lacks the key, copy the secret into global configuration, or substitute another model.

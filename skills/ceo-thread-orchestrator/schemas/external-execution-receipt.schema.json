@@ -4,7 +4,7 @@
   "title": "CEO Flow External Execution Receipt",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "taskId", "taskSha256", "provider", "status", "summary", "changedFiles", "writeSetCompliance", "commands", "tests", "artifacts", "sourceRefs", "blockers", "residualRisks", "nextAction", "usage", "provenance", "forbiddenPayloadsPresent"],
+  "required": ["schemaVersion", "taskId", "taskSha256", "provider", "status", "summary", "changedFiles", "writeSetCompliance", "commands", "tests", "artifacts", "sourceRefs", "blockers", "residualRisks", "nextAction", "usage", "budgetGovernor", "provenance", "forbiddenPayloadsPresent"],
   "properties": {
     "schemaVersion": { "const": "ceoflow.external_execution_receipt.v1" },
     "taskId": { "type": "string", "minLength": 1 },
@@ -75,9 +75,36 @@
       "properties": {
         "reported": { "type": "boolean" },
         "inputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "uncachedInputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "cachedInputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "grossInputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "lastRequestInputTokens": { "type": ["integer", "null"], "minimum": 0 },
         "outputTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "totalTokens": { "type": ["integer", "null"], "minimum": 0 },
+        "providerCallCount": { "type": ["integer", "null"], "minimum": 0 },
         "cost": { "type": ["number", "null"], "minimum": 0 },
         "currency": { "type": ["string", "null"] }
+      }
+    },
+    "budgetGovernor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "pluginId", "policyVersion", "runtimeVerified", "telemetryPath", "telemetryComplete", "fuseTriggered", "fuseReason"],
+      "properties": {
+        "required": { "const": true },
+        "pluginId": { "const": "ceoflow-budget-governor" },
+        "policyVersion": { "const": "ceoflow.openclaw_budget_governor.v1" },
+        "runtimeVerified": { "type": "boolean" },
+        "telemetryPath": { "type": ["string", "null"] },
+        "telemetryComplete": { "type": "boolean" },
+        "fuseTriggered": { "type": ["boolean", "null"] },
+        "fuseReason": { "type": ["string", "null"] },
+        "modelRequestsStarted": { "type": ["integer", "null"], "minimum": 0 },
+        "modelRequestsCompleted": { "type": ["integer", "null"], "minimum": 0 },
+        "toolCalls": { "type": ["integer", "null"], "minimum": 0 },
+        "cumulativeToolResultChars": { "type": ["integer", "null"], "minimum": 0 },
+        "observedContextTokenBudget": { "type": ["integer", "null"], "minimum": 0 },
+        "grossTokensLastMinute": { "type": ["integer", "null"], "minimum": 0 }
       }
     },
     "provenance": {

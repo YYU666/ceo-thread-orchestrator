@@ -34,17 +34,21 @@
     "execution": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["providerId", "adapter", "transport", "capabilityClass", "timeoutSeconds", "attemptBudget"],
+      "required": ["providerId", "adapter", "transport", "capabilityClass", "timeoutSeconds", "attemptBudget", "agentContextProfile", "sessionReusePolicy", "laneId", "sessionGeneration", "sessionContextPolicy", "archiveAfterReceipt", "sessionDisplayName", "sessionCategory", "frontendVisibility", "archivedSessionPolicy", "nativeMemoryPolicy", "sessionRosterPath", "dispatchLeaseId", "writeConcurrency", "budgetGovernorPolicy", "maxInitialInputTokens", "maxInputTokensPerRequest", "maxCumulativeInputTokens", "maxCumulativeUncachedInputTokens", "maxCumulativeCachedInputTokens", "maxCumulativeGrossTokens", "maxProviderCalls", "maxModelRequests", "maxToolCalls", "maxToolResultChars", "maxCumulativeToolResultChars", "maxGrossTokensPerMinute"],
       "properties": {
         "providerId": { "type": "string", "minLength": 1 },
         "adapter": { "type": "string", "minLength": 1 },
         "transport": { "enum": ["cli-json", "acp", "mcp", "file-exchange", "webhook", "other"] },
         "localMode": { "const": false },
         "agentId": { "type": ["string", "null"] },
+        "agentContextProfile": { "const": "minimal-ceoflow" },
         "sessionId": { "type": ["string", "null"] },
         "sessionKey": { "type": ["string", "null"], "maxLength": 240 },
-        "sessionReusePolicy": { "enum": ["reuse-project-role", "reuse-explicit", "fresh-isolated"] },
+        "sessionReusePolicy": { "enum": ["single-task", "fresh-isolated"] },
         "laneId": { "type": ["string", "null"], "maxLength": 120, "pattern": "^[A-Za-z0-9._-]+$" },
+        "sessionGeneration": { "type": "integer", "minimum": 1, "maximum": 999999 },
+        "sessionContextPolicy": { "const": "single-task-zhixia" },
+        "archiveAfterReceipt": { "const": true },
         "newSessionReason": { "type": ["string", "null"], "maxLength": 500 },
         "sessionDisplayName": { "type": "string", "minLength": 1, "maxLength": 240 },
         "sessionCategory": { "type": "string", "minLength": 1, "maxLength": 160 },
@@ -83,7 +87,21 @@
             "statePath": { "type": "string", "minLength": 1, "maxLength": 300 }
           }
         },
-        "costPriority": { "enum": ["cost", "balanced", "quality", "latency"] }
+        "costPriority": { "enum": ["cost", "balanced", "quality", "latency"] },
+        "budgetGovernorPolicy": { "const": "required" },
+        "maxInitialInputTokens": { "type": "integer", "minimum": 1, "maximum": 30000 },
+        "maxInputTokensPerRequest": { "type": "integer", "minimum": 1, "maximum": 30000 },
+        "maxCumulativeInputTokens": { "type": "integer", "minimum": 1, "maximum": 180000 },
+        "maxCumulativeUncachedInputTokens": { "type": "integer", "minimum": 1, "maximum": 180000 },
+        "maxCumulativeCachedInputTokens": { "type": "integer", "minimum": 1, "maximum": 180000 },
+        "maxCumulativeGrossTokens": { "type": "integer", "minimum": 1, "maximum": 240000 },
+        "maxProviderCalls": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "maxModelRequests": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "maxToolCalls": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "maxToolResultChars": { "type": "integer", "minimum": 500, "maximum": 8000 },
+        "maxCumulativeToolResultChars": { "type": "integer", "minimum": 1000, "maximum": 24000 },
+        "maxGrossTokensPerMinute": { "type": "integer", "minimum": 1, "maximum": 450000 },
+        "toolOutputMaxChars": { "type": "integer", "minimum": 1000, "maximum": 24000, "deprecated": true }
       }
     },
     "permissions": {
@@ -112,7 +130,7 @@
       "properties": {
         "memoryPacket": { "type": "array", "items": { "type": "string" }, "maxItems": 20 },
         "sourceRefs": { "type": "array", "items": { "type": "string" }, "maxItems": 40 },
-        "tokenBudget": { "type": "integer", "minimum": 0, "maximum": 20000 }
+        "tokenBudget": { "type": "integer", "minimum": 0, "maximum": 3000 }
       }
     },
     "returnContract": {

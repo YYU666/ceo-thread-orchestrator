@@ -10,6 +10,7 @@ Push-Location $Root
 try {
   Write-Host 'Running public reproducible checks...'
   python -m unittest discover -s tests -v
+  node --test integrations\openclaw\plugins\ceoflow-budget-governor\test\governor.test.mjs
   python scripts\smoke_eval.py
   python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
   python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json

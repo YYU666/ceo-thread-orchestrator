@@ -11,10 +11,11 @@
     {
       "laneId": "implementation-main",
       "role": "implementation",
-      "agentId": "main",
-      "sessionKey": "agent:main:ceoflow:example-project:implementation-main",
+      "agentId": "ceoflow-executor",
+      "agentContextProfile": "minimal-ceoflow",
+      "sessionKey": "agent:ceoflow-executor:ceoflow:example-project:implementation-main:g001:external-task-001-19102661",
       "sessionId": null,
-      "displayName": "Example Project · Implementation",
+      "displayName": "Example Project · Implementation · EXTERNAL-TASK-001",
       "category": "Example Project",
       "frontendVisibility": "required",
       "frontendVisible": null,
@@ -24,7 +25,10 @@
       "dispatchLeaseId": null,
       "writeConcurrency": "single-writer",
       "lastReceiptPath": null,
-      "updatedAt": null
+      "updatedAt": null,
+      "sessionGeneration": 1,
+      "sessionContextPolicy": "single-task-zhixia",
+      "archiveAfterReceipt": true
     }
   ],
   "updatedAt": null

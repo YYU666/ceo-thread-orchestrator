@@ -33,7 +33,7 @@ Do not modify the CEO lane's model or reasoning from worker/reviewer callbacks. 
 Before assigning models for a wave, inspect the active tool contract for each surface being used:
 
 - visible thread create/continue tools;
-- OpenClaw external-provider tools and reusable project-role sessions;
+- OpenClaw external-provider tools, reusable logical project-role lanes, and single-task physical sessions;
 - host Codex subagent tools only when a higher-priority contract requires a bounded exception;
 - automation tools;
 - configured workflow or external worker tools.
@@ -182,7 +182,19 @@ Do not classify a model as cheap, safe, private, domestic, frontier, or adequate
 
 Codex should not replay external reasoning. Consume a typed receipt, diff/files, tests, artifacts, sourceRefs, and provider-reported usage. Reserve Codex/frontier tokens for architecture, conflict resolution, independent review, and publish/release gates rather than routine execution transcripts.
 
-### MiniMax Through OpenClaw
+### Kimi K3 Tier1 Through OpenClaw
+
+The current cost-efficient default uses `auto-class` plus `openclaw_kimi_k3_tier1_policy.json`. Model selection stays pinned to `moonshot/kimi-k3`; only the provider-supported thinking control varies:
+
+| Risk/role | Kimi K3 thinking | Assurance |
+| --- | --- | --- |
+| `R0-mechanical` and ordinary `R1-bounded` execution | `off` | bounded context plus Codex diff/test review |
+| `R1-bounded` research or neutral review | `adaptive` | source/evidence challenge |
+| `R2-complex` / bounded `R3-critical` | `adaptive` | independent Codex review; Codex keeps acceptance and publishing |
+
+Tier1 advertises 50 concurrent requests, 200 RPM, and 2,000,000 TPM, but CEO Flow deliberately schedules well below that ceiling. Default to at most three active K3 tasks across projects, one writer per project, no cross-provider fallback, at most four provider calls per task, 90k cumulative task input, and 300k gross task TPM. These are safety ceilings, not targets; use fewer calls and less context whenever possible.
+
+### MiniMax Through OpenClaw (Optional Policy)
 
 When the configured OpenClaw route uses MiniMax, use `auto-class` plus the bundled `openclaw_minimax_model_policy.json` instead of inventing model ranks or `low/medium/high` thinking levels.
 
@@ -202,7 +214,7 @@ Default importance route:
 | `R2-complex` | `frontier` | `adaptive` | independent Codex review and targeted rerun |
 | `R3-critical` | `frontier` external execution only when bounded | `adaptive` | Codex CEO keeps the decision; neutral high-capability audit required |
 
-The model policy is capability- and evidence-gated. At present, only `minimax/MiniMax-M3` is enabled and validated across `fast`, `balanced`, and `frontier`; therefore model choice may remain M3 while thinking changes dynamically. `MiniMax-M2.7-highspeed` is a disabled fast-lane candidate until OpenClaw availability, tool calls, typed receipts, latency, coding quality, and provider reliability pass a controlled probe. Merely appearing in official docs or a provider catalog does not activate it.
+The MiniMax policy is capability- and evidence-gated. Only `minimax/MiniMax-M3` is enabled in that optional policy; `MiniMax-M2.7-highspeed` remains disabled until a controlled probe passes. Merely appearing in official docs or a provider catalog does not activate it.
 
 For `auto-class`, the bridge derives class from `riskTier`, intersects the policy order with `openclaw models list --json`, and selects only an enabled+validated+available candidate. For `pinned`, the task must name the model. Both paths preflight configured fallbacks and supported thinking values. The route result records selected model/thinking, source, class, candidate order, and rejected candidates.
 

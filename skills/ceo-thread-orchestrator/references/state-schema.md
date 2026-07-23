@@ -123,6 +123,7 @@ Routing surface:
 Execution provider / adapter / transport:
 External task schema / task SHA-256 / receipt path:
 External project ID / lane ID:
+OpenClaw Agent / context profile: ceoflow-executor / minimal-ceoflow
 External project display name / identity SHA-256 / canonical root:
 Project CEO owner / dispatch lease:
 External session key / actual session ID:
@@ -130,7 +131,10 @@ External session display name / category / frontend visible:
 Archived-session policy / lifecycle state:
 Native memory policy / session roster path:
 Write concurrency: single-writer | read-only
-Session reuse policy: reuse-project-role | reuse-explicit | fresh-isolated
+Session reuse policy: single-task | fresh-isolated
+Session generation / context policy: positive integer / single-task-zhixia
+Archive after receipt: true
+Context limits: initial / per-request / separate uncached+cached cumulative / gross session / model+tool calls / per-result+cumulative tool chars / gross TPM
 Session rotation reason / superseded key:
 External task status: prepared | dispatched | running | succeeded | failed | timed_out | cancelled | lost | invalid_receipt
 Risk tier: R0-mechanical | R1-bounded | R2-complex | R3-critical
@@ -164,8 +168,8 @@ Rules:
 - Default thread operation permission is `worker-only`, `review-only`, or `read-only`; only CEO/router lanes may create, fork, or route unless explicitly granted.
 - Missing thread ids are `stale_lane_reference` until locator fallback runs.
 - Worker self-routing, delegating, waiting on another worker, or inspecting CEO state without permission is `role_contamination`.
-- Codex subagents are denied for normal project execution. Temporary outside help routes to a reusable OpenClaw project-role session; a higher-priority host-required exception must be bounded and recorded.
-- External OpenClaw lanes default to one reusable project-role session. A task ID change does not create a session; only the CEO/bridge may rotate a session for a recorded safety or isolation reason.
+- Codex subagents are denied for normal project execution. Temporary outside help routes to a reusable logical OpenClaw project-role lane with one clean physical session per bounded task; a higher-priority host-required exception must be bounded and recorded.
+- External OpenClaw lanes reuse the logical project-role identity while each task uses a clean physical session generation. A task ID or semantic objective change creates a new generation; the bridge archives the terminal generation and follow-up work starts from Zhixia, not archived chat.
 - Different projects never share an OpenClaw session. Exact project identity, canonical root, owner, frontend label/category, and session key must agree before dispatch; `Main Session` is not a CEO Flow execution lane.
 - A project has one write-dispatch owner and one active writer lease at a time. Archived or busy sessions are not silently reused, and OpenClaw native/global memory is not project memory.
 
@@ -290,7 +294,10 @@ Execution provider / adapter / transport:
 External task schema / task SHA-256 / receipt path / raw result path:
 External task status / provider run ID / session ID:
 External project ID / lane ID / session key:
+OpenClaw Agent / context profile: ceoflow-executor / minimal-ceoflow
 Session reuse policy / rotation reason:
+Session generation / context policy / archive-after-receipt:
+Context limits: initial / per-request / separate uncached+cached cumulative / gross session / model+tool calls / per-result+cumulative tool chars / gross TPM:
 Risk tier:
 Data residency / content exposure:
 Available class candidates / reasoning levels / unsupported controls:

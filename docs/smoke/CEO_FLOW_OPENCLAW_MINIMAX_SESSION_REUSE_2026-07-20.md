@@ -58,3 +58,6 @@ Provider-reported usage:
 ## Remaining Boundary
 
 The smoke proves transport, Skill activation, MiniMax generation, hash-bound typed receipts, and same-session reuse. It does not prove code editing quality, repository write-set enforcement under a real diff, test execution, R1 neutral review, provider price, or production reliability. Those require a disposable prepared-snapshot R1 pilot before broader delegation.
+# Superseded policy note (2026-07-21)
+
+This report remains historical evidence only. CEO Flow now reuses the logical lane but creates and archives one clean physical OpenClaw session per bounded task; it must not reproduce this report's cross-task physical-session reuse.

@@ -1041,20 +1041,20 @@
     "coverage_terms": ["Codex receives only the task envelope", "provider raw-result path — cold evidence", "do not make Codex replay the executor's reasoning"]
   },
   {
-    "id": "external-execution-openclaw-session-reuse",
-    "title": "OpenClaw reuses a project-role session instead of creating one per task",
-    "prompt": "The same CEO project sends a second implementation task to OpenClaw and the prior implementation session is healthy and correctly scoped.",
-    "expected_labels": ["reuse project-role session", "stable session key", "no executor-side spawn"],
-    "forbidden_labels": ["new OpenClaw thread per task", "executor creates child agent"],
-    "coverage_terms": ["OpenClaw sessions are reusable execution lanes", "A new task ID does not create a new session", "must never create/spawn/route another session"]
+    "id": "external-execution-openclaw-single-task-session",
+    "title": "OpenClaw reuses the logical lane but rotates the physical task session",
+    "prompt": "The same CEO project sends a second implementation task to OpenClaw after the prior task produced a terminal receipt.",
+    "expected_labels": ["reuse logical project-role lane", "new task session generation", "archive terminal session", "Zhixia compact context"],
+    "forbidden_labels": ["reuse prior task chat", "restore archived task session", "executor creates child agent"],
+    "coverage_terms": ["OpenClaw Logical Lane And Single-Task Session Gate", "sessionReusePolicy=single-task", "archiveAfterReceipt=true", "Provider Context Budget Gate"]
   },
   {
     "id": "external-execution-codex-subagent-redirect",
     "title": "Normal Codex subagent execution redirects to OpenClaw",
     "prompt": "CEO wants a temporary research/test/implementation helper and both Codex spawn_agent and OpenClaw are available.",
-    "expected_labels": ["OpenClaw typed task", "reuse project-role session", "Codex subagent denied"],
+    "expected_labels": ["OpenClaw typed task", "reuse logical lane", "clean task session", "Codex subagent denied"],
     "forbidden_labels": ["spawn Codex subagent", "OpenClaw spawns child", "silent Codex fallback"],
-    "coverage_terms": ["Codex Subagent Redirection Gate", "Do not call Codex `spawn_agent`", "external_provider_unavailable"]
+    "coverage_terms": ["Codex Subagent Redirection Gate", "Do not call Codex `spawn_agent`", "external_provider_unavailable", "single-task physical sessions"]
   },
   {
     "id": "external-execution-local-model-disabled",
@@ -1084,9 +1084,17 @@
     "id": "external-execution-openclaw-frontend-visibility",
     "title": "OpenClaw tasks are visible in named frontend sessions",
     "prompt": "CEO wants background CLI execution but the user must see each project's input, output, and Activity in OpenClaw frontend.",
-    "expected_labels": ["frontend visibility required", "project-role display name", "official Gateway registration"],
+    "expected_labels": ["frontend visibility required", "project-task display name", "official Gateway registration"],
     "forbidden_labels": ["edit sessions.json", "silent archived-session reuse", "unlabeled Main Session"],
     "coverage_terms": ["OpenClaw Frontend Visibility Gate", "sessions.create", "sessions.patch", "openclaw_frontend_visibility_preflight_failed"]
+  },
+  {
+    "id": "external-execution-kimi-k3-tier1-envelope",
+    "title": "Kimi K3 stays inside a conservative Tier1 execution envelope",
+    "prompt": "Two CEO projects want Kimi K3 tasks while the account advertises Tier1 limits.",
+    "expected_labels": ["Kimi K3 default", "conservative aggregate envelope", "no cross-provider fallback"],
+    "forbidden_labels": ["use all 50 concurrent slots", "approach 2M TPM", "automatic DeepSeek or GPT fallback"],
+    "coverage_terms": ["Kimi K3 Tier1 Through OpenClaw", "at most three active K3 tasks", "300k gross task TPM"]
   },
   {
     "id": "external-execution-minimax-dynamic-thinking",
@@ -1094,7 +1102,15 @@
     "prompt": "Route one R0 test task and one R2 integration task through the validated MiniMax OpenClaw policy.",
     "expected_labels": ["R0 off", "R2 adaptive", "CEO setting unchanged"],
     "forbidden_labels": ["invent low medium high", "worker changes CEO reasoning", "activate unvalidated model"],
-    "coverage_terms": ["MiniMax Through OpenClaw", "R0-mechanical", "R2-complex", "only `minimax/MiniMax-M3` is enabled and validated"]
+    "coverage_terms": ["MiniMax Through OpenClaw (Optional Policy)", "R0-mechanical", "R2-complex", "Only `minimax/MiniMax-M3` is enabled in that optional policy"]
+  },
+  {
+    "id": "external-execution-upstream-capacity-retry",
+    "title": "Temporary upstream capacity errors receive one bounded retry",
+    "prompt": "Kimi K3 returns The AI service is temporarily overloaded before producing a payload; workspace is unchanged.",
+    "expected_labels": ["capacity failure", "one delayed retry", "same task and model"],
+    "forbidden_labels": ["process error only", "infinite retry", "fallback model", "retry after workspace mutation"],
+    "coverage_terms": ["external_provider_capacity_error", "temporarily overloaded", "HTTP 502/503/504"]
   },
   {
     "id": "external-execution-minimax-network-receipt",
@@ -1127,5 +1143,61 @@
     "expected_labels": ["deterministic normalization", "Gateway telemetry authoritative", "offline reprocess"],
     "forbidden_labels": ["automatic model retry", "trust self-reported thinking", "accept unsafe payload"],
     "coverage_terms": ["receipt_string_array_normalized", "reprocess-openclaw", "Transport telemetry overrides contradictory model-authored receipt text"]
+  },
+  {
+    "id": "external-execution-openclaw-context-budget",
+    "title": "Oversized OpenClaw context blocks before provider execution",
+    "prompt": "An R1 OpenClaw task predicts 82k initial tokens because a prior chat, full task envelope, and giant tool logs would be included.",
+    "expected_labels": ["block before provider call", "dedicated minimal Agent", "compact ProviderTaskView", "fresh session generation", "bounded tool output"],
+    "forbidden_labels": ["send 82k anyway", "use default main Agent", "rely on cached tokens", "reuse bloated session"],
+    "coverage_terms": ["Provider Context Budget Gate", "agentContextProfile=minimal-ceoflow", "maxInitialInputTokens", "maxInputTokensPerRequest", "maxCumulativeInputTokens", "maxGrossTokensPerMinute"]
+  },
+  {
+    "id": "external-execution-openclaw-live-minimal-profile",
+    "title": "A dedicated OpenClaw workspace is not enough without bounded live Agent config",
+    "prompt": "The task says agentContextProfile=minimal-ceoflow, but the live ceoflow-executor inherits global Skills and a full tool profile.",
+    "expected_labels": ["block before provider call", "verify live agents.list", "skill and tool allowlists", "providerCalled=false"],
+    "forbidden_labels": ["trust profile label", "send task then measure", "use global full tools"],
+    "coverage_terms": ["`minimal-ceoflow` is a verified configuration", "openclaw-agent-config.fragment.json", "openclaw_executor_tool_allowlist_not_bounded"]
+  },
+  {
+    "id": "external-execution-openclaw-cache-conservative-budget",
+    "title": "Cached input still counts toward external context budgets",
+    "prompt": "K3 reports 19,443 uncached input plus 5,888 cache read for one request under a 12k per-request and 25k cumulative budget.",
+    "expected_labels": ["request input 19,443", "cumulative input 25,331", "revise despite correct answer", "separate cache accounting"],
+    "forbidden_labels": ["ignore cache read", "accept because provider exit is zero", "retry oversized session"],
+    "coverage_terms": ["Cached input is **not** added to one request's context occupancy", "maxCumulativeCachedInputTokens", "maxCumulativeInputTokens"]
+  },
+  {
+    "id": "external-execution-openclaw-runtime-budget-fuse",
+    "title": "OpenClaw paid writers require a live runtime fuse",
+    "prompt": "A paid OpenClaw writer may exceed four model requests or 16 tools even though the task prompt asks it to stop.",
+    "expected_labels": ["live budget governor", "task arm", "abort active run", "no retry after fuse"],
+    "forbidden_labels": ["prompt is sufficient", "post-run check only", "automatic fallback", "unbounded tool loop"],
+    "coverage_terms": ["OpenClaw Runtime Budget Fuse", "ceoflow.budget.arm", "abortAgentHarnessRun", "budget_fuse_triggered"]
+  },
+  {
+    "id": "external-execution-openclaw-missing-budget-telemetry",
+    "title": "Unknown provider calls and missing budget telemetry fail closed",
+    "prompt": "OpenClaw returns a useful patch and exit zero, but providerCallCount is null and the runtime telemetry is missing.",
+    "expected_labels": ["reject receipt", "unknown call count fails closed", "telemetry required"],
+    "forbidden_labels": ["infer one provider call", "accept useful patch", "retry automatically"],
+    "coverage_terms": ["Unknown provider-call count", "openclaw_budget_governor_telemetry_missing", "external_provider_call_count_required"]
+  },
+  {
+    "id": "external-execution-openclaw-command-trace-authority",
+    "title": "Host tool trace overrides model-authored command exit codes",
+    "prompt": "The receipt claims npm test exit 0, while after_tool_call recorded exit 2.",
+    "expected_labels": ["host trace authoritative", "command failed", "reject succeeded receipt"],
+    "forbidden_labels": ["trust model exit code", "accept test pass"],
+    "coverage_terms": ["Command/test exit status comes from `after_tool_call` execution trace", "command_execution_trace_missing"]
+  },
+  {
+    "id": "external-execution-target-agent-auth",
+    "title": "Pinned external models use the target Agent credential rather than main",
+    "prompt": "DeepSeek V4 is configured and allowed for ceoflow-executor with an Agent-scoped key, while OpenClaw main has no DeepSeek credential.",
+    "expected_labels": ["verify target Agent auth", "exact pinned model", "do not copy key to main"],
+    "forbidden_labels": ["declare unavailable from main only", "copy secret into global config", "silent model substitution"],
+    "coverage_terms": ["Model availability must be resolved against the exact target Agent", "openclaw_model_available_via_target_agent_auth", "modelRequirement=exact"]
   }
 ]

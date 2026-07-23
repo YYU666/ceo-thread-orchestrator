@@ -1,0 +1,31 @@
+{
+  "id": "ceoflow-executor",
+  "name": "ceoflow-executor",
+  "model": "moonshot/kimi-k3",
+  "skills": [
+    "ceoflow-external-executor"
+  ],
+  "skillsLimits": {
+    "maxSkillsPromptChars": 1200
+  },
+  "bootstrapMaxChars": 2000,
+  "bootstrapTotalMaxChars": 5000,
+  "contextTokens": 25000,
+  "contextLimits": {
+    "memoryGetMaxChars": 1000,
+    "memoryGetDefaultLines": 20,
+    "toolResultMaxChars": 4000,
+    "postCompactionMaxChars": 800
+  },
+  "tools": {
+    "allow": [
+      "read",
+      "apply_patch",
+      "exec",
+      "process"
+    ],
+    "loopDetection": {
+      "enabled": true
+    }
+  }
+}

@@ -34,9 +34,31 @@
   "usage": {
     "reported": false,
     "inputTokens": null,
+    "uncachedInputTokens": null,
+    "cachedInputTokens": null,
+    "grossInputTokens": null,
+    "lastRequestInputTokens": null,
     "outputTokens": null,
+    "totalTokens": null,
+    "providerCallCount": null,
     "cost": null,
     "currency": null
+  },
+  "budgetGovernor": {
+    "required": true,
+    "pluginId": "ceoflow-budget-governor",
+    "policyVersion": "ceoflow.openclaw_budget_governor.v1",
+    "runtimeVerified": false,
+    "telemetryPath": null,
+    "telemetryComplete": false,
+    "fuseTriggered": null,
+    "fuseReason": null,
+    "modelRequestsStarted": null,
+    "modelRequestsCompleted": null,
+    "toolCalls": null,
+    "cumulativeToolResultChars": null,
+    "observedContextTokenBudget": null,
+    "grossTokensLastMinute": null
   },
   "provenance": {
     "rawResultPath": ".ceoflow/exchange/raw/EXTERNAL-TASK-001.provider.json",

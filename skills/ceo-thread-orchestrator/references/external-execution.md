@@ -152,22 +152,77 @@ openclaw acp --provenance meta+receipt
 
 Use JSON stdout; keep diagnostics on stderr. Do not use `--deliver` for internal CEO Flow execution unless user-facing channel delivery is explicitly authorized. Use an isolated agent/session/workspace when write ownership or memory separation matters.
 
-### OpenClaw Project Session Gate
+### OpenClaw Logical Lane And Single-Task Session Gate
 
-OpenClaw sessions are reusable execution lanes, not disposable threads to create per task. Before dispatch, resolve the project identity and inspect the external-session roster.
+CEO Flow reuses **logical project-role lanes**, not accumulated OpenClaw conversation. Each bounded task gets one clean physical OpenClaw session generation. The session may perform the bounded tool loop for that task and one bridge-controlled transient retry, but it must be archived after its terminal typed receipt. Follow-up work uses a new generation hydrated from Zhixia rather than the archived chat.
 
 Default policy:
 
-1. Set a stable `project.projectId` and lane id.
-2. Reuse a deterministic key: `agent:<agentId>:ceoflow:<projectId>:<laneId>`.
-3. Use `sessionReusePolicy: reuse-project-role` for normal follow-up tasks. A new task ID does not create a new session.
-4. Default to one OpenClaw implementation session per CEO project. Add a second role session only when write ownership, test isolation, or a genuinely independent wave requires it. The staffing plan, not the executor, owns the approved session count.
-5. Reuse only when project id, canonical root, lane role, workspace mode, trust boundary, and write ownership still match. Record the key, actual session id, current task, model, status, and last accepted receipt in the external-session roster.
-6. Use `fresh-isolated` only for a recorded reason: broken/stale session, role contamination, context pressure, project/workspace/trust change, conflicting write ownership, or explicit isolation. Mark the old session superseded; do not fork/copy its raw conversation.
+1. Set stable `project.projectId` and logical `laneId` values in the CEO roster.
+2. Route through a preconfigured dedicated minimal Agent (`agentId=ceoflow-executor`, `agentContextProfile=minimal-ceoflow`), not the user's default `main` Agent; then allocate an increasing `sessionGeneration` and deterministic task-session key: `agent:<agentId>:ceoflow:<projectId>:<laneId>:gNNN:<task-slug>-<hash>`.
+3. Set `sessionReusePolicy=single-task`, `sessionContextPolicy=single-task-zhixia`, and `archiveAfterReceipt=true`.
+4. A new task ID, materially changed objective, model/provider change, trust-boundary change, or write-set change requires a new physical session generation. Never fork or copy the previous chat.
+5. The external-session roster may contain several archived generations for one logical lane. Only one writable generation per project may be active.
+6. The bridge archives every succeeded, failed, blocked, or exhausted-retry task session through official Gateway `sessions.patch`, verifies it in the archived list, and marks archive failure explicitly. An archived task session is never restored for follow-up work.
 
-The OpenClaw executor must never create/spawn/route another session, Agent, subagent, or task. If the caller selected the wrong session, it returns `blocked`. CEO Flow updates the roster and chooses reuse or replacement.
+The OpenClaw executor must never create/spawn/route another session, Agent, subagent, or task. If the caller selected the wrong generation, it returns `blocked`. CEO Flow owns logical staffing; the bridge owns physical session registration and terminal archival.
 
-Session reuse is not permission reuse. Every turn still receives a new immutable task envelope, task hash, write-set, verification contract, and current memory packet. Previous session instructions cannot expand the newest envelope.
+This is deliberately not “one command per session.” One bounded task may use a small tool loop. It is also not “one project per permanent session.” The lease is exactly one acceptance-sized task slice.
+
+### Provider Context Budget Gate
+
+Zhixia remains the sole durable-memory authority. A fresh task session runs under the dedicated minimal `ceoflow-executor` Agent and receives only a compiled `ProviderTaskView`: project identity, bounded objective, write-set, verification, permissions, compact Zhixia packet/sourceRefs, return contract, and context limits. The user's default `main` Agent, full CEO control envelope, old OpenClaw transcript, unrelated Skills, giant diffs, raw logs, and prior task output do not enter provider context.
+
+`minimal-ceoflow` is a verified configuration, not a label supplied by the task. Before any provider call, the bridge inspects the live `agents.list[]` entry and requires the single `ceoflow-external-executor` skill, bounded bootstrap/skill budgets, a task-sized `contextTokens` cap, the narrow `read/apply_patch/exec/process` tool allowlist, and the declared per-result cap. `write`, `edit`, `session_status`, browser, memory, session, spawn, and delegation tools are not part of the paid writer profile. Missing or broad configuration blocks locally with `providerCalled=false`; a broad tool surface reports `openclaw_executor_tool_allowlist_not_bounded`, while a missing/oversized context cap reports `openclaw_executor_task_context_cap_not_bounded`. Use `integrations/openclaw/agents/ceoflow-executor/openclaw-agent-config.fragment.json` as the canonical fragment.
+
+Model availability must be resolved against the exact target Agent named by the task. An Agent-scoped provider credential may intentionally be absent from `main`; do not copy the key into `main` merely to satisfy a global catalog check. Require the model to be configured, allowed for the target Agent, backed by a usable target-Agent auth profile, and selected exactly when `modelRequirement=exact`. Record `openclaw_model_available_via_target_agent_auth` when this scoped route is used.
+
+Hard defaults:
+
+| Risk/task class | Initial compiled input | Provider calls | Cumulative input |
+| --- | ---: | ---: | ---: |
+| R0 read-only/mechanical | <= 12k | <= 2 | <= 25k |
+| R1 bounded writer | <= 20k | <= 6 | <= 120k |
+| R2 complex | <= 30k | <= 6 | <= 180k |
+| R3 critical external slice | <= 30k | <= 4 | <= 180k |
+
+Every task also sets a per-request context cap, separate uncached/cached cumulative limits, a gross session budget, a model-request count, a tool-call count, a per-result character cap, a cumulative tool-result cap, and gross TPM headroom. Cached input is **not** added to one request's context occupancy, but it does count toward cumulative cost/rate protection. Initial context means the compiled task prompt plus a conservative verified-harness allowance; a small `ProviderTaskView` alone is not proof that the OpenClaw system prompt is small.
+
+Required hard-budget fields are `budgetGovernorPolicy=required`, `maxInitialInputTokens`, `maxInputTokensPerRequest`, `maxCumulativeUncachedInputTokens`, `maxCumulativeCachedInputTokens`, `maxCumulativeInputTokens`, `maxCumulativeGrossTokens`, `maxModelRequests`, `maxToolCalls`, `maxToolResultChars`, `maxCumulativeToolResultChars`, and `maxGrossTokensPerMinute`. `maxProviderCalls` remains a compatibility field and must equal `maxModelRequests`; legacy `toolOutputMaxChars` is not runtime enforcement evidence.
+
+### OpenClaw Runtime Budget Fuse
+
+Prompt instructions and post-run receipt rejection are not a hard budget. Paid OpenClaw writer execution therefore requires the local `ceoflow-budget-governor` plugin under `integrations/openclaw/plugins/ceoflow-budget-governor/`.
+
+Before every attempt, the bridge must:
+
+1. inspect the **live** Gateway runtime and verify all seven hooks (`before_agent_run`, `llm_input`, `model_call_started`, `llm_output`, `before_tool_call`, `after_tool_call`, `agent_end`) plus the `ceoflow.budget.arm/status/clear` methods;
+2. verify `ceoflow-executor.contextTokens <= maxInputTokensPerRequest` and the minimal tool allowlist;
+3. arm one immutable task hash/session key through `ceoflow.budget.arm` before invoking `openclaw agent`;
+4. reject a paid run when the plugin is missing, inactive, unarmed, or returns incomplete telemetry.
+
+The plugin counts by run ID, blocks excess tool calls before execution, conservatively blocks a tool when its maximum result could breach the remaining cumulative character budget, tracks model-call starts, separates uncached/cache-read/cache-write usage, maintains a rolling gross-TPM window, and calls OpenClaw's host `abortAgentHarnessRun(sessionId)` on a breach. Because OpenClaw 2026.7.1 exposes model-call and usage observations asynchronously, one violating provider call may already be in flight when cancellation lands; the fuse prevents an unbounded loop but must not be described as a zero-overshoot billing guarantee.
+
+Default bounded writer values are:
+
+```text
+maxModelRequests: 4
+maxToolCalls: 16
+maxToolResultChars: 4000
+maxCumulativeToolResultChars: 12000
+maxInputTokensPerRequest / agent contextTokens: 25000
+maxCumulativeUncachedInputTokens: 50000
+maxCumulativeCachedInputTokens: 90000
+maxCumulativeInputTokens: 90000
+maxCumulativeGrossTokens: 110000
+maxGrossTokensPerMinute: 300000
+```
+
+Every terminal receipt must carry a bridge-injected `budgetGovernor` card and a local `.ceoflow/exchange/runtime/*.budget.json` telemetry path. Unknown provider-call count (`external_provider_call_count_required`), missing telemetry (`openclaw_budget_governor_telemetry_missing`), missing required usage, incomplete telemetry, runtime mismatch, or `fuseTriggered=true` fails closed. `budget_fuse_triggered` is terminal for that task attempt: never perform the network retry, never silently switch model/provider, and never accept a useful-looking patch automatically.
+
+Command/test exit status comes from `after_tool_call` execution trace. The bridge overwrites matching model-authored exit codes with host-observed values and rejects claimed commands that have no authoritative trace (`command_execution_trace_missing`). Full tool output remains out of the receipt and CEO context.
+
+Tool results return paths, hashes, exit codes, test counts, and short tails/summaries. Full file bodies, broad diffs, build logs, OCR, screenshots, raw API bodies, and repeated task envelopes stay in local artifacts or the Codex assurance plane.
 
 ### Multi-Project Session Namespace Gate
 
@@ -179,7 +234,11 @@ projectDisplayName: human-readable frontend group name
 canonicalRoot: exact project root
 projectIdentitySha256: SHA-256(projectId + normalized canonicalRoot)
 ceoOwnerId: current project dispatch owner
-sessionKey: agent:<agentId>:ceoflow:<projectId>:<laneId>
+sessionKey: agent:<agentId>:ceoflow:<projectId>:<laneId>:gNNN:<task-slug>-<hash>
+sessionGeneration: positive integer
+sessionContextPolicy: single-task-zhixia
+archiveAfterReceipt: true
+agentId / agentContextProfile: ceoflow-executor / minimal-ceoflow
 ```
 
 The bridge rejects a changed root with a stale identity hash, a session key from another project, or a display/category name that is not project-scoped. Each project keeps its own roster at the declared project-relative `sessionRosterPath`; the roster records owner, lane, session key/id, frontend name, lifecycle, active task, write policy, model, usage, and last receipt. Do not use `agent:<id>:main`, a generic `Main Session`, or a session from another canonical root for CEO Flow execution.
@@ -198,7 +257,7 @@ Default session budget per active project:
 OpenClaw CLI execution must remain inspectable in the OpenClaw frontend. For OpenClaw tasks, default `frontendVisibility=required` and provide:
 
 ```text
-sessionDisplayName: <Project Display Name> · <Role>
+sessionDisplayName: <Project Display Name> · <Role> · <TaskId>
 sessionCategory: <Project Display Name>
 archivedSessionPolicy: reject
 nativeMemoryPolicy: forbid
@@ -215,11 +274,11 @@ Before model execution, the bridge uses official Gateway methods rather than edi
 
 If required frontend registration cannot be verified, return `openclaw_frontend_visibility_preflight_failed` before model execution. Never repair this by editing the OpenClaw session store directly, sending the task to `Main Session`, restoring an archived session silently, or using `--deliver` to an external channel. The receipt records exact project identity, frontend display name, session id/key, and `frontendVisible=true`; this proves routing metadata, not that a human watched the whole stream live.
 
-OpenClaw sessions isolate conversation history, but sessions under one Agent may still share Agent configuration, tools, or native workspace memory. CEO Flow therefore sets `nativeMemoryPolicy=forbid`; only the bounded Zhixia packet and explicit project sourceRefs may be used. Sensitive projects may use a preconfigured dedicated OpenClaw Agent, but OpenClaw cannot create that Agent from inside a task.
+OpenClaw sessions isolate conversation history, but sessions under one Agent still share Agent configuration, tools, and workspace bootstrap context. CEO Flow therefore requires the preconfigured minimal `ceoflow-executor` Agent and sets `nativeMemoryPolicy=forbid`; only the bounded Zhixia packet and explicit project sourceRefs may be used. OpenClaw cannot create or reconfigure that Agent from inside a task.
 
 ### Codex Subagent Redirection Gate
 
-When CEO Flow would previously have used a Codex subagent/contractor for exploration, audit, verification, research, docs, tests, or bounded implementation, dispatch a typed OpenClaw external task instead. Reuse the approved project-role session and record it in the lane roster.
+When CEO Flow would previously have used a Codex subagent/contractor for exploration, audit, verification, research, docs, tests, or bounded implementation, dispatch a typed OpenClaw external task instead. Reuse the approved logical project-role lane, allocate a clean task-session generation, and record both identities in the roster.
 
 Do not call Codex `spawn_agent`, `multi_agent`, or equivalent project-execution subagent tools by default. If OpenClaw cannot satisfy the task, return `external_provider_unavailable`; do not silently substitute a Codex subagent. A higher-priority host contract may require a bounded `host-required-exception`, which must be recorded with its scope, model/permissions, evidence, and reason OpenClaw was not used.
 
@@ -229,7 +288,7 @@ The optional OpenClaw execution skill is versioned at `integrations/openclaw/ski
 
 ### Local Model Gate — Disabled
 
-CEO Flow does not currently route work to local models. `execution.localMode=true`, `--local`, isolated `.openclaw-ceoflow` launchers, and `ollama/<model>` routes are hard-blocked. Keep `localMode=false` and use an explicitly configured cloud/provider route such as the current OpenClaw MiniMax profile.
+CEO Flow does not currently route work to local models. `execution.localMode=true`, `--local`, isolated `.openclaw-ceoflow` launchers, and `ollama/<model>` routes are hard-blocked. Keep `localMode=false` and use an explicitly configured cloud/provider route such as the current OpenClaw Kimi K3 profile.
 
 Do not choose a local model because it appears cheaper, more private, or available after a cloud failure. Do not start a local model service, download a model, copy cloud credentials into an isolated state, or switch from a configured cloud model to local execution without a future explicit user decision and a separate capability review.
 
@@ -239,7 +298,13 @@ OpenClaw may have a host-level fallback model list. Every task therefore declare
 
 The bundled bridge supports task/receipt validation, task hashing, prompt rendering, dry-run command generation, and explicitly authorized OpenClaw execution. Execution is never the default side effect.
 
-### MiniMax Dynamic Route
+### Kimi K3 Tier1 Route
+
+For the current cloud profile, set `routingMode=auto-class`, `modelPolicy=kimi-k3-tier1-v1`, `requestedModel=null`, and `reasoningRequirement=preferred`. The bridge keeps the model on `moonshot/kimi-k3`, sends `off` for R0/ordinary R1 work, and sends `adaptive` for R1 research/review and R2/R3 bounded work.
+
+Tier1's provider ceiling is not a dispatch target. CEO Flow's conservative envelope is at most three active K3 tasks across projects, one writer per project, 25k input per request, 90k cumulative input and four provider calls per task, and 300k gross task TPM. The default task template uses these smaller limits, denies local/GPT/cross-provider fallback, and preserves Codex acceptance/publish authority. When multiple tasks might overlap, estimate aggregate gross TPM before dispatch and delay a task rather than approaching the 2,000,000 TPM account ceiling.
+
+### MiniMax Dynamic Route (Optional)
 
 For the current MiniMax cloud profile, set `routingMode=auto-class`, `modelPolicy=minimax-validated-v1`, `requestedModel=null`, and `reasoningRequirement=preferred`. The bridge maps risk to `fast | balanced | frontier`, intersects the bundled policy with the live OpenClaw model catalog, and sends an explicit MiniMax thinking value:
 
@@ -248,11 +313,13 @@ For the current MiniMax cloud profile, set `routingMode=auto-class`, `modelPolic
 
 Only enabled, locally validated policy candidates may auto-activate. The current validated model is `minimax/MiniMax-M3`; `MiniMax-M2.7-highspeed` remains disabled until a controlled coding/tool/receipt probe passes. No local/Ollama route and no GPT/cross-provider fallback may be introduced by this policy.
 
-Provider transport failure is not a malformed worker receipt. If OpenClaw reports `LLM request failed: network connection error` or an equivalent network boundary failure before a payload exists, write a schema-valid `status=failed` receipt with `blocker=external_provider_network_error`, attempted model/thinking, raw-result path, independently observed changed files, and unknown usage. Do not label it `invalid_receipt`, switch provider/model, create another session, or block the whole Program Goal from one transient incident. `invalid_receipt` is reserved for a process that completed without a valid typed contract and without a classified provider failure.
+Provider transport or explicit upstream-capacity failure is not a malformed worker receipt. Network boundary errors use `external_provider_network_error`; `temporarily overloaded`, `service unavailable`, `server busy`, `capacity exceeded`, and explicit HTTP 502/503/504 gateway failures use `external_provider_capacity_error`. Both produce schema-valid `status=failed` receipts with attempted model/thinking, raw-result path, independently observed changed files, and unknown usage. They may use the same bounded retry fuse. Authentication failures, permission failures, HTTP 429/rate-limit, quota exhaustion, ordinary process errors, and HTTP 500 are not reclassified as transient capacity failures. Do not label a classified provider failure `invalid_receipt`, switch provider/model, create another session, or block the whole Program Goal from one transient incident.
 
 ### Transient Provider Retry And Circuit Fuse
 
-Use `networkRetryPolicy=bounded-backoff` only for classified transient network/connection failures. The default MiniMax task contract permits exactly two total attempts: the original attempt plus one retry after 60 seconds. Keep the same task hash, immutable semantics, project-role session, provider, model, thinking route, fallback denial, permissions, and write-set. Attempt one keeps the declared evidence paths; attempt two uses immutable `.attempt-2` sibling raw/receipt files. Never overwrite consumed evidence or reset the budget by renaming an equivalent task.
+Use `networkRetryPolicy=bounded-backoff` only for classified transient network/connection or explicit upstream-capacity failures. The default cloud task contract permits exactly two total attempts: the original attempt plus one retry after 60 seconds. Keep the same task hash, immutable semantics, single-task session generation, provider, model, thinking route, fallback denial, permissions, and write-set. Attempt one keeps the declared evidence paths; attempt two uses immutable `.attempt-2` sibling raw/receipt files. Never overwrite consumed evidence or reset the budget by renaming an equivalent task. Archive only after the final attempt.
+
+The model/tool/token budgets belong to the task, not each attempt. Before arming attempt two, subtract attempt-one runtime telemetry from the remaining model requests, tool calls, tool-result characters, uncached/cache input, cumulative input, and gross-session limits. Missing/incomplete attempt-one telemetry or an exhausted remainder blocks the retry locally.
 
 Before and after every provider attempt, the bridge independently fingerprints git state and task-owned files. A retry is permitted only when:
 
@@ -264,7 +331,7 @@ Before and after every provider attempt, the bridge independently fingerprints g
 
 If a writer changed files before the network failure, do not rerun the consumed task. Ignore a contradictory provider claim such as `changedFiles=[]`; record the independently observed paths, mark the patch an untrusted partial candidate, harvest the actual diff, wait for provider recovery, and issue a new bounded correction/continuation task ID. Preserve every task/raw/receipt hash.
 
-Two consecutive transient failures open the project-scoped provider circuit for five minutes by default. During cooldown, do not call MiniMax repeatedly and do not switch to GPT, another provider, a local model, or a new session. Continue safe portfolio steering, review, evidence inspection, docs, or another already-authorized independent product wave. After cooldown, one half-open probe may run; success closes the circuit, while failure reopens it. Provider cooldown is lane-local and is not sufficient reason to block the Program Goal.
+Two consecutive transient failures open the project-scoped provider circuit for five minutes by default. During cooldown, do not call the provider repeatedly and do not switch to GPT, another provider, a local model, or a new session. Continue safe portfolio steering, review, evidence inspection, docs, or another already-authorized independent product wave. After cooldown, one half-open probe may run; success closes the circuit, while failure reopens it. Provider cooldown is lane-local and is not sufficient reason to block the Program Goal.
 
 The public receipt keeps `artifacts`, `sourceRefs`, `blockers`, and `residualRisks` as compact string arrays. The OpenClaw prompt shows valid/invalid examples. If a successful provider-native receipt returns bounded object entries in those fields, the adapter may deterministically serialize each safe object to one compact JSON string, retain the immutable raw result, emit `receipt_string_array_normalized:<field>`, and validate the normalized receipt. This is transport normalization, not self-acceptance and not a second model call. Oversized, unsafe, non-object/non-string, base64, secret-bearing, or otherwise unnormalizable entries still fail closed.
 

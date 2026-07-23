@@ -126,3 +126,6 @@ For external execution, use provider push completion, immediate synchronous harv
 - Should OpenClaw report usage directly or through a provider billing sidecar?
 
 These are deployment inputs, not reasons to weaken the provider-neutral skill contract.
+# Supersession note (2026-07-21)
+
+The original R0 evidence below validated the then-current permanent project-role session design. Current policy supersedes physical-session reuse with a stable logical lane plus one clean, archived physical session generation per bounded task. Treat the same-session observations below as historical evidence, not current dispatch guidance.

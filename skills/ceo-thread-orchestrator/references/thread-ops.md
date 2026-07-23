@@ -47,7 +47,7 @@ After creating or reusing a lane:
 - Archive or unpin after acceptance, supersession, or retirement, after recording why.
 - Record `threadId`, title, task id, role, workspace, write-set, source CEO thread id, expected callback signature, status, and next harvest action in the roster or operating note.
 - Avoid multiple sibling implementation lanes for the same project/area unless write-sets are non-overlapping and merge/review cost is justified.
-- Do not use Codex subagents for normal project execution. Route temporary outside-help work to approved reusable OpenClaw lanes; preserve visible Codex lanes when the user needs persistent sidebar continuity.
+- Do not use Codex subagents for normal project execution. Route temporary outside-help work to approved reusable logical OpenClaw lanes with short-lived task sessions; preserve visible Codex lanes when the user needs persistent sidebar continuity.
 
 Sidebar cleanup:
 
@@ -116,13 +116,13 @@ Codex CEO does not use Codex host subagents as the default project-execution sur
 Hard rules:
 
 1. Do not call Codex `spawn_agent`, `multi_agent`, or equivalent subagent tools for normal project execution.
-2. Map temporary work to an approved OpenClaw project-role lane and reuse its deterministic session key. A new task ID does not create another OpenClaw session.
+2. Map temporary work to an approved logical OpenClaw project-role lane, then allocate a clean deterministic physical session generation for the bounded task. A new task ID never inherits the previous task chat.
 3. CEO dispatches directly to each OpenClaw lane. OpenClaw must not call `sessions_spawn`, create child Agents/tasks, or delegate again.
 4. OpenClaw output is an untrusted typed receipt. Codex CEO still inspects evidence and decides `accept | revise | block | supersede`.
 5. If OpenClaw is unavailable, blocked, lacks the required capability, or exceeds the approved lane count, do not silently fall back to Codex subagents. Reuse an authorized visible Codex lane, use a bounded direct-CEO fallback only when its gate allows, or report `external_provider_unavailable`.
 6. A higher-priority system/developer/host contract may require a Codex subagent for the current request. Treat that as `host-required-exception`, keep it bounded, record why OpenClaw could not be used, and preserve the same evidence/acceptance boundary. User/project policy never overrides a stricter host contract.
 7. Different CEO projects use different project-scoped sessions. Never route CEO Flow work into OpenClaw `Main Session`, another project's session, or a generic unlabeled session.
-8. OpenClaw execution defaults to frontend-visible sessions named `<Project> · <Role>`. Archived or busy sessions fail closed; restore, ownership transfer, or rotation must be explicit.
+8. OpenClaw execution defaults to frontend-visible task sessions named `<Project> · <Role> · <TaskId>`. Archived or busy sessions fail closed; archived task sessions are replaced, never restored for follow-up.
 
 OpenClaw contractor mapping:
 
@@ -132,14 +132,18 @@ Project ID:
 Project display name / identity SHA-256 / canonical root:
 Project CEO owner / dispatch lease:
 Role / lane ID: implementation-main | test-main | research-main | docs-main | audit-main | approved custom lane
-Session key: agent:<agentId>:ceoflow:<projectId>:<laneId>
-Frontend display name / category: <Project> · <Role> / <Project>
+Session key: agent:<agentId>:ceoflow:<projectId>:<laneId>:gNNN:<task-slug>-<hash>
+Frontend display name / category: <Project> · <Role> · <TaskId> / <Project>
 Frontend visibility: required
 Archived session policy: reject
 Native OpenClaw memory: forbidden
 Session roster path:
 Write concurrency: single-writer | read-only
-Session reuse policy: reuse-project-role
+Session reuse policy: single-task
+Session context policy: single-task-zhixia
+Session generation: positive integer
+Archive after receipt: true
+OpenClaw Agent / context profile: ceoflow-executor / minimal-ceoflow
 Approved external session count:
 Allowed scope / write-set:
 Forbidden scope:
@@ -148,7 +152,7 @@ Required typed receipt / ContractorTrace:
 Codex subagent policy: deny | host-required-exception
 ```
 
-Default external session count is one implementation/execution lane per CEO project. Add a separate test, research, docs, or audit session only when role independence, write ownership, or verification isolation requires it. Do not create one OpenClaw session per small task.
+Default logical staffing is one implementation/execution lane per CEO project. Add a separate test, research, docs, or audit lane only when role independence, write ownership, or verification isolation requires it. Each acceptance-sized task gets one short-lived physical session; do not create one session per shell command or keep one session for an entire project.
 
 One project has one write-dispatch owner at a time. Different projects may run concurrently when their roots and resources are isolated; two CEOs must not issue competing writes into the same project/session. OpenClaw sessions separate conversation context but may share Agent-level configuration/tools, so only the CEO-supplied Zhixia packet and project sourceRefs are valid memory.
 
@@ -493,7 +497,7 @@ If a worker finishes in a nested child thread that the CEO did not explicitly au
 
 - A new thread is a separate conversation, not a guaranteed autonomous employee.
 - Existing thread steering requires explicit read/send operations.
-- OpenClaw contractors are short-lived outside-help roles backed by reusable project-role sessions. Codex subagents are denied for normal execution unless a higher-priority host contract requires a bounded exception. Neither is durable project history until summarized into evidence.
+- OpenClaw contractors are short-lived outside-help roles backed by persistent logical lanes and single-task physical sessions. Codex subagents are denied for normal execution unless a higher-priority host contract requires a bounded exception. Neither is durable project history until summarized into evidence and written to Zhixia.
 - Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
 - Dispatch is not complete until the CEO records how results will be harvested.
 - Forked workers may inherit CEO context; clean worker creation is safer for bounded implementation.

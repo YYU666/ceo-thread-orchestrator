@@ -28,7 +28,9 @@ Use this scorecard before accepting pipeline work.
 - [ ] External task schema, task ID, and task SHA-256 match the dispatch envelope.
 - [ ] Provider, adapter, transport, run/session identifiers, actual model/reasoning, and usage availability are recorded.
 - [ ] Exact project ID/root identity, CEO owner/lease, project-scoped session key, frontend display/category, and `frontendVisible=true` match the task.
-- [ ] The session is not `Main Session`, archived, busy, cross-project, or backed by OpenClaw native/global memory; writable work has one active writer.
+- [ ] The physical session is a clean single-task generation, not `Main Session`, archived, busy, cross-project, or backed by OpenClaw native/global memory; writable work has one active writer and terminal sessions are archived.
+- [ ] The task uses the dedicated `ceoflow-executor` Agent with `agentContextProfile=minimal-ceoflow`, not the default personal Agent.
+- [ ] ProviderTaskView, initial/per-request/cumulative token limits, call budget, TPM headroom, and bounded tool-output policy are present and within risk-tier limits.
 - [ ] Receipt validates; no write-set violation, forbidden publish/merge/release, secret, raw session, image/base64, or giant payload is present.
 - [ ] Raw provider output remains cold evidence at a local path; CEO context uses only the compact receipt and inspectable evidence.
 - [ ] External `succeeded` is treated as a completion claim, not CEO acceptance.

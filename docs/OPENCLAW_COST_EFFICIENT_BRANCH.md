@@ -41,23 +41,29 @@ OpenClaw cannot accept its own work, publish, merge, release, change the CEO mod
 
 ## Session And Cost Discipline
 
-- Sessions are namespaced by exact project and role: `agent:<agentId>:ceoflow:<projectId>:<laneId>`.
-- Related tasks reuse the same frontend-visible project-role session instead of creating a new session per task.
+- Logical lanes are namespaced by exact project and role. Each bounded task receives a clean physical generation: `agent:<agentId>:ceoflow:<projectId>:<laneId>:gNNN:<task-slug>-<hash>`.
+- Related tasks reuse the logical lane and Zhixia continuity, not the previous OpenClaw chat. Each terminal task session is archived through the Gateway and follow-up work starts in a new generation.
+- Provider context is compiled into a compact `ProviderTaskView` with hard initial/per-request/cumulative token, call-count, TPM, and tool-output budgets.
+- External execution uses the isolated `ceoflow-executor` Agent with `agentContextProfile=minimal-ceoflow`; the default personal `main` Agent is not a CEO Flow execution surface.
+- `minimal-ceoflow` must match the checked-in per-agent config fragment. A dedicated workspace without explicit Skill/tool allowlists is still context-bloated and is rejected before a provider call.
+- Single-task receipts count cache reads in gross input; a correct answer that exceeds per-request/cumulative/call budgets remains `revise`, not `accept`.
 - One project defaults to one active writer plus optional read-only test/review lanes.
 - Routine work uses the smallest validated adequate route; higher-risk work receives stronger reasoning and Codex assurance.
 - Provider usage is recorded when available. Unknown token/cost remains unknown rather than being invented.
 - Raw reasoning transcripts are not replayed into Codex; harvest uses typed receipts, diffs, tests, artifact paths, and source refs.
 
-## Current MiniMax Policy
+## Current Kimi K3 Tier1 Policy
 
-The bundled validated policy currently uses `minimax/MiniMax-M3` through OpenClaw:
+The current default uses `moonshot/kimi-k3` through the dedicated minimal OpenClaw executor:
 
 - R0 and ordinary R1 execution: thinking `off`;
 - R1 research/review and R2/R3 bounded execution: thinking `adaptive`;
+- no more than three active K3 tasks across projects and one writer per project;
+- per task: 25k input/request, 90k cumulative input, four provider calls, 300k gross TPM;
 - GPT, cross-provider, and local/Ollama fallback: denied by default;
-- unvalidated models remain disabled until a controlled capability probe passes.
+- Codex remains the acceptance, release, and publishing authority.
 
-Users may configure another provider later, but a provider/model change requires a reviewed policy update rather than silent fallback.
+This stays intentionally below the provider Tier1 ceiling of 50 concurrency, 200 RPM, and 2,000,000 TPM. MiniMax remains an optional reviewed policy, while DeepSeek V4 remains a manual probe candidate and is not an automatic fallback.
 
 ## Transient Network Recovery
 

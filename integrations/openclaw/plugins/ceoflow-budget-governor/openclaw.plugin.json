@@ -1,0 +1,34 @@
+{
+  "id": "ceoflow-budget-governor",
+  "name": "CEO Flow Budget Governor",
+  "description": "Arms task-scoped OpenClaw budgets, blocks excess tool calls, aborts runaway runs, and emits compact authoritative telemetry.",
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "gatewayMethods": [
+      "ceoflow.budget.arm",
+      "ceoflow.budget.status",
+      "ceoflow.budget.clear"
+    ],
+    "hooks": [
+      "before_agent_run",
+      "llm_input",
+      "model_call_started",
+      "llm_output",
+      "before_tool_call",
+      "after_tool_call",
+      "agent_end"
+    ]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "executorAgentId": {
+        "type": "string",
+        "default": "ceoflow-executor"
+      }
+    }
+  }
+}
