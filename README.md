@@ -33,6 +33,28 @@ Use CEO Flow to manage this project goal until it is accepted, blocked, or super
 
 For safer first tests, use the smoke prompts in [examples/smoke-prompts.md](examples/smoke-prompts.md).
 
+## Execution Surfaces
+
+CEO Flow keeps Codex internal multi-thread execution as its native path. This
+branch also supports an optional hybrid path in which the Codex CEO sends one
+bounded task to Codex Multi-Model Desktop (CMMD), validates a Host-owned typed
+receipt, and remains the only acceptance and publishing authority.
+
+- `codex-internal`: reusable Codex implementation/review/QA lanes.
+- `cmmd`: currently optional R0 read-only runs through the v2 task, Context
+  View, budget, and receipt contracts. R1 bounded writing is documented as a
+  future gate but remains unavailable in the bundled R0-only Context View
+  snapshot.
+- OpenClaw: historical branch material only; it is not a default, dependency,
+  retry target, or fallback in the CMMD hybrid path.
+
+An explicit request to use Codex internal threads always remains valid. CMMD is
+fail-closed when it is unavailable, contract-incompatible, or lacks readiness
+for the requested risk tier; the CEO may then make a new, explicit routing
+decision rather than silently switching executors. See
+[CMMD Hybrid Execution](skills/ceo-thread-orchestrator/references/cmmd-execution.md)
+and [branch rationale](docs/CMMD_HYBRID_BRANCH.md).
+
 ## What It Does
 
 - Keeps the current Codex thread as the high-reasoning CEO lane.
@@ -232,6 +254,8 @@ Knowledge provider modes:
 | No thread tools | Works as a planning, task-card, document-first review, and acceptance discipline. It must not pretend to create worker lanes. |
 | Manual copy/paste lanes only | Writes task cards, memory packets, and review reports as documents so a user can relay them manually. |
 | Codex app thread tools available | Can create, read, reuse, steer, and harvest specialist lanes when the tool contract and user/project authorization allow it. |
+| CMMD not installed or not enabled | Uses Codex internal lanes normally; CMMD is optional and no external execution is implied. |
+| CMMD enabled with matching readiness | May dispatch one bounded v2 R0 run, then requires Codex CEO receipt/evidence review. R1 remains blocked until an R1-capable Context View and production evidence are accepted. |
 | Different model lists across threads, subagents, and automations | Runs capability discovery per surface and resolves abstract `fast`, `balanced`, `frontier`, or `inherit` classes against the live tool contract. |
 | No model selection controls | States the intended model/reasoning lane, then uses the closest available mechanism without pretending to set unavailable controls. |
 | No automations or heartbeats | Leaves a concrete next harvest action in the report instead of creating a monitor. |
@@ -260,6 +284,7 @@ ceo-thread-orchestrator/
 │       ├── agents/openai.yaml
 │       ├── references/
 │       │   ├── ceo-autopilot.md
+│       │   ├── cmmd-execution.md
 │       │   ├── context-memory.md
 │       │   ├── flowskill-hook.md
 │       │   ├── guardian-history.md
@@ -280,6 +305,7 @@ ceo-thread-orchestrator/
 │       │   ├── review_handoff.yaml
 │       │   └── scorecard.md
 │       └── scripts/
+│           ├── validate_cmmd_exchange.py
 │           ├── validate_pipeline.py
 │           └── scorecard_handoff.py
 ├── examples/
@@ -296,6 +322,7 @@ ceo-thread-orchestrator/
 - [Release gate evidence](docs/CEO_FLOW_RELEASE_GATE_2026-06-11.md)
 - [E2E behavior smoke protocol](docs/CEO_FLOW_E2E_BEHAVIOR_SMOKE_PROTOCOL_2026-07-07.md)
 - [Zhixia 0.9.0 Memory Core compatibility report](docs/smoke/CEO_FLOW_ZHIXIA_090_MEMORY_CORE_COMPAT_REPORT_2026-07-16.md)
+- [CMMD hybrid compatibility report](docs/smoke/CEO_FLOW_CMMD_HYBRID_COMPAT_REPORT_2026-07-27.md)
 - [Smoke prompts](examples/smoke-prompts.md)
 - [Pipeline contract reference](skills/ceo-thread-orchestrator/references/pipeline-contract.md)
 - [Operating playbook](skills/ceo-thread-orchestrator/references/operating-playbook.md)

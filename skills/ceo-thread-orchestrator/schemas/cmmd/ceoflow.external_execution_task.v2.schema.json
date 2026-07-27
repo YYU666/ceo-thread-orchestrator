@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.local/ceoflow.external_execution_task.v2.schema.json",
+  "title": "CEO Flow external execution task v2 R0/R1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "taskId",
+    "taskSha256",
+    "projectId",
+    "projectIdentitySha256",
+    "laneRole",
+    "projectRoleThreadId",
+    "runId",
+    "executionEpoch",
+    "runReservationId",
+    "contextViewId",
+    "contextViewSha256",
+    "contextViewCompiledAt",
+    "canonicalRoot",
+    "workspace",
+    "riskTier",
+    "route",
+    "objective",
+    "acceptance",
+    "sourceRefs",
+    "readContract",
+    "budgets",
+    "writeSet",
+    "authorizationLeaseRequired",
+    "providerContextPolicy",
+    "visibleThreadPolicy",
+    "forbiddenPayloadsPresent"
+  ],
+  "properties": {
+    "schema": { "const": "ceoflow.external_execution_task.v2" },
+    "taskId": { "$ref": "#/$defs/id" },
+    "taskSha256": { "$ref": "#/$defs/sha256" },
+    "projectId": { "$ref": "#/$defs/id" },
+    "projectIdentitySha256": { "$ref": "#/$defs/sha256" },
+    "laneRole": { "$ref": "#/$defs/laneRole" },
+    "projectRoleThreadId": { "$ref": "#/$defs/id" },
+    "runId": { "$ref": "#/$defs/id" },
+    "executionEpoch": { "type": "integer", "minimum": 1 },
+    "runReservationId": { "$ref": "#/$defs/id" },
+    "contextViewId": { "$ref": "#/$defs/id" },
+    "contextViewSha256": { "$ref": "#/$defs/sha256" },
+    "contextViewCompiledAt": { "type": "string", "format": "date-time" },
+    "canonicalRoot": { "$ref": "#/$defs/absoluteWindowsPath" },
+    "workspace": { "$ref": "#/$defs/workspace" },
+    "riskTier": { "enum": ["R0", "R1"] },
+    "route": { "$ref": "#/$defs/route" },
+    "objective": { "type": "string", "minLength": 1, "maxLength": 4000 },
+    "acceptance": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": { "type": "string", "minLength": 1, "maxLength": 1000 }
+    },
+    "sourceRefs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/sourceRef" }
+    },
+    "readContract": { "$ref": "#/$defs/readContract" },
+    "budgets": { "$ref": "#/$defs/r1Budgets" },
+    "writeSet": { "type": "array", "maxItems": 8, "uniqueItems": true, "items": { "$ref": "#/$defs/r1RelativePath" } },
+    "authorizationLeaseRequired": { "type": "boolean" },
+    "authorizationLeaseId": { "$ref": "#/$defs/id" },
+    "commandAllowlist": {
+      "type": "array",
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/commandAllowlistEntry" }
+    },
+    "providerContextPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "nativeMemory", "conversationReuse"],
+      "properties": {
+        "authority": { "const": "cmmd_compiled_view" },
+        "nativeMemory": { "const": "disabled-required" },
+        "conversationReuse": { "const": "per-run-none" }
+      }
+    },
+    "visibleThreadPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archiveAfterReceipt", "terminalClosesVisibleThread"],
+      "properties": {
+        "archiveAfterReceipt": { "const": false },
+        "terminalClosesVisibleThread": { "const": false }
+      }
+    },
+    "forbiddenPayloadsPresent": { "const": false }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "workspace": {
+            "required": ["mode"],
+            "properties": { "mode": { "const": "existing-codex-worktree-readonly" } }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "workspace": { "required": ["mode", "baseline", "executionRoot", "gitCommonDir", "branch"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "riskTier": { "const": "R0" } }, "required": ["riskTier"] },
+      "then": {
+        "properties": {
+          "budgets": { "$ref": "#/$defs/r0Budgets" },
+          "writeSet": { "maxItems": 0 },
+          "authorizationLeaseRequired": { "const": false },
+          "commandAllowlist": { "maxItems": 0 }
+        },
+        "not": { "required": ["authorizationLeaseId"] }
+      },
+      "else": {
+        "required": ["authorizationLeaseId", "commandAllowlist"],
+        "properties": {
+          "budgets": { "$ref": "#/$defs/r1Budgets" },
+          "writeSet": { "minItems": 1, "maxItems": 8 },
+          "authorizationLeaseRequired": { "const": true },
+          "commandAllowlist": {
+            "minItems": 1,
+            "contains": {
+              "required": ["purpose"],
+              "properties": { "purpose": { "const": "verification" } }
+            },
+            "minContains": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "laneRole": { "enum": ["ceo", "implementation", "review", "qa", "research", "memory", "custom"] },
+    "absoluteWindowsPath": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 1024,
+      "pattern": "^(?:[A-Za-z]:[\\\\/]|\\\\\\\\)"
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "baseline"],
+      "properties": {
+        "mode": { "enum": ["registered-readonly", "existing-codex-worktree-readonly"] },
+        "baseline": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "executionRoot": { "$ref": "#/$defs/absoluteWindowsPath" },
+        "gitCommonDir": { "$ref": "#/$defs/absoluteWindowsPath" },
+        "branch": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "fallback", "retry"],
+      "properties": {
+        "provider": { "$ref": "#/$defs/id" },
+        "model": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "fallback": { "const": "deny" },
+        "retry": { "const": 0 }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "ranges"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*(?:^|/|\\\\)\\.\\.(?:/|\\\\|$)).+"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "ranges": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/sourceRange" }
+        }
+      }
+    },
+    "sourceRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "startLine", "endLine"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "startLine": { "type": "integer", "minimum": 1, "maximum": 10000000 },
+        "endLine": { "type": "integer", "minimum": 1, "maximum": 10000000 }
+      }
+    },
+    "readContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRefAllowlist", "maxFiles", "maxRanges", "maxSearchMatches", "maxBytesPerToolResult", "maxTotalSourceBytes"],
+      "properties": {
+        "sourceRefAllowlist": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "maxFiles": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "maxRanges": { "type": "integer", "minimum": 1, "maximum": 16 },
+        "maxSearchMatches": { "type": "integer", "minimum": 1, "maximum": 50 },
+        "maxBytesPerToolResult": { "type": "integer", "minimum": 1, "maximum": 12000 },
+        "maxTotalSourceBytes": { "type": "integer", "minimum": 1, "maximum": 12000 },
+        "searchFirst": { "type": "boolean" }
+      }
+    },
+    "r1RelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*(?:^|/)[a-z0-9._@+-]*\\.(?:/|$))(?!.*(?:^|/)(?:con|prn|aux|nul|clock\\$|com[1-9]|lpt[1-9])(?:\\.[a-z0-9._@+-]+)?(?:/|$))(?!.*(?:^|/)(?:(?:node_modules|bower_components|jspm_packages|vendor|vendors|dependency|dependencies|deps|third_party|third-party|dist|build|out|output|coverage|generated|release|target|cache|caches|tmp|temp|\\.git|\\.hg|\\.svn|\\.cache|\\.ssh|\\.codex-knowledge|\\.ceoflow|\\.codex-control)|(?:(?:credentials?|secrets?|sessions?|controls?|knowledge|private|tokens?|password|api[_-]?key)(?:[._-][a-z0-9._@+-]*)?|(?:\\.env|\\.npmrc|\\.pypirc)(?:[._-][a-z0-9._@+-]*)?|(?:id_rsa|id_ed25519)(?:[._-][a-z0-9._@+-]*)?))(?:/|$))[a-z0-9._@+-]+(?:/[a-z0-9._@+-]+)*$"
+    },
+    "commandAllowlistEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "executable", "args"],
+      "properties": {
+        "purpose": { "enum": ["command", "verification"] },
+        "executable": { "const": "node" },
+        "args": { "type": "array", "minItems": 2, "maxItems": 2 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "purpose": { "const": "command" } }, "required": ["purpose"] },
+          "then": {
+            "properties": {
+              "args": { "prefixItems": [{ "const": "--check" }, { "$ref": "#/$defs/r1RelativePath" }], "items": false }
+            }
+          },
+          "else": {
+            "properties": {
+              "args": { "prefixItems": [{ "const": "--test" }, { "$ref": "#/$defs/r1RelativePath" }], "items": false }
+            }
+          }
+        }
+      ]
+    },
+    "r0Budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxModelRequests", "maxToolCalls", "maxInputTokensPerRequest", "maxCumulativeInputTokens", "maxCumulativeToolResultBytes", "maxWallTimeMs"],
+      "properties": {
+        "maxModelRequests": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "maxToolCalls": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "maxInputTokensPerRequest": { "type": "integer", "minimum": 1, "maximum": 12000 },
+        "maxCumulativeInputTokens": { "type": "integer", "minimum": 1, "maximum": 20000 },
+        "maxCumulativeToolResultBytes": { "type": "integer", "minimum": 1, "maximum": 12000 },
+        "maxWallTimeMs": { "type": "integer", "minimum": 1, "maximum": 180000 }
+      }
+    },
+    "r1Budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxModelRequests", "maxToolCalls", "maxInputTokensPerRequest", "maxCumulativeInputTokens", "maxCumulativeToolResultBytes", "maxWallTimeMs"],
+      "properties": {
+        "maxModelRequests": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "maxToolCalls": { "type": "integer", "minimum": 1, "maximum": 16 },
+        "maxInputTokensPerRequest": { "type": "integer", "minimum": 1, "maximum": 16000 },
+        "maxCumulativeInputTokens": { "type": "integer", "minimum": 1, "maximum": 48000 },
+        "maxCumulativeToolResultBytes": { "type": "integer", "minimum": 1, "maximum": 48000 },
+        "maxWallTimeMs": { "type": "integer", "minimum": 1, "maximum": 600000 }
+      }
+    }
+  }
+}

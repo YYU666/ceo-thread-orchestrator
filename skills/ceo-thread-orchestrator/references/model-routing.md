@@ -162,6 +162,16 @@ Reuse an established thread's current model/reasoning by default. Override it on
 
 Do not assume a visible-thread create/send tool supports the same models as the subagent tool. Resolve the class independently for that surface.
 
+### CMMD External Runs
+
+CMMD is an optional execution surface, not the CEO model router. Resolve its
+Provider/model against current CMMD capability evidence and the admitted risk
+tier. Do not infer support from a configured model name alone. The current v2
+CMMD contract uses `fallback=deny` and `retry=0`; a successful receipt whose
+actual Provider/model differs from the task is not acceptable. Missing or stale
+capability/readiness evidence fails closed for that CMMD task but does not
+disable Codex internal routing. See `cmmd-execution.md`.
+
 ### Automations
 
 Automations have their own model/reasoning contract. Choose a model appropriate to the repeated task, not the CEO thread. Lightweight monitoring and status checks should not default to a frontier profile.

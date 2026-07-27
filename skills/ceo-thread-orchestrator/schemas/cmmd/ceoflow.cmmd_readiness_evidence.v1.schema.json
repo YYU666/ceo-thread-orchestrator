@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.local/ceoflow.cmmd_readiness_evidence.v1.schema.json",
+  "title": "CEO Flow CMMD readiness evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "authority",
+    "projectId",
+    "projectIdentitySha256",
+    "provider",
+    "model",
+    "state",
+    "admittedRiskTiers",
+    "contractSnapshot",
+    "observedAt",
+    "expiresAt",
+    "evidenceRefs"
+  ],
+  "properties": {
+    "schema": { "const": "ceoflow.cmmd_readiness_evidence.v1" },
+    "authority": { "enum": ["cmmd-host", "independent-review"] },
+    "projectId": { "$ref": "#/$defs/id" },
+    "projectIdentitySha256": { "$ref": "#/$defs/sha256" },
+    "provider": { "$ref": "#/$defs/id" },
+    "model": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "state": { "enum": ["live_smoke_ready", "production_acceptance_ready"] },
+    "admittedRiskTiers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": { "enum": ["R0", "R1"] }
+    },
+    "contractSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["taskV2", "receiptV2", "authorizationLeaseV1", "contextViewV1"],
+      "properties": {
+        "taskV2": { "$ref": "#/$defs/sha256" },
+        "receiptV2": { "$ref": "#/$defs/sha256" },
+        "authorizationLeaseV1": { "$ref": "#/$defs/sha256" },
+        "contextViewV1": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "evidenceRefs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/sourceRef" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*(?:^|/|\\\\)\\.\\.(?:/|\\\\|$)).+"
+        },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

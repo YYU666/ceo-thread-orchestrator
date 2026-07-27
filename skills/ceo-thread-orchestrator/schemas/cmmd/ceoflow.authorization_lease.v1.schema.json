@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.local/ceoflow.authorization_lease.v1.schema.json",
+  "title": "CEO Flow host authorization lease v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "authority",
+    "leaseId",
+    "taskId",
+    "taskSha256",
+    "projectId",
+    "projectIdentitySha256",
+    "projectRoleThreadId",
+    "runId",
+    "executionEpoch",
+    "writeSetSha256",
+    "commandAllowlistSha256",
+    "issuedAt",
+    "expiresAt",
+    "status",
+    "consumedAt"
+  ],
+  "properties": {
+    "schema": { "const": "ceoflow.authorization_lease.v1" },
+    "authority": { "const": "host-only" },
+    "leaseId": { "$ref": "#/$defs/id" },
+    "taskId": { "$ref": "#/$defs/id" },
+    "taskSha256": { "$ref": "#/$defs/sha256" },
+    "projectId": { "$ref": "#/$defs/id" },
+    "projectIdentitySha256": { "$ref": "#/$defs/sha256" },
+    "projectRoleThreadId": { "$ref": "#/$defs/id" },
+    "runId": { "$ref": "#/$defs/id" },
+    "executionEpoch": { "type": "integer", "minimum": 1 },
+    "writeSetSha256": { "$ref": "#/$defs/sha256" },
+    "commandAllowlistSha256": { "$ref": "#/$defs/sha256" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["active", "consumed", "expired", "revoked"] },
+    "consumedAt": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "format": "date-time" }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "consumed" } }, "required": ["status"] },
+      "then": { "properties": { "consumedAt": { "type": "string", "format": "date-time" } } },
+      "else": { "properties": { "consumedAt": { "type": "null" } } }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

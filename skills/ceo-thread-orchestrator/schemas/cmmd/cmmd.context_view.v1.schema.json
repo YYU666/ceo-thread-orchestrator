@@ -1,0 +1,558 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.local/cmmd.context_view.v1.schema.json",
+  "title": "CMMD bounded Context View v1 with directed two-stage commitment",
+  "description": "contextViewSha256 is the sole formal Context View content commitment. Its domain-separated canonical basis excludes only contextViewSha256 itself and identity.taskSha256. identity.taskSha256 is a validated external back-reference to the finalized ceoflow.external_execution_task.v2, preventing a hash cycle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "identity",
+    "compiledAt",
+    "layers",
+    "sourceRefs",
+    "estimates",
+    "budgets",
+    "warmAnchorTrigger",
+    "providerContextPolicy",
+    "forbiddenPayloadsPresent",
+    "contextViewSha256"
+  ],
+  "properties": {
+    "schema": { "const": "cmmd.context_view.v1" },
+    "identity": { "$ref": "#/$defs/identity" },
+    "compiledAt": { "allOf": [{ "$ref": "#/$defs/canonicalDateTime" }], "description": "Must equal identity.contextViewCompiledAt and the finalized task contextViewCompiledAt." },
+    "layers": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "prefixItems": [
+        { "$ref": "#/$defs/taskLayer" },
+        { "$ref": "#/$defs/workspaceLayer" },
+        { "$ref": "#/$defs/hotLayer" },
+        { "$ref": "#/$defs/warmLayer" },
+        { "$ref": "#/$defs/skillLayer" },
+        { "$ref": "#/$defs/coldRefsLayer" },
+        { "$ref": "#/$defs/currentRunLayer" }
+      ],
+      "items": false
+    },
+    "sourceRefs": {
+      "type": "array",
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/coldRef" }
+    },
+    "estimates": { "$ref": "#/$defs/estimates" },
+    "budgets": { "$ref": "#/$defs/budgets" },
+    "warmAnchorTrigger": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/compileTrigger" }
+      ]
+    },
+    "providerContextPolicy": { "$ref": "#/$defs/providerContextPolicy" },
+    "forbiddenPayloadsPresent": { "const": false },
+    "contextViewSha256": { "allOf": [{ "$ref": "#/$defs/sha256" }], "description": "Domain-separated SHA-256 of every semantic Context View field except this field and identity.taskSha256." }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "warmAnchorTrigger": { "type": "null" } }, "required": ["warmAnchorTrigger"] },
+      "then": {
+        "properties": {
+          "layers": { "prefixItems": [{}, {}, {}, { "properties": { "payload": { "maxItems": 0 } } }] }
+        }
+      },
+      "else": {
+        "properties": {
+          "layers": { "prefixItems": [{}, {}, {}, { "properties": { "payload": { "minItems": 1 } } }] }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "canonicalDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*[/\\\\]{2})(?!.*(?:^|[/\\\\])\\.{1,2}(?:[/\\\\]|$))(?!.*[/\\\\]$)[^\\r\\n]+$"
+    },
+    "compileTrigger": {
+      "enum": [
+        "bootstrap",
+        "resume",
+        "takeover",
+        "new_module",
+        "new_wave",
+        "new_task_run",
+        "new_lane",
+        "major_review",
+        "user_direction_correction",
+        "conflict",
+        "evidence_gap",
+        "thread_recovery",
+        "terminal_writeback",
+        "user_rule_change"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contextViewId", "contextViewCompiledAt", "projectRoleThreadId", "runId", "taskId", "taskSha256", "executionEpoch"],
+      "properties": {
+        "contextViewId": { "$ref": "#/$defs/id" },
+        "contextViewCompiledAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "projectRoleThreadId": { "$ref": "#/$defs/id" },
+        "runId": { "$ref": "#/$defs/id" },
+        "taskId": { "$ref": "#/$defs/id" },
+        "taskSha256": { "allOf": [{ "$ref": "#/$defs/sha256" }], "description": "External back-reference to the finalized G2 task hash; deliberately excluded from the Context View commitment basis." },
+        "executionEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectRoleThreadId", "taskId", "runId", "executionEpoch", "contextViewId", "contextViewCompiledAt",
+        "objective", "acceptance", "riskTier", "route", "sourceRefs", "readContract",
+        "permissions", "writeSet", "providerContextPolicy", "forbiddenPayloadsPresent"
+      ],
+      "properties": {
+        "projectRoleThreadId": { "$ref": "#/$defs/id" },
+        "taskId": { "$ref": "#/$defs/id" },
+        "runId": { "$ref": "#/$defs/id" },
+        "executionEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "contextViewId": { "$ref": "#/$defs/id" },
+        "contextViewCompiledAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "objective": { "type": "string", "minLength": 1, "maxLength": 4000 },
+        "acceptance": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        },
+        "riskTier": { "const": "R0" },
+        "route": { "$ref": "#/$defs/taskRoute" },
+        "sourceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/taskSourceRef" }
+        },
+        "readContract": { "$ref": "#/$defs/readContract" },
+        "permissions": { "$ref": "#/$defs/taskPermissions" },
+        "writeSet": {
+          "type": "array",
+          "maxItems": 0,
+          "items": { "$ref": "#/$defs/relativePath" }
+        },
+        "providerContextPolicy": { "$ref": "#/$defs/providerContextPolicy" },
+        "forbiddenPayloadsPresent": { "const": false }
+      }
+    },
+    "taskRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "fallback", "retry"],
+      "properties": {
+        "provider": { "$ref": "#/$defs/id" },
+        "model": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "fallback": { "const": "deny" },
+        "retry": { "const": 0 }
+      }
+    },
+    "taskSourceRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "startLine", "endLine"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "startLine": { "type": "integer", "minimum": 1, "maximum": 10000000 },
+        "endLine": { "type": "integer", "minimum": 1, "maximum": 10000000 }
+      }
+    },
+    "taskSourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "ranges"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "ranges": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/taskSourceRange" }
+        }
+      }
+    },
+    "readContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRefAllowlist", "maxFiles", "maxRanges", "maxSearchMatches", "maxBytesPerToolResult", "maxTotalSourceBytes"],
+      "properties": {
+        "sourceRefAllowlist": { "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+        "maxFiles": { "type": "integer", "minimum": 1 },
+        "maxRanges": { "type": "integer", "minimum": 1 },
+        "maxSearchMatches": { "type": "integer", "minimum": 1 },
+        "maxBytesPerToolResult": { "type": "integer", "minimum": 1 },
+        "maxTotalSourceBytes": { "type": "integer", "minimum": 1 },
+        "searchFirst": { "type": "boolean" }
+      }
+    },
+    "taskPermissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceRefAllowlist", "writeSet", "authorizationLeaseRequired"],
+      "properties": {
+        "sourceRefAllowlist": { "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+        "writeSet": { "type": "array", "maxItems": 0 },
+        "authorizationLeaseRequired": { "const": false }
+      }
+    },
+    "workspaceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "workspaceSymbol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "name", "kind"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "kind": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "diff", "files", "symbols"],
+      "properties": {
+        "baseline": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "diff": { "type": "string", "maxLength": 32768 },
+        "files": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/workspaceFile" }
+        },
+        "symbols": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/workspaceSymbol" }
+        }
+      }
+    },
+    "memoryRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "content", "authority", "sourceRefs", "attestation"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "content": { "type": "string", "minLength": 1, "maxLength": 12000 },
+        "authority": { "enum": ["canonical", "accepted-evidence", "user-direction", "advisory"] },
+        "sourceRefs": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "attestation": { "$ref": "#/$defs/memoryAttestation" }
+      }
+    },
+    "memoryAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recordId", "layer", "sourceSha256", "contentSha256", "authority", "authorityEvidenceSha256", "checkedAt", "expiresAt", "evidenceDigest"],
+      "properties": {
+        "recordId": { "$ref": "#/$defs/id" },
+        "layer": { "enum": ["hot", "warm"] },
+        "sourceSha256": { "$ref": "#/$defs/sha256" },
+        "contentSha256": { "$ref": "#/$defs/sha256" },
+        "authority": { "enum": ["canonical", "accepted-evidence", "user-direction", "advisory"] },
+        "authorityEvidenceSha256": { "$ref": "#/$defs/sha256" },
+        "checkedAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "expiresAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "evidenceDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256", "allowed", "contract", "sourceRefs", "attestation"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "allowed": { "const": true },
+        "contract": { "type": "string", "minLength": 1, "maxLength": 8000 },
+        "sourceRefs": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "attestation": { "$ref": "#/$defs/skillAttestation" }
+      }
+    },
+    "skillAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skillId", "sourceSha256", "contractSha256", "allowed", "allowlistEvidenceSha256", "checkedAt", "expiresAt", "evidenceDigest"],
+      "properties": {
+        "skillId": { "$ref": "#/$defs/id" },
+        "sourceSha256": { "$ref": "#/$defs/sha256" },
+        "contractSha256": { "$ref": "#/$defs/sha256" },
+        "allowed": { "const": true },
+        "allowlistEvidenceSha256": { "$ref": "#/$defs/sha256" },
+        "checkedAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "expiresAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "evidenceDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "coldRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256", "title", "recordedAt", "index", "kind", "authority"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "recordedAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "index": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["source", "derived_advisory_summary"] },
+        "authority": { "const": "non-authoritative" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "derived_advisory_summary" } }, "required": ["kind"] },
+          "then": {
+            "properties": {
+              "title": { "maxLength": 64, "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._:-]{0,63}$" }
+            }
+          }
+        }
+      ]
+    },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["segmentId", "role", "content"],
+      "properties": {
+        "segmentId": { "$ref": "#/$defs/id" },
+        "role": { "enum": ["user", "assistant"] },
+        "content": { "type": "string", "minLength": 1, "maxLength": 16000 }
+      }
+    },
+    "toolResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["segmentId", "toolName", "content"],
+      "properties": {
+        "segmentId": { "$ref": "#/$defs/id" },
+        "toolName": { "$ref": "#/$defs/id" },
+        "content": { "type": "string", "minLength": 1, "maxLength": 16000 }
+      }
+    },
+    "currentRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectRoleThreadId", "taskId", "runId", "executionEpoch", "contextViewId", "contextViewCompiledAt", "messages", "toolResults"],
+      "properties": {
+        "projectRoleThreadId": { "$ref": "#/$defs/id" },
+        "taskId": { "$ref": "#/$defs/id" },
+        "runId": { "$ref": "#/$defs/id" },
+        "executionEpoch": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 },
+        "contextViewId": { "$ref": "#/$defs/id" },
+        "contextViewCompiledAt": { "$ref": "#/$defs/canonicalDateTime" },
+        "messages": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/message" }
+        },
+        "toolResults": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/toolResult" }
+        }
+      }
+    },
+    "taskLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "task" },
+        "payload": { "$ref": "#/$defs/task" }
+      }
+    },
+    "workspaceLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "workspace" },
+        "payload": { "$ref": "#/$defs/workspace" }
+      }
+    },
+    "hotLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "hot" },
+        "payload": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/memoryRecord" }
+        }
+      }
+    },
+    "warmLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "warm" },
+        "payload": {
+          "type": "array",
+          "maxItems": 32,
+          "items": { "$ref": "#/$defs/memoryRecord" }
+        }
+      }
+    },
+    "skillLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "skill" },
+        "payload": {
+          "type": "array",
+          "maxItems": 16,
+          "items": { "$ref": "#/$defs/skill" }
+        }
+      }
+    },
+    "coldRefsLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "cold_refs" },
+        "payload": {
+          "type": "array",
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/coldRef" }
+        }
+      }
+    },
+    "currentRunLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "payload"],
+      "properties": {
+        "kind": { "const": "current_run" },
+        "payload": { "$ref": "#/$defs/currentRun" }
+      }
+    },
+    "layerEstimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "bytes", "estimatedTokens"],
+      "properties": {
+        "kind": { "enum": ["task", "workspace", "hot", "warm", "skill", "cold_refs", "current_run"] },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "estimatedTokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "estimates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bytes", "deliveredBytes", "estimatedTokens", "layers"],
+      "properties": {
+        "bytes": { "type": "integer", "minimum": 0 },
+        "deliveredBytes": { "type": "integer", "minimum": 0 },
+        "estimatedTokens": { "type": "integer", "minimum": 0 },
+        "layers": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "task" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "workspace" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "hot" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "warm" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "skill" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "cold_refs" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/layerEstimate" }, { "properties": { "kind": { "const": "current_run" } } }] }
+          ],
+          "items": false
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "taskBytes",
+        "workspaceBytes",
+        "hotBytes",
+        "warmBytes",
+        "skillBytes",
+        "coldRefsBytes",
+        "currentRunBytes",
+        "totalBytes"
+      ],
+      "properties": {
+        "taskBytes": { "$ref": "#/$defs/byteBudget" },
+        "workspaceBytes": { "$ref": "#/$defs/byteBudget" },
+        "hotBytes": { "$ref": "#/$defs/byteBudget" },
+        "warmBytes": { "$ref": "#/$defs/byteBudget" },
+        "skillBytes": { "$ref": "#/$defs/byteBudget" },
+        "coldRefsBytes": { "$ref": "#/$defs/byteBudget" },
+        "currentRunBytes": { "$ref": "#/$defs/byteBudget" },
+        "totalBytes": { "$ref": "#/$defs/byteBudget" }
+      }
+    },
+    "byteBudget": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16777216
+    },
+    "providerContextPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "nativeMemory", "conversationReuse"],
+      "properties": {
+        "authority": { "const": "cmmd_compiled_view" },
+        "nativeMemory": { "const": "disabled-required" },
+        "conversationReuse": { "const": "per-run-none" }
+      }
+    }
+  }
+}

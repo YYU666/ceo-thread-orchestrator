@@ -26,6 +26,9 @@ jobs:
       - name: Validator adversarial tests
         run: python -m unittest discover -s tests -v
 
+      - name: CMMD contract snapshot check
+        run: python skills/ceo-thread-orchestrator/scripts/validate_cmmd_exchange.py --check-schemas
+
       - name: Validate bundled pipeline template
         run: python skills/ceo-thread-orchestrator/scripts/validate_pipeline.py skills/ceo-thread-orchestrator/templates/pipeline.yaml --json
 
