@@ -15,6 +15,10 @@ Use this reference when CEO Flow needs a compact, durable state contract for Pro
 ```text
 Program goal:
 Canonical project root:
+ProjectIdentityEnvelope:
+  projectId / canonicalRepoId:
+  canonicalRoot / worktreeRoot:
+  baselineHead / projectIdentitySha256:
 Outcome / launch definition:
 Done criteria:
 Non-goals:
@@ -33,6 +37,8 @@ Memory Runtime result:
   query:
   tokenBudget:
   memoryMode:
+  reported/effective memoryMode:
+  sidecar status / provider diagnostics:
   memoryLayers:
     hot:
     warm:
@@ -254,6 +260,8 @@ Use these fields when a task card needs resumable state:
 
 ```text
 Parent Program Goal ID:
+Task card profile: minimal | standard | R1
+ProjectIdentityEnvelope ref/hash:
 Lane ID:
 Thread operation:
 Interaction surface: CEO-only | user-visible-by-request

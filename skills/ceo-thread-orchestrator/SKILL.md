@@ -33,7 +33,7 @@ Use this 10-step path as the default decision tree. Load detailed references onl
 1. **Frame the request.** Confirm newest request, mode, canonical project root, allowed write-set/worktrees, local instructions, and current tool surface before promising thread orchestration.
 2. **Classify scale and continuity.** Classify project/task scale. For large/program work, complete-product requests, active runtime Goals, takeover, or recovery, run CEO Autopilot; create/update Program Goal Brief, Completion Dashboard, and one runtime Goal when available.
 3. **Load compact context and continuity.** Run Memory Trigger Gate when local project memory exists or the user asks to continue/resume/recover. At takeover, recovery, or major direction correction, run the event-triggered Project Continuity Gate with exact project identity, required role slots, complete mandatory pagination, and trigger-receipt evidence; incomplete or helper-only continuity stays partial and cannot claim `recoveryReady`. Run Warm Anchor and Reference Scan only at their event triggers.
-4. **Guard the workspace.** Verify canonical root, workspace match, repo baseline, dirty budget, worktree readiness, visual-evidence policy, and file ownership before implementation dispatch. Non-reproducible git baseline blocks worktree writers.
+4. **Guard the workspace.** Bind a `ProjectIdentityEnvelope`, then verify canonical root, workspace match, repo baseline, dirty budget, worktree readiness, visual-evidence policy, and file ownership before implementation dispatch. Non-reproducible git baseline blocks worktree writers; a worktree inherits canonical project memory without becoming a new project identity.
 5. **Choose staffing, execution surface, and model route.** After bootstrap, leave CEO-only unless the task is tiny, non-coding, explicitly direct, or routing is unavailable. Codex internal threads/subagents remain the native default and must remain selectable. Use CMMD only when the user or accepted project policy enables it and its capability/readiness/risk/contract gates pass. Decide lane count, single-writer vs parallel, review/UX/QA/memory roles, contractor allowance, capability class/reasoning route, fan-out cost posture, and MVP/full-version continuation. OpenClaw is historical-only, never a default or fallback.
 6. **Dispatch compact, bounded work.** Send Codex task cards or CMMD v2 task envelopes with role, execution surface, write-set, stop condition, callback/receipt policy, no-stall approval profile, context budget, trust boundary, and forbidden payloads. Do not paste raw CEO chat, raw sessions, giant memory files, image/base64/data:image, or self-routing instructions.
 7. **Track one harvest driver.** After dispatch, record exactly one primary harvest driver: active runtime Goal, immediate synchronous harvest, explicit next time, or heartbeat. Worker callbacks are signals, not acceptance proof.
@@ -70,85 +70,28 @@ Default roles:
 
 Default minimum execution is CEO plus one implementation lane. Add neutral review for substantial app-code and high-risk work. Add UX, research, or knowledge only when the task graph needs them.
 
-## Task Card Minimum
+## Task Card Profiles
 
-Send compact task cards. Include optional fields only when relevant.
+Use the smallest profile that safely carries the task: `minimal`, `standard`, or
+future-gated `R1`. Do not send the old full field inventory as a default prompt.
+
+The default `minimal` card is:
 
 ```text
-Task ID:
-Parent goal ID:
-Role:
-Workspace / canonical project root:
-Worktree readiness:
-Repo baseline / dirty budget:
-File ownership:
-Allowed write-set / do not touch:
-Lane ID / planned title:
-Thread operation:
-CEO thread id / callback policy:
-Interaction surface: CEO-only | user-visible-by-request
-Lane visibility: durable-visible | background-contractor
-User contact policy: CEO-mediated
-Escalation route: callback-to-CEO
-Contractor/subagent policy:
-Execution surface: codex-internal | cmmd
-Execution surface selection source / reason:
-CMMD live smoke readiness / production acceptance readiness:
-CMMD risk tier: R0 | R1-future-gated
-CMMD capability evidence refs:
-CMMD readiness evidence packet / source refs:
-CMMD contract schemas / snapshot hashes:
-Project role thread ID / run ID / execution epoch / run reservation ID:
-Task SHA-256 / Context View ID / Context View SHA-256:
-Authorization lease / lease ID / write-set / command allowlist:
-Requested and actual provider/model/reasoning:
-Provider native memory: disabled-required
-Provider conversation reuse: per-run-none
-CMMD receipt path / Host command-test evidence / usage-cost:
-External fallback: deny; failure requires a new CEO routing decision
-Role contamination guard:
-Trust boundary / untrusted input policy:
-Model routing mode / required capability:
-Routing surface / mapping source / available candidates:
-Model requirement: preferred | exact
-Reasoning requirement: preferred | exact
-Requested model or class / reasoning:
-Routing reason / fallback order / cost-latency priority:
-Spending authorization / ceiling / attempt budget:
-Actual model-reasoning / routing result / reason code or skipped reason:
-Memory packet / retrieved source refs:
+Profile: minimal
+Task ID / role:
+ProjectIdentityEnvelope ref:
 Goal:
-Relevant files/docs:
-Architecture invariants / reference scan:
-Depends on / parallel with:
-Acceptance criteria:
-Required verification:
-Visual evidence policy:
-Reference input:
-Screenshot output:
-Manifest required:
-Image budget:
-Thread return format:
-Artifact return policy:
-Forbidden visual payloads:
-CPA/API request body cap:
-Change budget / quality gates:
-Knowledge provider mode:
-Memory Runtime query / context budget:
-Memory Runtime result: memoryMode, memoryLayers, recallPlan, top memory items, retrieved sourceRefs
-Memory skipped or unavailable reason:
-Project Continuity Gate: triggered, reason, role coverage, required slots, exact projectPath/projectId, page/token bounds
-Project Continuity result: covered/missing/conflict/stale/review slots, pages, mandatory returned/total, partial reason, recoveryReady, sourceRefs
-Memory Runtime trigger receipts: retrieve_context, retrieve_precedent, writeback_evidence or unavailable reason
-Runtime event observation: checkpoint, thread invalidation, takeover, user-rule change, receipt/sourceRefs
-Warm Anchor Gate: triggered, reason, warm query, anchor summary, direction check, sourceRefs, cold read
-Memory writeback target / promotion boundary:
-Slice Closure Gate:
-Autonomy level:
-Approval route / command approval profile:
-Allowed command families / commands that must not run:
-Report back with:
+Allowed read/write-set / do not touch:
+Acceptance / verification:
+Stop condition:
+Return: changed files + evidence + risks + next action
 ```
+
+Upgrade to `standard` for ordinary substantial implementation/review work. Use
+`R1` only by referencing the exact admitted versioned CMMD task envelope,
+Context View, lease, schema hashes, and readiness evidence; fields alone never
+enable R1. See `references/task-card-profiles.md` and bundled templates.
 
 Autonomy levels: `advise-only`, `draft-only`, `implement-within-write-set`, `operate-workflow`.
 
@@ -161,6 +104,12 @@ Default packet: newest goal, bounded task card, allowed write-set, verification 
 Knowledge provider modes: `none`, `project-memory`, `memory-runtime`, `history-provider`, `hybrid`. Provider-specific aliases such as local-doc or history-vault tools are optional integrations, not core requirements.
 
 Use compact retrieval before raw chat, broad history, or visual payloads. Old-thread slimming must preserve recallable full history in a Thread History Vault or equivalent source-backed archive before selected-thread compaction is accepted. Cold/raw history stays behind the hard gate.
+
+Treat provider freshness as a claim, not a fact. Missing Memory Core/Memory Fact
+sidecars, stale source mtimes, or duplicate item IDs are visible diagnostics.
+Effective `fallback_stale` memory is advisory only and cannot support a current
+state or `recoveryReady` claim. Run the read-only stack doctor when bootstrap,
+takeover, provider changes, or contradictory packets make readiness uncertain.
 
 ## Structured Trust Boundary
 
@@ -204,6 +153,9 @@ Read only the reference needed for the current task:
 - Pipeline contracts, typed handoffs, and scorecard checks: `references/pipeline-contract.md`.
 - Context governor and memory/reference routing overview: `references/context-memory.md`.
 - Memory Runtime lifecycle, trigger gate, retrieval/writeback, large-file rule, and Hot/Warm/Skill/Cold result contract: `references/memory-runtime.md`.
+- Stack doctor, stable project/worktree identity, stale-memory interpretation, and compatibility receipt: `references/stack-readiness.md`.
+- Minimal/standard/R1 task-card selection and templates: `references/task-card-profiles.md`.
+- Real Codex behavioral forward-test loop and evidence requirements: `references/forward-testing.md`.
 - History-provider old-thread evidence, restore dry-run, compact-session safety, and raw-session gates: `references/guardian-history.md`.
 - Visual evidence, image payload budgets, local artifact policy, and third-party visual request limits: `references/visual-evidence.md`.
 - FlowSkill reusable-skill search/capture/score hook: `references/flowskill-hook.md`.

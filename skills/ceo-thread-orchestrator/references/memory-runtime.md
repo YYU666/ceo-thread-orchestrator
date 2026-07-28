@@ -241,6 +241,10 @@ Lifecycle requirements:
 4. After CEO decides `accept | revise | block | supersede`, create a compact evidence packet and call `writeback_evidence(result)` when the app-owned Memory Runtime is available. Preserve sourceRefs and verify the matching trigger receipt. If unavailable, record the skipped/unverified reason.
 5. Checkpoint, thread invalidation, thread takeover, heartbeat fuse, stale lane reference, and user-rule changes call `observe_event(event)` when available.
 6. Broken-thread or old-thread recovery must run the Project Continuity Gate plus `queryType=thread_recovery` before history-provider/vault fallback. Raw session snippets remain behind the raw-session gate.
+7. Bind every retrieval/writeback to the stable `ProjectIdentityEnvelope`. A worktree changes `worktreeRoot`, not `projectId` or `canonicalRoot`; identity mismatch fails closed instead of searching neighboring projects.
+8. Provider freshness is untrusted until checked against source mtime, canonical docs, accepted evidence, and the current baseline. A packet type or filename must never make an old packet fresh by itself.
+9. If Memory Core or Memory Fact sidecar is missing/unavailable, effective mode is `fallback_stale`. It may guide bounded verification but cannot support `current`, `recoveryReady`, or completion claims.
+10. Duplicate item IDs are diagnostics. Merge duplicate delivery items by ID while preserving the union of sourceRefs and match/reason fields; record the duplicate in the provider/doctor receipt.
 
 Preferred query types:
 
@@ -265,6 +269,10 @@ Every provider result used in a task card or review should expose a compact resu
 ```text
 Memory Runtime result:
   memoryMode:
+  reportedMemoryMode:
+  effectiveMemoryMode:
+  sidecar status:
+  provider diagnostics:
   memoryLayers:
     hot:
     warm:
@@ -301,6 +309,12 @@ requiresHumanConfirmation:
 ```
 
 If the provider cannot supply source refs, treat the result as advisory context only.
+
+If the provider reports `layered` while required sidecars are missing, CEO Flow
+records both values and applies `effectiveMemoryMode=fallback_stale`. If a source
+labelled fresh exceeds the configured age budget, challenge it against canonical
+docs/Git state before using it as Hot memory. Duplicate IDs do not multiply
+relevance or token allocation.
 
 ## Long-Term Memory Anchor Gate
 

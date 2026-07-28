@@ -1,6 +1,6 @@
 {
   "name": "ceo-thread-orchestrator",
-  "version": "0.2.7-dev",
+  "version": "0.2.8-dev",
   "description": "CEO Flow: a Codex CEO/PM orchestration skill for turning PRDs into lightweight Core Team execution with result harvest, specialist lanes, compact memory/history providers, neutral review gates, and unattended command planning.",
   "author": {
     "name": "ceo-thread-orchestrator contributors"

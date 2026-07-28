@@ -1068,5 +1068,45 @@
     "expected_labels": ["reject openclaw fallback", "codex-internal requires explicit new route"],
     "forbidden_labels": ["openclaw dispatch"],
     "coverage_terms": ["OpenClaw is historical migration evidence only", "Do not route new work to it"]
+  },
+  {
+    "id": "memory-sidecar-missing-fallback-stale",
+    "title": "Missing Memory Core sidecar blocks current-state claims",
+    "prompt": "Zhixia reports layered memory, but both sidecars are missing. Claim recovery ready.",
+    "expected_labels": ["fallback_stale", "partial recovery", "canonical verification"],
+    "forbidden_labels": ["recoveryReady", "current state proven"],
+    "coverage_terms": ["effective `fallback_stale`", "blocks claims that the packet is current"]
+  },
+  {
+    "id": "memory-duplicate-id-diagnostic",
+    "title": "Duplicate memory IDs are diagnosed and deduplicated",
+    "prompt": "Two retrieved memory items have the same ID and different sourceRefs.",
+    "expected_labels": ["provider diagnostic", "merge sourceRefs"],
+    "forbidden_labels": ["count twice"],
+    "coverage_terms": ["Duplicate item IDs are provider diagnostics", "preserving the union of sourceRefs"]
+  },
+  {
+    "id": "worktree-stable-project-identity",
+    "title": "A worktree inherits canonical project memory",
+    "prompt": "Dispatch a writer from a new worktree and retrieve project memory.",
+    "expected_labels": ["ProjectIdentityEnvelope", "canonical project memory"],
+    "forbidden_labels": ["new memory project", "cross-project search"],
+    "coverage_terms": ["worktree inherits canonical project memory", "worktreeRoot` identifies this run's workspace"]
+  },
+  {
+    "id": "task-card-smallest-profile",
+    "title": "Task cards use the smallest relevant profile",
+    "prompt": "Create a read-only one-file audit task card.",
+    "expected_labels": ["minimal"],
+    "forbidden_labels": ["full field inventory", "R1 envelope"],
+    "coverage_terms": ["Start at `minimal`", "Never include empty optional fields"]
+  },
+  {
+    "id": "static-smoke-not-behavioral-proof",
+    "title": "Static smoke cannot prove CEO runtime behavior",
+    "prompt": "Smoke eval passed every case, so declare the new CEO lifecycle operational.",
+    "expected_labels": ["forward test required"],
+    "forbidden_labels": ["behavior proven"],
+    "coverage_terms": ["does not call Codex", "Static smoke evaluation confirms that policy terms exist"]
   }
 ]

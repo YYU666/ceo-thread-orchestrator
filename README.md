@@ -277,6 +277,8 @@ ceo-thread-orchestrator/
 │   ├── check_release_state.py
 │   └── validate.ps1
 ├── tests/
+│   ├── test_cmmd_contract.py
+│   ├── test_stack_doctor.py
 │   └── test_validators.py
 ├── skills/
 │   └── ceo-thread-orchestrator/
@@ -295,16 +297,23 @@ ceo-thread-orchestrator/
 │       │   ├── quality-gate.md
 │       │   ├── repo-baseline.md
 │       │   ├── self-harness.md
+│       │   ├── stack-readiness.md
 │       │   ├── state-schema.md
+│       │   ├── task-card-profiles.md
 │       │   ├── thread-ops.md
 │       │   ├── visual-evidence.md
+│       │   ├── forward-testing.md
 │       │   └── open-source-readiness.md
 │       ├── templates/
 │       │   ├── pipeline.yaml
 │       │   ├── typed_handoff.yaml
 │       │   ├── review_handoff.yaml
+│       │   ├── task-card-minimal.md
+│       │   ├── task-card-standard.md
+│       │   ├── task-card-r1.md
 │       │   └── scorecard.md
 │       └── scripts/
+│           ├── stack_doctor.py
 │           ├── validate_cmmd_exchange.py
 │           ├── validate_pipeline.py
 │           └── scorecard_handoff.py
@@ -344,6 +353,7 @@ Public, reproducible checks:
 python -m pip install -r requirements-dev.txt
 python scripts\smoke_eval.py
 python -m unittest discover -s tests -v
+python skills\ceo-thread-orchestrator\scripts\stack_doctor.py --project-root . --no-memory-probe --json
 python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
@@ -356,7 +366,15 @@ Optional isolated Zhixia 0.9.0 provider smoke, when the local Zhixia app source 
 node scripts\zhixia_memory_core_recovery_probe.cjs <zhixia-app-root> <ceo-flow-repo-root>
 ```
 
-`smoke_eval.py` is a static documentation coverage check. It verifies that smoke cases are well formed and that policy terms exist in the skill/reference corpus; it is not an LLM behavior evaluation. The adversarial validator tests in `tests/` check executable guardrails for typed handoffs and pipeline contracts.
+`smoke_eval.py` is a static documentation coverage check. It verifies that smoke cases are well formed and that policy terms exist in the skill/reference corpus; it is not an LLM behavior evaluation. The adversarial validator tests in `tests/` check executable guardrails for typed handoffs, pipeline contracts, stale-memory fail-closed behavior, stable worktree identity, and task-card profiles. Use the [behavioral forward-test contract](skills/ceo-thread-orchestrator/references/forward-testing.md) before claiming that Codex follows a new lifecycle rule.
+
+For a real project readiness diagnosis, omit `--no-memory-probe` and provide the canonical repository separately when the current workspace is a worktree:
+
+```powershell
+python skills\ceo-thread-orchestrator\scripts\stack_doctor.py --project-root <worktree> --canonical-root <canonical-repo> --json
+```
+
+The doctor is read-only. It reports source/installed hashes, Zhixia helper and sidecar state, effective stale/fallback memory status, project identity, CMMD control/schema visibility, and exact skipped reasons. It never starts CMMD or enables R1.
 
 Optional Codex-internal checks, when you have the corresponding local validator skills installed:
 
