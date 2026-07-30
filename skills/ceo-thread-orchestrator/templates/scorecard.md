@@ -15,6 +15,7 @@ Use this scorecard before accepting pipeline work.
 - [ ] Changed files are inside the allowed write-set.
 - [ ] Forbidden paths are not touched.
 - [ ] Out-of-scope work is disclosed.
+- [ ] If the Coding Discipline Gate triggered, profile identity/state is recorded, adjacent refactors are absent or disclosed, and scope deviations are handled by the task policy.
 
 ## Evidence
 
@@ -22,6 +23,7 @@ Use this scorecard before accepting pipeline work.
 - [ ] Test/build/lint result is stated.
 - [ ] Artifacts, screenshots, or output refs are listed when relevant.
 - [ ] Failed tests and blockers are visible.
+- [ ] Declared success criteria were checked with real evidence; worker/model self-acceptance is ignored.
 
 ## Review
 

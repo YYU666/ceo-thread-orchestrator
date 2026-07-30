@@ -119,6 +119,17 @@ class PolicyContractTests(unittest.TestCase):
         self.assertIn("does not call Codex", text)
         self.assertIn("must not be converted into a passing behavioral claim", text)
 
+    def test_evidence_driven_coding_discipline_is_compact_default_off_and_r1_neutral(self):
+        reference = (ROOT / "skills" / "ceo-thread-orchestrator" / "references" / "coding-discipline.md").read_text(encoding="utf-8")
+        standard = (ROOT / "skills" / "ceo-thread-orchestrator" / "templates" / "task-card-standard.md").read_text(encoding="utf-8")
+        r1 = (ROOT / "skills" / "ceo-thread-orchestrator" / "templates" / "task-card-r1.md").read_text(encoding="utf-8")
+        self.assertIn("evidence-driven-coding-discipline-v1", reference)
+        self.assertIn("Default enabled: false", reference)
+        self.assertIn("not an official Karpathy skill", reference)
+        self.assertIn("does not authorize an R1 writer", reference)
+        self.assertIn("Coding Discipline Gate, when triggered", standard)
+        self.assertIn("Coding Discipline Profile ID/state/SHA-256, when triggered", r1)
+
 
 if __name__ == "__main__":
     unittest.main()

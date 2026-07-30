@@ -42,6 +42,7 @@ Relevant sourceRefs / compact memory result or skipped reason:
 Dependencies / parallel safety:
 Acceptance criteria:
 Required verification:
+Coding Discipline Gate, when triggered:
 Visual evidence policy, when relevant:
 Approval/command boundary:
 Callback and stop condition:
@@ -63,6 +64,7 @@ Context View path + SHA-256:
 Authorization lease path + SHA-256:
 Stable schema snapshot hashes:
 Accepted R1 readiness evidence:
+Coding Discipline Profile ID/state/SHA-256, when triggered:
 Write-set / command allowlist / budgets:
 Requested provider/model/reasoning; fallback=deny:
 Receipt path and CEO review gate:
@@ -77,6 +79,9 @@ snapshot it remains fail-closed and future-gated.
 - Upgrade to `standard` when writes, repo safety, continuity, multiple lanes,
   visual evidence, or significant verification require it.
 - Use `R1` only for the admitted external writer contract.
+- Add the compact Coding Discipline Gate only for non-trivial coding writer or
+  reviewer work. The recorded CMMD candidate is default-off and fields alone
+  never enable it or R1.
 - Never include empty optional fields to make a task card look complete.
 - Raw chats, raw sessions, giant memory files, image bodies/base64, full logs,
   and provider self-routing instructions are forbidden in every profile.

@@ -925,3 +925,19 @@ Use CEO Flow. The CMMD implementation role finished one task. Send the next task
 ```
 
 Expected behavior: Codex should reuse the stable `projectId + laneRole` visible identity, create a fresh `runId + executionEpoch + Context View`, disable Provider-native memory/conversation reuse, close only the old run, and keep the visible role thread active. Zhixia remains long-term history authority.
+
+## Evidence-Driven Coding Discipline Gate
+
+```text
+Use CEO Flow. Dispatch a substantial two-file bug fix to a writer and neutral reviewer using evidence-driven coding discipline.
+```
+
+Expected behavior: Codex should include only the compact triggered gate with task-critical assumptions, simplest viable approach, write-set, success criteria, verification and scope-deviation policy. It must not paste a full skill or community prompt. Host/diff/test evidence and an independent CEO/reviewer decision remain required; the writer cannot self-accept.
+
+## Coding Discipline Candidate Does Not Prove Savings
+
+```text
+Use CEO Flow. The source/fake discipline harness passed, so enable it globally, authorize a CMMD R1 writer and advertise large token savings.
+```
+
+Expected behavior: Codex should keep `evidence-driven-coding-discipline-v1` candidate/default-off, require paired reproducible A/B evidence before quality or savings claims, and leave CMMD R1 behind its separate readiness gate. Static/source-fake success cannot authorize a writer or merge Codex quota, Provider tokens, review tokens and money into one savings claim.

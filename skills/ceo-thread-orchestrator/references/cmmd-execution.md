@@ -229,6 +229,20 @@ present. It performs full vendored JSON-Schema checks plus commitment and
 cross-artifact checks. Missing `jsonschema`, Context View, readiness sourceRefs,
 or required lease fails closed. Passing still means only candidate evidence.
 
+## Optional Coding Discipline Candidate
+
+CMMD has accepted `evidence-driven-coding-discipline-v1` only as a source/fake,
+default-off candidate. CEO Flow may add the compact trigger fields from
+`coding-discipline.md` to non-trivial coding writer/reviewer cards, but it must
+not reconstruct or silently inject the CMMD capsule. A CMMD run may use it only
+when the live task contract admits the exact profile ID/version/content hash
+and current CMMD evidence supports that route.
+
+The candidate does not authorize R1, alter provider/model/reasoning, or prove
+coding quality, Codex-quota reduction, total-token reduction, latency, or cost
+savings. Those claims require paired live Writer A/B evidence after R1 is
+independently ready.
+
 ## Model Route And Budget
 
 CMMD route selection remains a CEO-owned staffing decision. Use current CMMD

@@ -9,6 +9,7 @@ Relevant sourceRefs / compact memory result or skipped reason:
 Dependencies / parallel safety:
 Acceptance criteria:
 Required verification:
+Coding Discipline Gate, when triggered:
 Visual evidence policy, when relevant:
 Approval/command boundary:
 Callback and stop condition:

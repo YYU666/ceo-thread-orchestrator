@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added a lightweight Evidence-Driven Coding Discipline Gate for non-trivial coding writers and reviewers. The independently implemented, Karpathy-inspired CMMD profile remains explicitly non-official, candidate-only, default-off, R1-neutral, and ineligible for quality/token/cost claims until paired live Writer A/B evidence exists. CEO task cards carry only compact trigger fields; the full profile is never dumped into ordinary CEO context.
+
 - Added a read-only stack doctor and stable `ProjectIdentityEnvelope` for canonical repositories and worktrees. Missing Memory Core/Memory Fact sidecars, stale packets falsely labelled fresh, and duplicate item IDs now fail closed to `fallback_stale` for current/recovery claims. Task cards are split into minimal, standard, and future-gated R1 profiles, while a separate behavioral forward-test contract makes clear that static smoke coverage is not proof of Codex runtime behavior. CMMD R1 remains blocked pending a stable accepted schema and real bounded writer evidence.
 
 - Added the CMMD hybrid execution path while preserving Codex internal multi-thread execution as the native default. New gates distinguish current R0 from future-gated R1 and live-smoke from production readiness, use stable project-role identities plus isolated runs, require bounded Context Views and Host-owned v2 receipts/leases/usage evidence, reject silent model or executor fallback, and treat OpenClaw as historical branch material only. Vendored CMMD contract snapshots, a fail-closed JSON-Schema exchange validator, adversarial tests, and smoke prompts provide compatibility evidence without claiming CMMD production readiness.

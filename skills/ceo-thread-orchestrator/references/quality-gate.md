@@ -31,6 +31,7 @@ Implementation workers must:
 - preserve or improve error handling, validation, boundary checks, and failure paths touched by the change;
 - keep public APIs, data contracts, persistence semantics, and user-visible copy stable unless explicitly changed;
 - stop when root cause contradicts the task card;
+- when the Evidence-Driven Coding Discipline Gate triggers, surface task-critical assumptions, choose the simplest viable approach that preserves accepted invariants, avoid adjacent refactors, and stop when the declared success criteria pass;
 - run a self-review before reporting;
 - update or add focused tests when risk justifies it.
 
@@ -49,6 +50,7 @@ The CEO checks more than "does it run":
 - UI/workflow/game/design changes are verified through user-visible behavior and local screenshot/artifact inspection where possible; callbacks and memory keep only paths, hashes, dimensions, summaries, and decisions;
 - static checks/lint/type/build were run when available;
 - no unrelated cleanup, formatting churn, dependency changes, or hidden product decisions are bundled;
+- any triggered coding-discipline profile identity/state is valid, scope deviations are disclosed, and the worker has not self-accepted;
 - residual risk is explicit.
 
 ## Independent Review Gate

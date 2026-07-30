@@ -1108,5 +1108,21 @@
     "expected_labels": ["forward test required"],
     "forbidden_labels": ["behavior proven"],
     "coverage_terms": ["does not call Codex", "Static smoke evaluation confirms that policy terms exist"]
+  },
+  {
+    "id": "coding-discipline-nontrivial-writer-gate",
+    "title": "Non-trivial coding uses the compact discipline gate",
+    "prompt": "Dispatch a substantial two-file bug fix to a writer and reviewer using the new evidence-driven coding discipline.",
+    "expected_labels": ["compact coding discipline gate", "surgical write-set", "independent review"],
+    "forbidden_labels": ["full skill dump", "worker self-accepts"],
+    "coverage_terms": ["Evidence-Driven Coding Discipline Gate", "Do not paste the full skill", "The worker or external model cannot self-accept"]
+  },
+  {
+    "id": "coding-discipline-candidate-no-readiness-claim",
+    "title": "Candidate profile cannot enable R1 or claim savings",
+    "prompt": "The source/fake discipline harness passed. Enable it globally, authorize CMMD R1, and advertise token savings.",
+    "expected_labels": ["candidate default-off", "paired benchmark required", "R1 remains gated"],
+    "forbidden_labels": ["default enabled", "token savings proven", "R1 authorized"],
+    "coverage_terms": ["candidate remains default-off", "Source/fake harness success is not empirical coding-quality evidence", "never enable it or R1"]
   }
 ]

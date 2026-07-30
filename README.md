@@ -48,6 +48,17 @@ receipt, and remains the only acceptance and publishing authority.
 - OpenClaw: historical branch material only; it is not a default, dependency,
   retry target, or fallback in the CMMD hybrid path.
 
+### Evidence-Driven Coding Discipline
+
+For non-trivial coding writers/reviewers, CEO Flow can add a compact
+Evidence-Driven Coding Discipline Gate: task-critical assumptions, simplest
+viable approach, surgical write-set, verifiable success criteria, and a
+fail-closed scope-deviation policy. The recorded CMMD
+`evidence-driven-coding-discipline-v1` profile is an independent implementation
+inspired by Andrej Karpathy's public observations and `karpathy/autoresearch`;
+it is not an official Karpathy skill. It remains candidate-only and default-off
+until paired live Writer A/B evidence supports quality or savings claims.
+
 An explicit request to use Codex internal threads always remains valid. CMMD is
 fail-closed when it is unavailable, contract-incompatible, or lacks readiness
 for the requested risk tier; the CEO may then make a new, explicit routing
