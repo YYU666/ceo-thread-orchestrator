@@ -43,7 +43,9 @@ Dependencies / parallel safety:
 Acceptance criteria:
 Required verification:
 Coding Discipline Gate, when triggered:
-Visual evidence policy, when relevant:
+Visual evidence policy / transport mode / model-visible image budget, when relevant:
+Forbidden visual tools/returns in zero-payload mode, when relevant:
+Visual transport receipt required, when relevant:
 Approval/command boundary:
 Callback and stop condition:
 Return: files, commands/tests, artifacts, risks, memory candidate
@@ -82,6 +84,10 @@ snapshot it remains fail-closed and future-gated.
 - Add the compact Coding Discipline Gate only for non-trivial coding writer or
   reviewer work. The recorded CMMD candidate is default-off and fields alone
   never enable it or R1.
+- For visual tasks, default to `zero-payload-local-analysis`. A local path does
+  not make `view_image`, `image(...)`, browser screenshot image blocks, or
+  `input_image` local-only; bounded model vision requires a fresh short-lived
+  non-forked worker and an explicit byte/image budget.
 - Never include empty optional fields to make a task card look complete.
 - Raw chats, raw sessions, giant memory files, image bodies/base64, full logs,
   and provider self-routing instructions are forbidden in every profile.

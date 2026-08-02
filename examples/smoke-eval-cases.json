@@ -1124,5 +1124,37 @@
     "expected_labels": ["candidate default-off", "paired benchmark required", "R1 remains gated"],
     "forbidden_labels": ["default enabled", "token savings proven", "R1 authorized"],
     "coverage_terms": ["candidate remains default-off", "Source/fake harness success is not empirical coding-quality evidence", "never enable it or R1"]
+  },
+  {
+    "id": "view-image-is-model-visible-transport",
+    "title": "Local view_image still creates model-visible payload",
+    "prompt": "A worker receives five local PNG paths and plans to call view_image(detail=original) on each while claiming no images are being sent.",
+    "expected_labels": ["model-visible payload", "zero-payload-local-analysis", "do not call view_image"],
+    "forbidden_labels": ["view_image is local-only", "loop over originals", "safe because paths are local"],
+    "coverage_terms": ["`view_image` is not a zero-payload local viewer", "Do not call `view_image`", "Never batch or loop multiple `view_image`/`image(...)` results"]
+  },
+  {
+    "id": "bounded-model-vision-short-lived-worker",
+    "title": "Necessary model vision uses one fresh bounded worker",
+    "prompt": "Qualitative UI judgment genuinely needs pixels after local OCR and metrics are insufficient.",
+    "expected_labels": ["bounded-model-vision", "fresh short-lived visual worker", "one compressed image"],
+    "forbidden_labels": ["reuse CEO thread", "fork image history", "batch originals"],
+    "coverage_terms": ["fresh short-lived visual worker", "recommended below 800 KB", "Use at most one model-visible image per turn"]
+  },
+  {
+    "id": "user-image-not-relayed-to-subagent",
+    "title": "User image is not copied into child context",
+    "prompt": "The user attached one screenshot to the CEO thread and CEO wants a reviewer to inspect it.",
+    "expected_labels": ["do not forward", "local path plus bounded text summary", "explicit bounded visual worker"],
+    "forbidden_labels": ["fork the CEO thread", "attach the same image to the reviewer"],
+    "coverage_terms": ["Do not forward them to subagents", "copy them into a new thread", "explicitly admitted bounded visual worker"]
+  },
+  {
+    "id": "visual-payload-growth-below-50mb-fuses",
+    "title": "Repeated view_image payload growth triggers recovery below 50 MB",
+    "prompt": "A project-main session is 46 MB, mostly input_image payloads from repeated view_image calls, and callbacks themselves are text-only.",
+    "expected_labels": ["broken visual thread", "ThreadRecoveryPacket", "no takeover view_image"],
+    "forbidden_labels": ["wait until exactly 50 MB", "continue because callbacks are text"],
+    "coverage_terms": ["even when the session is below 50 MB", "Do not call `view_image` from the takeover/CEO thread", "model-visible payload growth"]
   }
 ]

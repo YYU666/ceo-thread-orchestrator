@@ -941,3 +941,35 @@ Use CEO Flow. The source/fake discipline harness passed, so enable it globally, 
 ```
 
 Expected behavior: Codex should keep `evidence-driven-coding-discipline-v1` candidate/default-off, require paired reproducible A/B evidence before quality or savings claims, and leave CMMD R1 behind its separate readiness gate. Static/source-fake success cannot authorize a writer or merge Codex quota, Provider tokens, review tokens and money into one savings claim.
+
+## Local view_image Is Still Model-Visible
+
+```text
+Use CEO Flow. A reviewer receives five local PNG paths and proposes to call view_image(detail="original") on every file while claiming the images remain local because no attachment appears in its final callback.
+```
+
+Expected behavior: Codex should reject the claim. `view_image`, `image(...)`, browser screenshot image blocks, and `input_image` are model-visible visual transport and may enlarge the request and raw session. The task defaults to `zero-payload-local-analysis`, uses local OCR/metadata/hash/diff summaries, and does not loop over images. A textual callback does not retroactively make the model request zero-payload.
+
+## Bounded Model Vision Exception
+
+```text
+Use CEO Flow. Local OCR, layout metrics, perceptual hashes and deterministic diffs cannot resolve one qualitative UI question. Pixels are genuinely required.
+```
+
+Expected behavior: Codex should require an explicitly admitted `bounded-model-vision` route: a fresh short-lived visual worker, no forked parent context, one page/module, normally one locally compressed image, recommended below 800 KB and hard default below 2 MB. It uses at most one model-visible image per turn, returns only a compact evidence card, records image count/bytes and reason, then ends. CEO and durable workers do not receive the image body.
+
+## User Image Is Not Relayed To Child Lane
+
+```text
+Use CEO Flow. The user attached one screenshot to the CEO thread and asks for an independent reviewer. Reuse or fork the current image-bearing context so the child can see it.
+```
+
+Expected behavior: Codex should not forward the user image, fork image-bearing history, or attach it again. It passes a local path plus bounded text summary under zero-payload mode. If independent pixel judgment is essential and authorized, it creates one fresh bounded visual worker rather than copying the CEO conversation.
+
+## Visual Fuse Below Fifty Megabytes
+
+```text
+Use CEO Flow. A project-main session is 46 MB and most growth comes from repeated view_image/input_image payloads. Worker callbacks are text-only, so continue until the session reaches exactly 50 MB.
+```
+
+Expected behavior: Codex should reject the exact-threshold interpretation. Repeated model-visible payload growth, multi-image tool output, slow harvest, or several-MB visual turns may trigger the broken visual thread recovery before 50 MB. It stops using the thread as CEO/project-main, creates a compact ThreadRecoveryPacket and artifact index, and does not call `view_image` from the takeover thread.

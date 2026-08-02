@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Corrected the Visual Evidence policy after real Codex session evidence showed that `view_image` and `image(...)` serialize local files into model-visible `input_image`/`data:image` payloads. Visual tasks now default to zero-payload local analysis, prohibit multi-image loops and image relays, and allow model vision only in fresh short-lived non-forked workers with explicit one-image/byte budgets and transport receipts.
+
 - Added a lightweight Evidence-Driven Coding Discipline Gate for non-trivial coding writers and reviewers. The independently implemented, Karpathy-inspired CMMD profile remains explicitly non-official, candidate-only, default-off, R1-neutral, and ineligible for quality/token/cost claims until paired live Writer A/B evidence exists. CEO task cards carry only compact trigger fields; the full profile is never dumped into ordinary CEO context.
 
 - Added a read-only stack doctor and stable `ProjectIdentityEnvelope` for canonical repositories and worktrees. Missing Memory Core/Memory Fact sidecars, stale packets falsely labelled fresh, and duplicate item IDs now fail closed to `fallback_stale` for current/recovery claims. Task cards are split into minimal, standard, and future-gated R1 profiles, while a separate behavioral forward-test contract makes clear that static smoke coverage is not proof of Codex runtime behavior. CMMD R1 remains blocked pending a stable accepted schema and real bounded writer evidence.

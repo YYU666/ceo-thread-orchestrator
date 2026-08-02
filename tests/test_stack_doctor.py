@@ -130,6 +130,41 @@ class PolicyContractTests(unittest.TestCase):
         self.assertIn("Coding Discipline Gate, when triggered", standard)
         self.assertIn("Coding Discipline Profile ID/state/SHA-256, when triggered", r1)
 
+    def test_view_image_is_not_treated_as_zero_payload_local_inspection(self):
+        reference = (ROOT / "skills" / "ceo-thread-orchestrator" / "references" / "visual-evidence.md").read_text(encoding="utf-8")
+        standard = (ROOT / "skills" / "ceo-thread-orchestrator" / "templates" / "task-card-standard.md").read_text(encoding="utf-8")
+        self.assertIn("`view_image` is not a zero-payload local viewer", reference)
+        self.assertIn("Do not call `view_image`", reference)
+        self.assertIn("Never batch or loop multiple `view_image`/`image(...)` results", reference)
+        self.assertIn("Visual transport mode: zero-payload-local-analysis | bounded-model-vision", reference)
+        self.assertIn("Model-visible image budget: 0 by default", reference)
+        self.assertIn("Visual evidence policy / transport mode / model-visible image budget", standard)
+
+    def test_bounded_model_vision_is_short_lived_non_forked_and_one_image(self):
+        reference = (ROOT / "skills" / "ceo-thread-orchestrator" / "references" / "visual-evidence.md").read_text(encoding="utf-8")
+        self.assertIn("fresh short-lived visual worker with no forked parent context", reference)
+        self.assertIn("recommended below 800 KB", reference)
+        self.assertIn("Use at most one model-visible image per turn", reference)
+        self.assertIn("Do not forward them to subagents", reference)
+        self.assertIn("even when the session is below 50 MB", reference)
+
+    def test_visual_transport_smoke_cases_are_present(self):
+        cases = json.loads((ROOT / "examples" / "smoke-eval-cases.json").read_text(encoding="utf-8"))
+        ids = {case["id"] for case in cases}
+        self.assertTrue({
+            "view-image-is-model-visible-transport",
+            "bounded-model-vision-short-lived-worker",
+            "user-image-not-relayed-to-subagent",
+            "visual-payload-growth-below-50mb-fuses",
+        }.issubset(ids))
+
+    def test_visual_transport_requires_real_forward_evidence(self):
+        forward = (ROOT / "skills" / "ceo-thread-orchestrator" / "references" / "forward-testing.md").read_text(encoding="utf-8")
+        self.assertIn("Visual Transport Forward Test", forward)
+        self.assertIn("modelVisibleImagesUsed=0", forward)
+        self.assertIn("Any `view_image` call in zero-payload mode", forward)
+        self.assertIn("prevents a behavioral claim", forward)
+
 
 if __name__ == "__main__":
     unittest.main()
