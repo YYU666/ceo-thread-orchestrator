@@ -307,6 +307,8 @@ The skill treats new threads as capacity decisions, not a reflex. For ordinary c
 
 Worker reports are evidence, not proof. The CEO lane still inspects meaningful artifacts before accepting work.
 
+Visual evidence remains local-artifact-first, but local file origin does not make a tool call zero-payload. `view_image`, `image(...)`, browser screenshot image blocks, and `input_image` send model-visible pixels and may enlarge requests and raw sessions. CEO Flow therefore defaults visual tasks to zero-payload OCR/metadata/hash/diff analysis. When pixels are essential, it uses one fresh short-lived non-forked visual worker with an explicit one-image/byte budget and returns only a compact evidence card.
+
 After installing or updating the plugin, restart or refresh Codex if old threads appear to use stale behavior. Existing long-running threads may still carry older hot context; after an explicit old-thread compaction, reopening the same thread means rereading its slimmed session body, not creating a new thread.
 
 ## Validation

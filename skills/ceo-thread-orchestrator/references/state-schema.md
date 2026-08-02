@@ -301,7 +301,10 @@ Runtime event observation:
   receipt / sourceRefs / unavailable reason:
 Context/history budget:
 Visual evidence policy:
-Image budget:
+Visual transport mode: zero-payload-local-analysis | bounded-model-vision
+Model-visible image budget:
+Forbidden visual tools/returns:
+Visual transport receipt: mode / modelVisibleImagesUsed / modelVisibleImageBytes / worker-thread id / reason
 Retrieved source refs:
 Top memory items:
 Writeback target:

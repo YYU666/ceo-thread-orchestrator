@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Corrected the Visual Evidence policy after real Codex session evidence showed that `view_image` and `image(...)` serialize local files into model-visible `input_image`/`data:image` payloads. Visual tasks now default to zero-payload local analysis, prohibit multi-image loops and image relays, and allow model vision only in fresh short-lived non-forked workers with explicit one-image/byte budgets and transport receipts.
+
 - Added the Single Front Door contract: one default user-facing CEO identity, CEO-mediated specialist escalation, durable-visible versus background-contractor classification, star-shaped callbacks instead of chained handoffs, and neutral review preserved behind the unified entrance.
 
 - Added Zhixia 0.9.0 Memory Core compatibility: event-triggered Project Continuity Gate, exact project identity, full 14-slot mandatory pagination for CEO recovery, role-bounded worker/reviewer slots, runtime event observation, source-backed decision writeback, trigger-receipt verification, helper-only partial/recovery-not-ready boundaries, and an isolated real-project Electron recovery probe/report.

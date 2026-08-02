@@ -63,7 +63,7 @@ Reviewer posture:
 - report missed acceptance criteria, regressions, unclear evidence, and test gaps;
 - do not flatter or reassure weak work.
 
-Reviewer starts from task card, diff, tests, local artifacts/screenshots by path, relevant docs, and compact evidence refs. Do not send image attachments/base64/data:image, full screenshot JSON, or the implementation thread's long conversation unless a specific unresolved claim requires it and CEO states reason and token budget.
+Reviewer starts from task card, diff, tests, local artifacts/screenshots by path, relevant docs, and compact evidence refs. A path is not permission to call `view_image`: zero-payload review uses local OCR/metadata/hash/diff summaries, while model-visible inspection requires a fresh bounded visual worker with no forked history. Do not send image attachments/base64/data:image/input_image, full screenshot JSON, or the implementation thread's long conversation unless a specific unresolved claim requires bounded model vision and CEO records reason and byte budget.
 
 ## Doom Loop Recovery
 

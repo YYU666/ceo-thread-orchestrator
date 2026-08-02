@@ -356,7 +356,7 @@ Callback events: completion | blocker | approval_stall | revise_needed
 Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
 Callback priority: queued | interrupt
 Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
-Visual evidence payload: paths + hashes + dimensions + short summary only; no image attachments/base64/data:image
+Visual evidence payload: paths + hashes + dimensions + short summary only; no image attachments/base64/data:image/input_image; view_image/image(...) are model-visible transport, not local-only
 Contractor trace: required if this lane used any contractor/subagent
 CEO harvest fallback:
 No-stall fallback: continue other ready tasks | reuse another lane | direct CEO fallback if allowed | HOST_APPROVAL_REQUIRED
@@ -367,7 +367,7 @@ Worker callback rules:
 1. The worker writes its normal final report in its own lane.
 2. If thread messaging is available and the task card includes a CEO thread id, the worker also sends a compact callback to the CEO on completion, blocker, approval stall, or revise-needed.
 3. If thread messaging is unavailable, the worker reports `CALLBACK_UNAVAILABLE` in its own lane and relies on CEO harvest.
-4. The callback must not include long chat history, raw session content, full knowledge bases, broad logs, image attachments, base64, `data:image`, or full screenshot JSON.
+4. The callback must not include long chat history, raw session content, full knowledge bases, broad logs, image attachments, base64, `data:image`, `input_image`, tool image blocks, or full screenshot JSON.
 5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
 6. The worker must not ask the user to choose another lane, repeat context, approve ordinary in-profile commands, or manage the workflow. It reports a typed escalation to CEO.
 7. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
@@ -406,6 +406,7 @@ Treat these as degraded warnings:
 - one context-pressure or auto-compact event;
 - hot session size makes routine harvest noticeably expensive;
 - session contains large image/base64/input_image payloads but still produces useful evidence;
+- a worker or CEO used repeated `view_image`, `image(...)`, or screenshot image blocks and caused model-visible payload growth even if callbacks remained textual;
 - the target is slow but still producing useful new evidence.
 
 Treat these as immediate fuse conditions:
@@ -423,13 +424,14 @@ On fuse:
 1. Pause, delete, or supersede heartbeat/automation targeting the broken thread. Record `reason=broken_ceo_thread`.
 2. Do not fork the broken thread.
 3. Do not copy the full old chat, raw session, giant knowledge dump, image attachments, base64, or `data:image` payloads into a new thread.
-4. Run the event-triggered Project Continuity Gate with exact `projectPath/projectId`. For CEO takeover/recovery, consume the full mandatory 14-slot pagination before any recovery-ready claim. Then run Memory Runtime `retrieve_context(queryType=thread_recovery)` and generate/update a compact `ThreadRecoveryPacket`. Helper-only or incomplete pagination remains `partial` with `recoveryReady=false`.
-5. Create or designate a clean CEO takeover thread when tools and authorization allow it.
-6. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and memory/history-provider/vault pointers.
-7. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
-8. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
-9. Write a compact WorkingMemory/evidence card.
-10. Call `observe_event(thread_takeover|broken_thread|stale_lane_reference|heartbeat_fuse)` when the app-owned Memory Runtime exposes it, and verify retrieve/writeback execution through project-scoped trigger receipts when available.
+4. Do not call `view_image` from the takeover/CEO thread. Run zero-payload local analysis first; if pixels are essential, create one fresh short-lived bounded visual worker without forked history.
+5. Run the event-triggered Project Continuity Gate with exact `projectPath/projectId`. For CEO takeover/recovery, consume the full mandatory 14-slot pagination before any recovery-ready claim. Then run Memory Runtime `retrieve_context(queryType=thread_recovery)` and generate/update a compact `ThreadRecoveryPacket`. Helper-only or incomplete pagination remains `partial` with `recoveryReady=false`.
+6. Create or designate a clean CEO takeover thread when tools and authorization allow it.
+7. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and memory/history-provider/vault pointers.
+8. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
+9. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
+10. Write a compact WorkingMemory/evidence card.
+11. Call `observe_event(thread_takeover|broken_thread|stale_lane_reference|heartbeat_fuse)` when the app-owned Memory Runtime exposes it, and verify retrieve/writeback execution through project-scoped trigger receipts when available.
 
 `ThreadRecoveryPacket` fields:
 
