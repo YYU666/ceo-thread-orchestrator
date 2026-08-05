@@ -2,6 +2,13 @@
 
 Use this reference for coding tasks, high-risk reviews, repeated failed fixes, UI quality checks, or acceptance gates.
 
+## Contents
+
+- Change budget and implementation requirements
+- CEO and independent review
+- Doom-loop recovery
+- Direct coding boundary and decision template
+
 ## Change Budget
 
 Before dispatching or doing implementation work, define:

@@ -49,7 +49,7 @@ Unsupported or unknown controls:
 
 Do not assume all surfaces expose the same models or reasoning levels. A model available to subagents may be unavailable to visible threads or automations.
 
-Omitting a model commonly means `inherit current/default settings`. It must not be described as role-aware automatic optimization unless the current host explicitly documents native automatic routing.
+Omitting a model commonly means `inherit current/default settings`. It must not be described as role-aware automatic optimization unless the current host explicitly documents native automatic routing; routine workers need an explicit `auto-class` or mapped route to avoid accidentally inheriting the CEO profile.
 
 ## Routing Modes
 

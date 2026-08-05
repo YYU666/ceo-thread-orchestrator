@@ -2,6 +2,13 @@
 
 Use this reference when CEO Flow needs a compact, durable state contract for Program Goals, lane rosters, harvest drivers, decisions, recovery packets, and memory writeback. These schemas are lightweight Markdown contracts, not a workflow runtime or database.
 
+## Contents
+
+- Program Goal, dashboard, roster, harvest driver, decision, and recovery packet
+- Evidence/memory candidate and full task-card field catalog
+- Project scale, Autopilot, bootstrap, staffing, and proof-loop records
+- Memory, context, continuity, receipt, repo, and Slice Closure gate records
+
 ## Principles
 
 1. Keep state document-first and source-backed.
@@ -25,6 +32,17 @@ Lane roster / thread ids: see schema below
 Current blockers:
 Next execution wave:
 Primary harvest driver: see schema below
+Context Governor:
+  inputTokens:
+  estimatedContextTokens:
+  estimatedContextBytes:
+  cumulativeInputTokens:
+  fallbackRate:
+  takeoverGeneration:
+  duplicateInjectionCount:
+  oldThreadStopReason:
+  decision:
+  nextAction:
 Acceptance evidence:
 Memory Runtime result:
   provider:
@@ -61,6 +79,7 @@ Autopilot Startup Card:
 Staffing Plan:
 Long-Term Memory Anchor Gate:
 Proof Loop Fuse:
+Memory Recovery Freeze Gate:
 Repo Baseline Gate:
 Memory / knowledge writeback:
 Lightweight state discipline:
@@ -161,6 +180,8 @@ Expected reports:
 Evidence to inspect:
 Next harvest trigger:
 Duplicate driver status: none | superseded_by_runtime_goal | local_only | external_only
+Status after context/memory freeze: active | unbind_required | unbound | superseded | rebound_to_takeover
+Old thread stop reason:
 Stop condition:
 ```
 
@@ -169,6 +190,7 @@ Rules:
 - One Program Goal should have one primary harvest driver.
 - Active runtime Goal bound to the Program Goal Brief can be primary; do not also run a co-primary project-main heartbeat.
 - Heartbeats are for lane callbacks or fallback, not the project source of truth.
+- After Context Pressure Gate or Memory Recovery Freeze Gate fires, the old driver must be unbound, superseded, completed, blocked, or rebound to a clean takeover; it must not keep waking the old task.
 
 ## Decision Record
 
@@ -202,6 +224,9 @@ Thread title:
 Canonical project root:
 Broken reason:
 Paused automation/heartbeat ID:
+Context generation ID:
+Duplicate injection count:
+Old thread stop reason:
 Recommended read order:
 Current Program Goal Brief path:
 Compact project memory refs:
@@ -292,6 +317,18 @@ Project Continuity result:
   pages / pagination complete / mandatory returned-total:
   authority verification / partial / recoveryReady:
   bounded stop reason / sourceRefs:
+Memory Recovery Freeze Gate:
+  triggered / reason:
+  provider status:
+  memoryMode / current / recoveryReady:
+  project identity result:
+  authority verification:
+  freeze action:
+  allowed evidence:
+  forbidden context expansion:
+  freeze receipt emitted:
+  old harvest driver unbound:
+  exit condition:
 MemoryRuntimeTriggerReceipt:
   hook / verification / receipt id-time:
   returnedCount / tokenEstimate / durationMs / partial / warnings:
@@ -300,6 +337,33 @@ Runtime event observation:
   event type / project identity / affected thread or checkpoint:
   receipt / sourceRefs / unavailable reason:
 Context/history budget:
+Context Governor:
+  inputTokens / estimatedContextTokens / estimatedContextBytes:
+  cumulativeInputTokens:
+  fallbackRate:
+  takeoverGeneration:
+  duplicateInjectionCount:
+  invalidatedGenerationCount:
+  oldThreadStopReason:
+  decision / nextAction:
+Context Injection Ledger:
+  taskId:
+  injectedGenerationIds:
+  lastGenerationBasis:
+  invalidatedGenerationIds:
+Direct Refresh Binding:
+  driver: scripts/refresh_binding_driver.py
+  workspace / lane or module:
+  previousCheckpointId:
+  expectedProjectIdentitySha256:
+  expectedScanSha256:
+  acceptedEvidenceReceipt:
+  acceptedChangedPaths / exact sourceRefs:
+  refresh idempotency key / call count:
+  receiptId / authorizedCheckpointId / contextGenerationId:
+  verify matched / current / recoveryReady:
+  lane status / programGoalBlocked / unrelated lanes:
+  knowledge task messages / paid Provider calls / retry:
 Visual evidence policy:
 Visual transport mode: zero-payload-local-analysis | bounded-model-vision
 Model-visible image budget:
@@ -338,7 +402,9 @@ Canonical project root:
 Program Goal Brief:
 Runtime Goal:
 Memory Runtime result:
+Context Governor:
 Long-Term Memory Anchor Gate:
+Memory Recovery Freeze Gate:
 Current phase:
 Completion Dashboard:
 Ready task graph:
@@ -356,13 +422,77 @@ Bootstrap exit decision:
 ## Bootstrap Exit Decision
 
 ```text
-Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | direct CEO fallback
+Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | memory repair / fresh takeover | direct CEO fallback
 Why not continue CEO-only:
 If CEO-only continues, reason:
+Memory readiness:
+If memory is stale/unresolved, freeze action:
 Staffing check required:
 Next routed lane/review:
 Stop condition:
 ```
+
+## Memory Recovery Freeze Gate Record
+
+```text
+Triggered: yes/no
+Reason: fallback_stale | current_false | recovery_not_ready | project_unresolved | project_scope_mismatch | authority_unavailable_for_claim | schema_or_cursor_failure | none
+Project scale / task scale:
+Provider:
+Provider status:
+MemoryMode:
+Current:
+RecoveryReady:
+Project identity result:
+Authority verification:
+Allowed evidence while frozen:
+Forbidden context expansion:
+Freeze receipt emitted:
+Old harvest driver unbound:
+Next action: memory repair | fresh CEO takeover | compact handoff | bounded source audit | user decision
+Exit condition:
+```
+
+Rules:
+
+- For large/program continuation, takeover, recovery, or major direction correction, stale/unresolved memory is an execution-routing event, not a soft warning.
+- Do not continue product implementation, polling, or old-thread harvest loops from a bloated CEO/project-main thread while this gate is triggered.
+- Emit one freeze receipt only; subsequent wakeups must stop, unbind, or route to the clean takeover instead of repeating pause status.
+- If execution must proceed before repair, limit it to one bounded source-backed slice and do not claim current memory or recovery readiness.
+
+## Context Governor Record
+
+```text
+Schema: ceo_context_governor_v1
+Thread ID:
+Task ID:
+Input tokens:
+Estimated context tokens:
+Estimated context bytes:
+Cumulative input tokens:
+Fallback rate:
+Takeover generation:
+Duplicate injection count:
+Old thread stop reason:
+Decision: allow | block | freeze
+Reason:
+Allow old thread execution: yes/no
+Allow tool calls: yes/no
+Allow provider calls: yes/no
+Unbind harvest driver: yes/no
+Next action:
+Blocker:
+```
+
+Rules:
+
+- Run from compact JSON metrics/state only; do not include raw chat, raw session, full logs, SQLite, credentials, API keys, image bodies, or base64.
+- Default hard pressure thresholds are 120000 per-turn input tokens, 120000 estimated context tokens, 10000000 cumulative input tokens per task, or 50 MB estimated context/session bytes.
+- Use `contextGenerationId` as an idempotency key; one generation can be injected at most once per task.
+- HEAD, scan hash, project identity, postimage, or verified memory state changes invalidate the old generation and require refresh binding plus a new generation before reinjection.
+- `replace_long_thread_context` is mandatory for takeover injection; never append takeover packets after a long old context.
+- Heartbeat, tool-result, commentary, and wake-check events skip memory retrieval and injection unless the lifecycle gate changed.
+- Use `scripts/context_governor.py` for deterministic checks when practical.
 
 ## Staffing Plan
 

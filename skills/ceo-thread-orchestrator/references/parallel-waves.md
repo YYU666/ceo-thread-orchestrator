@@ -2,6 +2,12 @@
 
 Use this reference after a PRD, design brief, or task graph is accepted and the user asks to start, continue, or complete implementation.
 
+## Contents
+
+- Readiness and wave plan
+- Dependency graph and lane count
+- Dispatch, integration, and harvest
+
 ## Principle
 
 CEO Flow should not serialize an entire PRD through one worker when independent tasks can safely run together. Parallelism is useful only when it reduces delivery time without creating merge, review, workspace, or context debt.

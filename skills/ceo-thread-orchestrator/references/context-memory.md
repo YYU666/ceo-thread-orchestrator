@@ -1,60 +1,45 @@
-# Context And Memory Reference
+# Context And Memory Router
 
-Use this short router when a task involves runtime context size, memory/reference routing, `.codex-knowledge/`, memory providers, history providers, old-thread continuity, raw sessions, visual payload boundaries, or compact recovery. For detailed rules, load the focused reference below instead of keeping this file as a giant mixed policy.
+Use this router when a task involves project continuity, context pressure, `.codex-knowledge`, a Memory Runtime, a history provider, takeover, or compact recovery. Load only the focused reference whose gate fired.
 
-## Runtime Context Governor
+## Routing
 
-CEO Flow keeps active threads lean, source-backed, and recoverable. It is not a Windows Task Scheduler, automatic log cleaner, automatic process-manager pruner, or background cleanup service.
+- Context pressure, sticky freeze, strict takeover packets, generation idempotency, and refresh binding: `context-governance.md` plus `scripts/context_governor.py`.
+- ProjectBrain roles/slots, exact identity, pagination, receipts, runtime events, and Warm Anchor: `project-continuity.md`.
+- Provider hooks, query types/budgets, result envelopes, precedents, large-file handling, and evidence writeback: `memory-runtime.md`.
+- Zhixia app-owned adapter details: `zhixia-app-owned-governance.md`.
+- Old-task vault/history evidence, compaction safety, restore, and raw-session gate: `guardian-history.md`.
+- Program state and gate record fields: `state-schema.md`.
 
-At bootstrap, dispatch, reuse, review, harvest, and writeback:
+## Trigger Summary
 
-- use newest goal, bounded task card, allowed write-set, verification commands, relevant source refs, compact knowledge excerpts, and a short history budget;
-- do not copy full CEO conversations into worker prompts;
-- do not send full `.codex-knowledge/` or long generated knowledge files by default;
-- do not read raw sessions or long chat transcripts by default;
-- do not treat old threads as free context;
-- prefer compact retrieval and source-backed packets over stacking instructions in long threads;
-- for visual tasks, keep screenshots/reference/generated images in local artifacts and pass only paths, hashes, dimensions, short summaries, and decisions through chat and memory.
+Use compact project memory when `.codex-knowledge` exists or the request depends on continuation, recovery, accepted decisions, blockers, prior failures, release state, or old-task evidence. Do not claim remembered project state if the configured provider was skipped or failed.
 
-When a CEO/project-main thread is broken, context-exhausted, stale, unreadable, or bloated by image/base64 payloads, recover through a compact `ThreadRecoveryPacket`, not by forking or copying the old chat or visual payloads.
+For large/program continuation, takeover, recovery, direction switch, active runtime Goal, or pre-dispatch checks:
 
-Recommended takeover read order:
+1. Run app-owned `verify` and a read-only exact scan when required.
+2. Run `scripts/context_governor.py` on compact metrics/state.
+3. On takeover/recovery, run Project Continuity and request `prepare_takeover`.
+4. Inject one verified bounded generation into a clean task with `replace_long_thread_context`.
+5. Fail closed and stop the old driver when pressure, authority, identity, freshness, content, budget, or generation checks fail.
 
-1. ThreadRecoveryPacket;
-2. Program Goal Brief and Completion Dashboard;
-3. event-triggered Project Continuity Gate with exact project identity and complete mandatory pagination for takeover/recovery, plus compact Memory Runtime `retrieve_context(queryType=project_resume)`;
-4. active lane roster and latest callbacks;
-5. canonical project docs/source files;
-6. Memory Runtime / history-provider / vault sourceRefs;
-7. cold/raw session evidence only through the raw-session gate.
+Heartbeat, tool-result, commentary, and unchanged status wakeups do not re-query memory or re-inject context.
 
-## Reference Router
+## Context Budget
 
-- Memory Runtime lifecycle, trigger gate, task-card retrieval fields, writeback/promotion, large `.codex-knowledge` file limits, precedent lookup, and Hot/Warm/Skill/Cold result contract: `memory-runtime.md`.
-- History-provider old-thread continuity, Thread History Vault/source-backed archive evidence, selected-thread compaction safety, restore dry-run, raw-session gate, and freshness labels: `guardian-history.md`.
-- Visual evidence and image payload budgets: `visual-evidence.md`.
-- FlowSkill search/capture/score bridge: `flowskill-hook.md`.
-- Program Goal, Completion Dashboard, ThreadRecoveryPacket, lane roster, harvest driver, and memory candidate schemas: `state-schema.md`.
+Prefer newest goal, bounded task card, source refs, compact Hot/Warm excerpts, verification commands, and a short history budget. Never copy full CEO conversations, raw sessions, complete logs, giant knowledge files, image/base64 bodies, or full worker chats into task cards or takeover packets.
 
-## Knowledge Provider Modes
+Default read order:
 
-- `none`: no durable provider; use newest request, local source files, task cards, reports, and verification.
-- `project-memory`: canonical local memory docs, decision logs, handoff logs, and bug memory.
-- `memory-runtime`: compact project knowledge from a configured provider or `.codex-knowledge/` helper.
-- `history-provider`: source-backed old Codex thread history, paused-task discovery, health, receipts, and restore dry-run evidence.
-- `hybrid`: current project memory plus old-thread/history provenance; preferred when both are configured.
+1. compact recovery/program/task packet;
+2. Hot/Warm memory and required continuity slots;
+3. canonical docs/source refs;
+4. lane roster and current evidence;
+5. history-provider/vault pointers;
+6. narrow Cold/raw evidence only after its hard gate.
 
-Use canonical project files, source code, tests, decision logs, and worker reports as stronger evidence than summaries when they disagree.
+Visual artifacts stay local; context and memory carry paths, hashes, dimensions, short summaries, and decisions only.
 
-## Minimal Context Budget
+## Ownership Boundary
 
-- Bootstrap/resume: retrieve compact project memory first, then inspect only cited sourceRefs.
-- CEO takeover/recovery/direction correction: retrieve all mandatory ProjectBrain slots through complete pagination; helper-only results remain partial and cannot claim `recoveryReady`.
-- Dispatch: include only the memory packet and sourceRefs the lane needs.
-- Review/harvest: inspect current diffs/tests/artifacts plus compact precedent; do not reload long worker chat.
-- Old-thread recovery: retrieve hot/warm memory before history-provider/vault pointers; cold/raw snippets require the hard gate.
-- Visual tasks: preserve visual QA, but keep image bodies out of task cards, callbacks, memory, FlowSkill candidates, and third-party logs.
-
-## Boundary
-
-CEO Flow may generate compact evidence/writeback packets and decide when memory is needed. The configured provider owns ingestion, dedupe, layer classification, retrieval implementation, and durable promotion. History providers supply source-backed provenance and recovery evidence, not automatic memory ownership or cleanup authority.
+CEO Flow owns task lifecycle, context budget, freeze/stop decisions, harvest drivers, clean-task creation, evidence review, and accept/revise/block. The provider owns ingestion, dedupe, storage, classification, retrieval, verification, packet content, and promotion. A provider cannot shrink an already bloated Codex task; CEO Flow must stop or replace it.

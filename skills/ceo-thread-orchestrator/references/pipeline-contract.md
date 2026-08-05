@@ -4,6 +4,13 @@ Use this reference when an accepted PRD, design brief, or Program Goal contains 
 
 The purpose is to make CEO Flow's task cards and harvest loop more machine-checkable. It is not a replacement for CEO judgment, a permanent workflow engine, or a return to heavyweight legacy automation.
 
+## Contents
+
+- Pipeline trigger and minimum shape
+- Parallel readiness and trust boundary
+- Typed handoff and scorecard contracts
+- Environment, failure handling, and validators
+
 Bundled assets:
 
 - `templates/pipeline.yaml`: starter pipeline contract.

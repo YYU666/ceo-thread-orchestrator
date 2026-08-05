@@ -2,6 +2,12 @@
 
 Use this reference only when CEO Flow behavior appears to fail, drift, repeat a process mistake, or needs a rule-candidate change. Do not run this routine for ordinary successful tasks.
 
+## Contents
+
+- Boundary and triggers
+- Failure codes and reflection packet
+- Promotion, regression, revert, and reporting
+
 ## Boundary
 
 Self-reflection is a diagnostic step, not an automatic rule updater.

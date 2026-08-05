@@ -4,6 +4,13 @@ Use this reference for large/program project takeover, complete-product executio
 
 CEO Autopilot is not a workflow daemon. It is a bounded startup/control card for large projects. Skip it for casual chat, tiny direct edits, and one-off low-risk tasks.
 
+## Contents
+
+- Project/task scale classifier
+- Startup card and bootstrap exit
+- Staffing and lane count
+- Proof Loop Fuse and execution loop
+
 ## Project Scale Classifier
 
 Classify both the whole project and the current request:
@@ -59,6 +66,7 @@ CEO Autopilot Startup Card:
   Program Goal Brief:
   Runtime Goal:
   Memory Runtime:
+  Context Governor:
   Long-Term Memory Anchor Gate:
   Current phase:
   Completion Dashboard:
@@ -71,12 +79,13 @@ CEO Autopilot Startup Card:
   Harvest driver:
   Review / audit plan:
   Memory writeback plan:
+  Memory Recovery Freeze Gate:
   Bootstrap exit decision:
 ```
 
 Rules:
 
-1. Build the card from compact memory, current docs/source refs, thread roster, and current user request. Do not load raw sessions, giant Markdown, or image payloads.
+1. Build the card from compact memory, context-governor metrics, current docs/source refs, thread roster, and current user request. Do not load raw sessions, giant Markdown, or image payloads.
 2. If a Program Goal Brief is missing for a large/program task, create or name the intended brief before dispatch.
 3. If runtime Goal tooling is available, bind/reuse exactly one Goal for the whole Program Goal; otherwise record fallback harvest driver.
 4. Record why each ready task is dispatched, queued, serialized, or skipped.
@@ -93,13 +102,20 @@ Bootstrap may do:
 - verify canonical project root and current evidence;
 - identify next safe execution options.
 
+If required Memory Runtime or Project Continuity returns `fallback_stale`, `current=false`, `recoveryReady=false`, `project_unresolved`, `project_scope_mismatch`, or app-authority unavailable for a claim that needs current memory, bootstrap must not exit directly into product implementation from the old CEO thread. First enter Memory Recovery Freeze, produce a compact handoff/recovery packet, route memory repair, or designate a clean takeover thread.
+
+If `scripts/context_governor.py` returns `decision=freeze`, bootstrap must stop after one freeze receipt in the old task, unbind/supersede the old harvest driver, and move execution to a clean takeover task or structured blocker. Do not let the runtime Goal or heartbeat keep waking the frozen task merely to restate that it is paused.
+
 After bootstrap, output:
 
 ```text
 Bootstrap Exit Decision:
-  Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | direct CEO fallback
+  Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | memory repair / fresh takeover | direct CEO fallback
   Why not continue CEO-only:
   If CEO-only continues, reason:
+  Memory readiness:
+  Context governor decision:
+  If memory is stale/unresolved, freeze action:
   Staffing check required:
   Next routed lane/review:
   Stop condition:

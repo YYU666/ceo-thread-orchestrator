@@ -6,6 +6,13 @@ Core principle: visual quality still requires visual inspection. Do not disable 
 
 `view_image` is not a zero-payload local viewer. It reads a local file, but its result is serialized as model-visible image content and may be persisted as `input_image`, `data:image`, or base64 inside a Codex request and raw session. The same applies to forwarding a screenshot or image result through `image(...)`. Never describe either operation as local-only.
 
+## Contents
+
+- Standard policy and transport modes
+- Artifact, manifest, and evidence-card layers
+- Visual QA, budgets, callbacks, memory, and third-party boundaries
+- Recovery, task-card fields, and acceptance
+
 ## Standard Policy
 
 ```text

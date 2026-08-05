@@ -4,6 +4,12 @@ Use this reference when a project explicitly enables FlowSkill or a local `flows
 
 FlowSkill is an optional local reusable-skill evolution hook. CEO Flow remains the orchestrator: it owns goals, task graphs, lane dispatch, task cards, evidence harvest, accept/revise/block decisions, and user reporting. FlowSkill only searches, captures, scores, evolves, and exports reusable skill candidates from accepted evidence.
 
+## Contents
+
+- Optional hooks and guardrails
+- JSON contracts
+- Task-card packet and accepted evidence report
+
 Do not merge FlowSkill implementation details into CEO Flow. Keep parser logic, scoring formulas, privacy patterns, export templates, and candidate storage inside FlowSkill.
 
 ## Optional Hook Points

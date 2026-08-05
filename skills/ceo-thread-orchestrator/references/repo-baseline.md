@@ -4,6 +4,13 @@ Use this reference when CEO Flow is about to dispatch worktree implementation la
 
 CEO Flow is not only a task orchestrator; it is also a repository state gatekeeper. If the canonical project root cannot be reproduced from git or an explicitly prepared snapshot, worktree implementation lanes are unsafe.
 
+## Contents
+
+- Baseline and dirty budget
+- Worktree block and slice closure
+- Continuous audit and file ownership
+- Controlled baseline task and dispatch consequences
+
 ## Repo Baseline Gate
 
 Run this gate before any worktree writer and after suspicious repo growth.

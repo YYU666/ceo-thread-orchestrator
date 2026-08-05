@@ -1,516 +1,173 @@
-# Thread Operations Reference
+# Task And Thread Operations
 
-Use this reference when CEO Flow needs visible Codex thread coordination, sidebar cleanup, workspace anchoring, thread relay, or thread lifecycle decisions.
+Use this reference for visible Codex task discovery, creation/reuse, sidebar lifecycle, workspace anchoring, relay/callback, broken-task takeover, and missing-task location.
+
+## Contents
+
+- Tool discovery and sidebar hygiene
+- Single front door and contractor boundary
+- Workspace/worktree guard
+- Clean creation, reuse, relay, and fork risk
+- Callback and harvest freshness
+- Broken CEO takeover
+- Missing task locator
+- Capability boundaries
 
 ## Tool Discovery
 
-Search for thread tools when thread work is needed. Available surfaces may expose `list_threads`, `read_thread`, `send_message_to_thread`, `create_thread`, `fork_thread`, `handoff_thread`, `set_thread_title`, `set_thread_pinned`, and `set_thread_archived`.
+When task coordination is requested, search for relevant thread tools such as list/read/send/create/fork/handoff/title/pin/archive before promising an operation. Follow current tool contracts over this reference.
 
-Use thread tools this way:
-
-- Discover: list/search by project, role, domain, known names, and workspace before creating anything new.
-- Inspect: read recent status and turn summaries before reusing, steering, accepting, archiving, or replacing a thread.
-- Continue: send a follow-up prompt to an existing thread when it is the right lane.
-- Reuse: prefer matching specialist lanes when role, workspace, freshness, and write-set reduce risk.
-- Create: create only when user/project authorization and tool contract allow it.
-- Fork: fork only when completed conversation history is needed and role contamination risk is controlled. Active unfinished turns are not copied; CEO self-routing context may still be inherited.
-- Handoff: move between Local and Worktree only when supported and useful.
-- Lifecycle: rename, pin, archive, or retire based on evidence.
+- Discover by project, role, domain, title, workspace, and known ids before creating.
+- Inspect recent status before reuse, steering, acceptance, archiving, or replacement.
+- Continue a matching clean task when role/workspace/write-set/freshness fit.
+- Create only when explicitly authorized and justified by the task graph.
+- Fork only when completed history is required; active unfinished turns are not copied and role contamination can persist.
+- Use handoff between Local/Worktree only when supported and useful.
 
 ## Sidebar Hygiene
 
-Before creating or forking any visible lane:
+Before creating/reusing a visible lane, decide role, stable lane id/title, workspace, write-set, stop condition, expected report, callback, and lifecycle policy.
 
-1. Search for a reusable lane by project, role, area, and workspace.
-2. Decide role, write-set, stop condition, expected report, and reuse policy.
-3. Assign a stable lane id and planned title.
-4. Put planned title and lifecycle policy in the task card.
-5. Create only the lanes needed for the current task graph.
-
-Prefer clean worker creation or reuse over forking the CEO thread. A worker lane should start from a compact task card, not from the CEO lane's planning/self-routing mindset.
-
-Use short sortable titles when title tools exist:
+Suggested titles:
 
 ```text
-<ProjectShort> CEO - <goal or project>
-<ProjectShort> Impl - <area>
-<ProjectShort> Review - <area>
-<ProjectShort> UX - <flow>
-<ProjectShort> Knowledge - <memory/archive>
-<ProjectShort> Research - <question>
+<Project> CEO - <goal>
+<Project> Impl - <area>
+<Project> Review - <area>
+<Project> UX - <flow>
+<Project> Knowledge - <scope>
+<Project> Research - <question>
 ```
 
-After creating or reusing a lane:
+Rename vague lanes, pin only harvest-critical active lanes, and archive/unpin accepted/superseded/retired lanes after recording a compact handoff or reason. Record task/thread id, title, role, root/workspace, write-set, parent CEO, callback signature, status, and next harvest action in the roster.
 
-- Rename vague or untitled lanes immediately when the tool allows it.
-- Pin only active CEO, implementation, review, and harvest-critical lanes.
-- Archive or unpin after acceptance, supersession, or retirement, after recording why.
-- Record `threadId`, title, task id, role, workspace, write-set, source CEO thread id, expected callback signature, status, and next harvest action in the roster or operating note.
-- Avoid multiple sibling implementation lanes for the same project/area unless write-sets are non-overlapping and merge/review cost is justified.
-- Do not use subagents as substitutes for visible lanes when the user asked for multi-thread execution, persistent experts, or later harvest.
+Avoid sibling writers for the same area unless write-sets are isolated and integration/review cost is justified. Do not substitute hidden contractors for persistent visible lanes when the user asked for multi-task execution or later harvest.
 
-Sidebar cleanup:
+## Single Front Door
 
-- At each harvest, classify lanes as `active`, `idle`, `busy`, `blocked`, `stale`, `superseded`, or `retired`.
-- Archive/retire stale or superseded lanes only after a compact handoff, memory pointer, or reason is recorded.
-- Prefer one stable implementation lane per project/domain, one review lane for high-risk work, and one knowledge lane only when durable memory work is active.
+**Single Front Door Contract.** Keep the CEO lane as the default user-facing identity: users should not have to choose a department, relay context, or consolidate specialist answers. CEO assigns bounded lanes and retains final acceptance and user-reporting authority.
 
-## Single Front Door Contract
+**Star Routing, Not Chained Handoff.** Specialists return evidence to CEO. Do not use an uncontrolled chain where one department creates the next; CEO remains the final acceptance point. Neutral reviewers remain independent: Single front door does not mean one model writes and approves its own work.
 
-CEO Flow uses one default responsibility entrance for the user: the CEO lane. Background specialization remains valuable, but users should not have to choose a department, understand the lane roster, relay context, or coordinate handoffs before work can start.
-
-Default contract:
+The CEO lane is the default conversational identity, project-context owner, routing authority, and final reporter. Durable specialist lanes may remain visible for continuity, but the user does not have to relay context or coordinate them.
 
 ```text
-Interaction surface: CEO-only
+Interaction surface: CEO-only | user-visible-by-request
 Lane visibility: durable-visible | background-contractor
 User contact policy: CEO-mediated
 Escalation route: callback-to-CEO
 ```
 
-Meanings:
+Specialists contact the user directly only when explicitly requested or when host limitations make CEO mediation impossible and the task card says so.
 
-- `CEO-only`: the CEO is the normal conversational identity, project context owner, acceptance authority, and final reporter.
-- `user-visible-by-request`: the user explicitly asks to inspect, continue, or speak directly with a specialist lane.
-- `durable-visible`: a persistent implementation/review/UX/release/memory lane may appear in the host sidebar for continuity, but the user is not responsible for routing or harvesting it.
-- `background-contractor`: a temporary subagent/contractor performs bounded work and returns a compact trace to its integration owner.
-- `CEO-mediated`: workers, reviewers, auditors, researchers, memory providers, and contractors escalate to CEO rather than transferring coordination work to the user.
+## Contractor And Role Boundary
 
-Host tools may expose durable specialist threads in the sidebar. This does not turn them into separate product entrances. CEO still owns lane selection, task cards, context packets, harvest, evidence review, and consolidated user reporting.
+Durable worker/reviewer lanes may use contractors/subagents only when the task card grants bounded help. Contractors cannot become durable lanes, route other tasks, change scope/model/reasoning/permissions, or create project memory directly.
 
-### Star Routing, Not Chained Handoff
+Require a contractor trace: purpose, action, files/evidence, changes, tests, limitations, and source refs. Without it, contractor output is insufficient for acceptance or durable writeback.
 
-Prefer a star-shaped responsibility graph:
+Worker/reviewer self-routing, creating/forking tasks, waiting for another lane, or inspecting CEO state without permission is `role_contamination`. Send one hard role reset or supersede with a clean lane; do not let contaminated work become the new coordinator.
 
-```text
-CEO -> implementation / review / QA / UX / research / memory / contractor
-implementation / review / QA / UX / research / memory / contractor -> CEO
-```
+## Workspace And Worktree Guard
 
-Do not use an uncontrolled chain such as `CEO -> product lane -> implementation lane -> test lane -> CEO`. A worker/reviewer must not forward the task, create the next department, ask another worker to continue, or make the user repeat context. It returns evidence or a typed escalation to CEO; CEO revises the task card and dispatches the next bounded action.
+Every task card records workspace, canonical root, allowed sibling/worktree roots, write-set, and verification. Workers verify root and stop with `workspace_mismatch` before edits when it differs.
 
-Exceptions require an explicit configured workflow or task-card permission with typed handoff ownership. Even then, CEO remains the final acceptance and user-reporting authority.
+Run the detailed Repo Baseline/Worktree Readiness rules from `repo-baseline.md`. Core consequences:
 
-### User Contact Boundary
+- worktree writers require reproducible tracked source/config/test baseline;
+- critical canonical-only untracked files block worktree writers;
+- yellow/red dirty budgets reduce to one canonical writer or read-only lanes;
+- workers never copy canonical-only files into a worktree to bypass baseline;
+- accepted slices run Slice Closure and update worktree impact.
 
-Lanes report one of these signals to CEO instead of asking the user directly:
+Do not commit caches, generated heavy artifacts, node_modules, raw sessions/private memory, screenshots/base64, or secrets.
 
-```text
-completion
-approval_stall
-decision_required
-missing_context
-permission_blocked
-evidence_insufficient
-revise_needed
-```
+## Reuse, Creation, Relay, And Fork
 
-CEO should resolve, reroute, narrow, or continue around the issue when possible. Escalate to the user only for a real product choice, changed goal, irreversible/destructive action, credential/privacy grant, external account/publication/payment, legal/security boundary, or materially different cost/risk tradeoff.
-
-Neutral reviewers remain independent. Single front door does not mean one model writes and approves its own work; reviewer findings return to CEO and cannot be suppressed merely to preserve a unified user experience.
-
-## Contractor / Subagent Gate
-
-Subagents are CEO Flow's Contractor / outside-help role. They are temporary bounded scouts, not durable visible lanes. Treat them like short-term contractors: useful for speed and parallel evidence gathering, but not the source of truth for project ownership, user-visible progress, long-running memory, or final acceptance.
-
-Use contractors/subagents for:
-
-- one-shot codebase exploration;
-- read-only audit or comparison;
-- quick independent verification;
-- disposable research that does not need user-visible thread continuity;
-- bounded implementation only when the write-set is disjoint, the result can be reviewed/integrated by CEO, and the user/tool contract allows subagent delegation.
-- sidecar work that a visible CEO or worker lane can summarize into evidence without needing the contractor's full private context later.
-
-Prefer visible Codex threads for:
-
-- user-requested multi-thread execution;
-- persistent expert roles such as implementation, review, UX, release, or knowledge lanes;
-- Program Goals that need later harvest or user-visible progress;
-- work where the user may need to click into the lane and continue;
-- implementation ownership across multiple turns;
-- any task where callback, roster, workspace anchoring, or lifecycle policy matters.
-
-Subagents must not replace lane roster, task cards, callback policy, harvest driver, workspace guard, or neutral review gate. If a subagent performs implementation, CEO or the visible worker lane still owns integration, evidence review, and accept/revise/block.
-
-If the host tool contract says current-request subtasks should use subagents unless the user explicitly asks for new threads, follow that contract but record the limitation. When durable lanes are required, ask for or use explicit visible-thread authorization instead of pretending subagents are equivalent.
-
-Durable lane vs contractor decision:
+Preference order:
 
 ```text
-Needs title/sidebar visibility? -> visible lane.
-Needs later harvest/continuation? -> visible lane.
-Needs memory/history-provider traceability beyond final summary? -> visible lane or write a contractor trace.
-Owns a long-running module, review role, UX role, release role, or memory role? -> visible lane.
-One-shot exploration/audit/verification/research? -> contractor allowed.
-Disjoint bounded patch that CEO can review/integrate now? -> contractor allowed if authorized.
+matching clean existing lane -> clean new lane -> fork only when completed history is essential
 ```
 
-CEO-created visible lanes may use contractors only when their task card explicitly grants it:
+A clean worker receives a compact task card and source refs, not CEO planning/self-routing context. If fork is unavoidable, reset role, scope, write-set, thread-operation permission, callback, and stop condition explicitly.
+
+For relay between CEO and a lane, send only:
 
 ```text
-Contractor/subagent policy:
-  May use contractors: yes/no
-  Allowed contractor scope:
-  Forbidden contractor scope:
-  Max contractor count:
-  Contractor write-set:
-  Integration owner:
-  Required contractor trace:
+Task/lane id and role
+Canonical workspace/root and write-set
+Goal/acceptance/stop condition
+Required verification and evidence refs
+Compact memory/source refs
+Callback target and format
+Trust/forbidden-payload boundary
 ```
 
-Default is `May use contractors: no` for implementation, review, UX, release, and knowledge lanes unless the task card says otherwise. A worker may not silently replace its bounded task with contractor delegation.
+Never relay raw CEO chat, full worker history, giant memory files, complete logs, image/base64 bodies, credentials, or self-routing instructions.
 
-Contractor trace requirement:
+## Callback Contract
+
+Callbacks notify CEO that evidence is ready; they are not acceptance proof.
+
+Minimum callback:
 
 ```text
-ContractorTrace:
-  contractor id or nickname:
-  spawned by:
-  reason for contractor use:
-  assigned scope:
-  files or evidence inspected:
-  files changed, if any:
-  commands/tests run:
-  result summary:
-  limitations:
-  integration owner:
-  source refs:
-  memory candidate:
+Lane/task id and status
+Changed files or typed handoff ref
+Commands/results
+Evidence/artifact refs
+Risks/blockers
+Needs CEO decision / next action
 ```
 
-For memory/history-provider continuity, assume contractor internals are not durable project history unless captured through a visible lane report, evidence card, handoff, or memory candidate. Do not depend on hidden subagent conversation state for future recovery.
+Workers remain responsible for integration inside their write-set. CEO harvests the lane/handoff, current diff/tests/artifacts, and source refs before deciding.
 
-## Workspace Root Guard
+Visual callbacks include paths, hashes, dimensions, summaries, transport receipt, and decision only. Memory callbacks use compact result envelopes, never raw provider/runtime JSON.
 
-Project work must stay anchored to the user's real project folder. Wrong Codex project folders, scratch directories, generated worktrees, or sibling folders cause long-term drift.
+## Harvest Driver Freshness
 
-At the start of a project or execution wave, define:
+After lane creation/reuse, bind the roster and one harvest driver to the current task id. On replacement, contamination, archive, supersession, or missing id, update or stop the old driver.
 
-```text
-Project short name:
-Canonical project root:
-Allowed worktrees or sibling roots:
-Forbidden / stale roots:
-Workspace evidence:
-```
+Do not poll unchanged tasks merely to produce status. Runtime Goal and heartbeat must not both be co-primary. A context/memory freeze allows one receipt, then all automatic wakeups targeting that task stop or rebind.
 
-Before reusing, creating, forking, or messaging a visible lane:
-
-1. Compare the lane `cwd` or workspace with the canonical project root.
-2. If it is a worktree, verify it belongs to the same project and record the parent root.
-3. If it is a sibling project folder, old generated Codex folder, temporary workspace, or unknown directory, do not dispatch implementation work there.
-4. If a wrong-workspace thread contains useful history, use it only for read-only context extraction, then relay a compact handoff to a correct-workspace lane.
-5. If the tool cannot create a correct-workspace thread, state that limitation and ask for the correct project/thread target.
+If real work occurred in an unauthorized nested child, harvest it explicitly only as untrusted evidence, classify the parent contamination, and route future work to a clean lane.
 
-Task cards must include `Workspace`, `Canonical project root`, `Allowed worktrees / sibling roots`, and `Workspace verification`. Workers must report `workspace_mismatch` and stop before file edits if the root does not match.
+## Broken CEO Or Long Task
 
-When a user says a project lives in one folder, treat that as stronger than inferred thread history or old Codex saved-project locations.
+Treat a CEO/project-main/heartbeat target as broken when it is stream-broken, repeatedly empty, unreadable, context-exhausted, frozen, or bloated by visual/raw payloads.
 
-## Worktree Readiness Gate
+Recovery sequence:
 
-Before dispatching any implementation lane into a Codex worktree, verify the repository baseline can actually produce a complete worker workspace. Parallel worktree execution is unsafe when critical project files are untracked or only exist in the canonical local directory. Use `repo-baseline.md` for the hard Repo Baseline Gate, Dirty Budget, Slice Closure Gate, and controlled baseline task.
+1. Stop/pause the old heartbeat, automation, or Goal binding and emit no more than one freeze receipt.
+2. Keep the old task read-only; do not fork/copy its full context.
+3. Build a compact `ThreadRecoveryPacket` using the schema in `state-schema.md` from Program Goal state, accepted decisions/evidence, current lane ids, canonical docs/source refs, and vault pointers.
+4. Run app-owned verify, exact scan, Context Governor, and Project Continuity through `context-governance.md` and `project-continuity.md`.
+5. Request a strict <=3000-token `prepare_takeover` packet.
+6. Create/designate a clean CEO task and inject the verified generation once with context replacement.
+7. Rebind the roster/driver, observe `thread_takeover` when supported, and continue only from current accepted state.
 
-Run a lightweight readiness check:
+Raw sessions and original image bodies remain Cold evidence behind their normal gates.
 
-```text
-Worktree readiness:
-- package/config/build files tracked or intentionally included:
-- source directories needed for task tracked:
-- tests needed for task tracked:
-- critical untracked source required by task:
-- install/build/test can run inside worker worktree without reading canonical workspace:
-- required visual artifacts copied/tracked or replaced by artifact index:
-- dirty budget state: green | yellow | red
-- decision: ready | repo_baseline_required | local_single_writer_only | read_only_only
-```
+## Missing Task Locator
 
-Evidence examples:
+When a recorded id no longer resolves, classify `stale_lane_reference` and run a bounded locator before declaring evidence lost or pausing the program.
 
-- `git ls-files` covers package/config files such as `package.json`, lockfile, `tsconfig`, Vite/Webpack/Electron config, test config, and app entrypoints;
-- `git ls-files` covers relevant `src/**`, `tests/**`, `app/**`, or equivalent project source roots;
-- `git status --short` does not show critical untracked source, config, test, generated code, or assets required by the task;
-- a fresh worktree can run install/build/test/smoke commands using only tracked or explicitly prepared snapshot files;
-- visual tasks have local artifact paths, hashes, or copied artifacts available to the worker instead of relying on hidden canonical-session state.
+Use anchors in this order:
 
-If the gate fails, it is a hard worktree block, not a warning:
+1. exact/id prefix and parent/source thread id;
+2. planned/current title and task/lane id;
+3. project root/cwd, role, write-set, callback signature, and recent time;
+4. recovery packet, roster, handoff, memory/history/vault metadata.
 
-1. Block worktree implementation lanes for that project wave.
-2. Use a single-writer canonical workspace implementation lane only if safe.
-3. Allow read-only review, audit, planning, test-log review, repo-baseline audit, or architecture lanes in parallel.
-4. Create a controlled Repo Baseline task before parallel code development; do not bypass by asking workers to copy or read canonical-only files.
-5. Record the failure as `repo_baseline_required` or `local_single_writer_only`, not as a CEO Flow methodology failure.
+Inspect only compact recent metadata/status first. If one strong match exists, correct the roster/driver and harvest it. If several candidates remain, keep them untrusted and use source/diff/artifact evidence to disambiguate. If only archive evidence exists, recover pointers and route a fresh lane. If nothing exists, mark `stale_no_evidence` and continue other safe program work.
 
-Repo Baseline task card:
-
-```text
-Goal: make the project safe for worktree worker lanes; do not implement product features.
-Check tracked files: package/config/build, src, tests, scripts, required assets.
-Classify untracked files: source/config/test/assets/artifacts/generated/cache.
-Propose explicit pathspec or snapshot plan; do not run broad `git add .`.
-Do not commit secrets, local caches, generated heavy artifacts, node_modules, raw sessions, or private memory.
-Verify a clean worktree can install/build/test.
-Report readiness decision and residual risks.
-```
-
-This gate is not meant to force every project into worktrees. It prevents CEO Flow from treating an incomplete git baseline as a parallel-ready project. If git cannot reproduce the canonical root, baseline first, then parallelize.
-
-## Unsaved Source Repo Host Lane
-
-Some Codex hosts can create threads only inside saved projects. If the user's canonical source repo is not a saved project, do not silently switch implementation to a scratch or generated folder.
-
-Use this fallback only when the user wants lane execution and no correct saved project target is available:
-
-1. Create or reuse a host lane in the closest approved CEO/shell project.
-2. State that the host workspace is not the canonical source repo.
-3. Put the canonical source repo in `Canonical project root`.
-4. Set `Allowed write-set` to absolute paths under that canonical source repo only.
-5. Add `Do not touch` for the host project files unless they are explicitly part of the task.
-6. Require the worker to run a workspace check before edits and stop with `workspace_mismatch` if the absolute canonical root is unavailable or differs from the task card.
-7. Use absolute paths in every edit, command, and report.
-8. Set a harvest driver before final reporting: heartbeat, concrete next harvest time, immediate synchronous harvest, or an active runtime Codex Goal bound to the Program Goal Brief.
-
-This is a bridge for tool limitations, not permission to let project roots drift. If the host lane cannot safely access the canonical repo, keep it read-only and ask the user to open or save the correct project.
-
-## Relay Packet
-
-When routing between threads, use a compact relay packet instead of raw logs:
-
-```text
-From CEO thread:
-Source thread / evidence:
-Target thread:
-Context snapshot:
-Decision or request:
-Allowed write-set:
-Dependencies:
-Required verification:
-Report back with:
-Stop condition:
-```
-
-Relay sequence:
-
-1. Read the source thread's newest report, diff summary, or blocker.
-2. Distill only relevant context, files, constraints, and evidence.
-3. Read the target thread before sending, so the prompt fits its state.
-4. Send a bounded relay packet or task card.
-5. Record message, target thread id, expected report, and next harvest action.
-6. Later read the target report and make an explicit CEO decision.
-
-Do not use thread messaging as a hidden autonomous chat room. CEO remains accountable for context crossing thread boundaries.
-
-## Clean Worker Creation And Fork Risk
-
-Worker creation preference:
-
-1. Reuse a suitable existing worker lane with matching role, workspace, write-set, and freshness.
-2. Create a clean visible worker lane in the correct project/workspace when tools allow it.
-3. Use same-directory or worktree fork only when the worker genuinely needs completed source-thread history and the source is not in an active unfinished turn.
-
-Do not fork a worker directly from an active/unfinished CEO turn. Do not fork a worker from a CEO thread whose recent completed history is dominated by orchestration, routing, thread creation, or "I will ask another worker" instructions, unless the task card explicitly resets the lane role.
-
-Fork inherits completed conversation history. That can be useful for context, but it can also copy CEO identity, self-routing habits, stale thread ids, old harvest prompts, and "create another worker" behavior into a supposed implementation lane.
-
-If fork is unavoidable, the first task card must include:
-
-```text
-Thread operation: worker execution only.
-Do not create, fork, route, message, inspect, or wait on other worker/CEO threads unless this task card explicitly asks.
-Do not inspect CEO lane state unless asked.
-Execute the bounded task in this lane.
-Report in this lane only; send compact callback to CEO only if callback tooling is available and the task card includes a CEO thread id.
-If you cannot execute directly, report blocker with evidence; do not delegate.
-Role contamination guard: if you start planning to dispatch another thread, stop and report role_contamination.
-```
-
-CEO must immediately classify the lane as `role_contamination` and revise/block/supersede if the first worker response says or implies:
-
-- "I will create/fork/route another thread";
-- "I will ask the backend/frontend worker";
-- "I will wait for another thread's report";
-- "I need to inspect the CEO thread first";
-- "I am the CEO/orchestrator for this task";
-- it creates another worker instead of executing the bounded task.
-
-For `role_contamination`, do not keep nudging the contaminated lane. Archive/retire it when safe, record the reason, and create/reuse a clean worker with a stricter task card.
-
-## Worker Callback Contract
-
-Worker callback is an optional acceleration path, not a replacement for CEO harvest. Use it when a project cannot safely run many implementation lanes, when only one visible worker is active, or when quick CEO feedback matters more than broad parallelism.
-
-CEO-created implementation and review lanes default to no-stall worker mode. The goal is not to bypass host security approval; it is to stop a single worker's approval wait from freezing the whole program.
-
-Every implementation or review task card should state:
-
-```text
-CEO thread id:
-Interaction surface: CEO-only unless user explicitly requests direct lane contact
-Lane visibility: durable-visible | background-contractor
-User contact policy: CEO-mediated
-Escalation route: callback-to-CEO
-Thread operation: worker execution only; do not create/fork/route threads unless explicitly asked
-Locator anchors: lane title, task id, source_thread_id, project/cwd, write-set, expected callback signature
-Role contamination guard: execute this bounded task directly; report blocker instead of delegating
-Callback events: completion | blocker | approval_stall | revise_needed
-Callback method: send_message_to_thread when available; otherwise CALLBACK_UNAVAILABLE
-Callback priority: queued | interrupt
-Callback payload: decision-grade compact report, changed files, commands/tests, blockers, residual risks, memory candidates
-Visual evidence payload: paths + hashes + dimensions + short summary only; no image attachments/base64/data:image/input_image; view_image/image(...) are model-visible transport, not local-only
-Contractor trace: required if this lane used any contractor/subagent
-CEO harvest fallback:
-No-stall fallback: continue other ready tasks | reuse another lane | direct CEO fallback if allowed | HOST_APPROVAL_REQUIRED
-```
-
-Worker callback rules:
-
-1. The worker writes its normal final report in its own lane.
-2. If thread messaging is available and the task card includes a CEO thread id, the worker also sends a compact callback to the CEO on completion, blocker, approval stall, or revise-needed.
-3. If thread messaging is unavailable, the worker reports `CALLBACK_UNAVAILABLE` in its own lane and relies on CEO harvest.
-4. The callback must not include long chat history, raw session content, full knowledge bases, broad logs, image attachments, base64, `data:image`, `input_image`, tool image blocks, or full screenshot JSON.
-5. The worker must not route new tasks, create new lanes, approve scope changes, or manage other workers through callback.
-6. The worker must not ask the user to choose another lane, repeat context, approve ordinary in-profile commands, or manage the workflow. It reports a typed escalation to CEO.
-7. CEO still performs acceptance, revision, blocking, memory writeback, and user reporting.
-8. Worker completion does not automatically push to CEO. Callback may fail, queue, or be unavailable; CEO must still harvest by reading the worker lane or evidence source.
-
-Callback interrupt policy:
-
-- Default callbacks are queued harvest signals. Completion, ordinary progress, low-risk revise-needed, memory candidates, and routine status updates should not interrupt the CEO thread.
-- Interrupt only for a blocker that stops downstream work, approval stall for an in-scope action, safety risk, destructive-risk, urgent user-visible failure, credential/spending/legal/security issue, or conflicting parallel writes.
-- If a worker is unsure whether interruption is justified, use queued priority and state the risk in the payload.
-- Callback priority affects attention only. It does not prove completion, authorize scope changes, or replace CEO evidence review.
-- If a lane used contractors/subagents, its callback or final report must include a compact contractor trace so project memory can preserve what outside help did without reading hidden contractor history.
-
-Approval stall handling:
-
-1. Workers must not ask the user for routine read/edit/test/build/screenshot approvals already covered by the task card.
-2. If host approval blocks a covered action, workers callback `approval_stall` to CEO with the exact pending action, command/tool, reason, and safer alternative.
-3. CEO immediately harvests the stalled lane. If the action is within the approval profile, CEO sends a compact continuation/approval message.
-4. If host UI approval is still required, CEO records `HOST_APPROVAL_REQUIRED`, marks the lane `approval_stalled`, and continues other safe ready tasks instead of waiting.
-5. Escalate to the user only for out-of-scope, destructive, credential, spending, external account, legal/security, privacy, or changed-goal decisions.
-6. A stalled lane is program-blocking only when it owns the only safe write-set and no review, audit, docs, alternate lane, or policy-compliant fallback can continue.
-
-For broad parallel projects, CEO harvest remains primary. Callback is a useful signal, but the CEO must still read/inspect evidence before accepting work.
-
-## Harvest Driver Thread Freshness
-
-Harvest drivers must track current lane ids and thread ids. A heartbeat, automation, or reminder that targets a superseded, retired, role-contaminated, or stale worker is itself stale.
-
-## Broken CEO Thread / Heartbeat Fuse
-
-Do not keep automatically harvesting or sending tasks to a CEO thread, project-main thread, or long-running heartbeat target that is no longer a safe execution surface.
-
-Treat these as degraded warnings:
-
-- one empty heartbeat or harvest turn;
-- one context-pressure or auto-compact event;
-- hot session size makes routine harvest noticeably expensive;
-- session contains large image/base64/input_image payloads but still produces useful evidence;
-- a worker or CEO used repeated `view_image`, `image(...)`, or screenshot image blocks and caused model-visible payload growth even if callbacks remained textual;
-- the target is slow but still producing useful new evidence.
-
-Treat these as immediate fuse conditions:
-
-- `systemError`, stream disconnected, reconnect loop, or repeated host/tool read failure;
-- `inProgress` for too long with no useful new output;
-- two consecutive heartbeat/harvest turns with `last_agent_message=null`, empty items, or no new evidence;
-- repeated `ContextLimit`, auto-compact loops, or near-window context pressure on every turn;
-- session size is over about 50 MB or visual payloads make opening/harvesting the thread slow;
-- repeated `data:image`, base64, `input_image`, screenshot, or generated-image payloads make the thread unsafe as a CEO/project-main surface;
-- CEO/project-main thread is unreadable, archived, replaced, or missing.
-
-On fuse:
-
-1. Pause, delete, or supersede heartbeat/automation targeting the broken thread. Record `reason=broken_ceo_thread`.
-2. Do not fork the broken thread.
-3. Do not copy the full old chat, raw session, giant knowledge dump, image attachments, base64, or `data:image` payloads into a new thread.
-4. Do not call `view_image` from the takeover/CEO thread. Run zero-payload local analysis first; if pixels are essential, create one fresh short-lived bounded visual worker without forked history.
-5. Run the event-triggered Project Continuity Gate with exact `projectPath/projectId`. For CEO takeover/recovery, consume the full mandatory 14-slot pagination before any recovery-ready claim. Then run Memory Runtime `retrieve_context(queryType=thread_recovery)` and generate/update a compact `ThreadRecoveryPacket`. Helper-only or incomplete pagination remains `partial` with `recoveryReady=false`.
-6. Create or designate a clean CEO takeover thread when tools and authorization allow it.
-7. The takeover thread reads compact memory first: Program Goal Brief, project docs, lane roster, sourceRefs, visual artifact indexes, and memory/history-provider/vault pointers.
-8. Raw session or vault session remains cold evidence and can be read only through the raw-session gate.
-9. Rebind heartbeat only to the takeover thread if no active runtime Goal is already the primary harvest driver.
-10. Write a compact WorkingMemory/evidence card.
-11. Call `observe_event(thread_takeover|broken_thread|stale_lane_reference|heartbeat_fuse)` when the app-owned Memory Runtime exposes it, and verify retrieve/writeback execution through project-scoped trigger receipts when available.
-
-`ThreadRecoveryPacket` fields:
-
-```text
-threadId:
-thread title:
-canonical project root:
-symptom:
-recommendedReadOrder:
-current Program Goal Brief:
-compact project memory:
-known active worker/thread ids:
-vault/sourceRefs pointers:
-visual artifact index:
-paused automation ids:
-replacement CEO thread id:
-next safe action:
-```
-
-Compact evidence card:
-
-```text
-BrokenThreadEvidence:
-brokenThreadId:
-symptom:
-pausedAutomationId:
-replacementCeoThreadId:
-recoveryPacketRefs:
-nextSafeAction:
-```
-
-Use `broken_ceo_thread` for CEO/project-main/heartbeat target failure. Use `stale_lane_reference` for a missing worker or review lane id. Missing worker ids should not pause the whole Program Goal.
-
-## Missing Thread Locator
-
-When a rostered lane, heartbeat, callback, or recovery packet points to a `threadId` that host tools cannot read, CEO must not keep retrying that exact id in a loop. Classify the lane as `stale_lane_reference` and run a bounded locator pass before treating the work as lost.
-
-Use these anchors in order, stopping when confidence is high enough to harvest or correct the roster:
-
-1. exact `read_thread(threadId)` or equivalent host lookup;
-2. thread id prefix search when the prefix is distinctive;
-3. lane title, task id, latest callback record, or callback first line search;
-4. `source_thread_id` / `codex_delegation` source id search when present;
-5. project/cwd plus task id or write-set search;
-6. current project recovery docs, handoff packets, Program Goal Brief, restore/recovery package, or compact memory packet;
-7. memory/history-provider/vault metadata by threadId, project path, title, or task id.
-
-Keep the raw-session gate closed during locator fallback. Use compact metadata, recovery indexes, vault manifests, and accepted evidence first. Read full raw chat/session only after an explicit narrow recovery need and the normal raw-history policy allows it.
-
-After locator fallback:
-
-- If a likely replacement thread is found, update the lane roster with the corrected `threadId`, record the old id as `stale_lane_reference`, update/delete stale heartbeat prompts, and harvest the replacement.
-- If only archived or vault history is found, recover compact evidence, mark the visible lane `stale_lane_reference`, and route a fresh replacement lane or continue from accepted evidence.
-- If nothing is found, mark the lane `stale_no_evidence` and move the Program Goal portfolio forward when any safe task, review, audit, docs, or fallback work remains.
-- A single missing lane reference must not pause or block the whole Program Goal unless that lane owns the only critical path and no other safe progress is possible.
-
-When a worker is superseded, retired, archived, or replaced:
-
-1. Update the lane roster with the new current thread id.
-2. Mark old thread ids as `superseded`, `role_contamination`, `stale`, `stale_lane_reference`, or `stale_no_evidence`.
-3. Delete, update, or replace heartbeat/harvest prompts that mention obsolete thread ids.
-4. Do not accept results from an old heartbeat unless the CEO revalidates the thread state and evidence.
-
-If a worker finishes in a nested child thread that the CEO did not explicitly authorize, classify the parent lane as `role_contamination` or `superseded` and harvest the actual evidence by reading the real worker thread. Do not assume the nested child can or will report back automatically.
+A missing lane is lane-local unless it is the only critical path and no other safe wave exists.
 
 ## Capability Boundaries
 
-- A new thread is a separate conversation, not a guaranteed autonomous employee.
-- Existing thread steering requires explicit read/send operations.
-- Contractor/subagents are short-lived outside-help scouts unless the user/tool contract says otherwise; they are not equivalent to user-visible persistent lanes and are not durable history until summarized into evidence.
-- Background work continues only with a live worker, heartbeat, lease, automation, or equivalent evidence.
-- Dispatch is not complete until the CEO records how results will be harvested.
-- Forked workers may inherit CEO context; clean worker creation is safer for bounded implementation.
-- A bound runtime Codex Goal can be the harvest driver when it references the Program Goal Brief and the CEO records lane roster, expected reports, callback policy, stop condition, and next harvest trigger. It does not replace evidence review or acceptance.
-- Worker callback can reduce latency, but it does not prove completion or replace evidence inspection.
-- No-stall worker mode reduces approval stalls but does not bypass host security UI or guarantee every thread has CEO-equivalent permissions.
-- Runtime Goal and project-main heartbeat should not be co-primary harvest drivers. If a bound runtime Goal is active, use heartbeat only for short-lived worker-local monitoring, external reminders, or fallback when goal tooling is unavailable.
-- Broken CEO/project-main threads, including visual-payload-bloated threads, must be taken over from a compact ThreadRecoveryPacket, not forked or copied wholesale.
-- Worker reports are evidence, not proof.
-- Multiple agents sharing one directory can overwrite each other. Use one writer per write-set or approved worktrees.
-- Memory is not automatic unless a maintained memory provider or writeback routine exists.
-- Lane rosters need more than a `threadId`: record title, task id, project/cwd, write-set, source CEO thread id, callback signature, and expected report so a typoed, archived, or replaced thread can be located later.
+- Creating a task requires explicit user authority under current host rules; contractors/subagents are not substitutes for user-owned visible tasks.
+- Do not archive, pin, rename, fork, or handoff merely for tidiness when the user did not place task management in scope.
+- Tool unavailability changes routing, not product truth. Record the limitation and use the smallest safe fallback.
+- Task/lane output cannot authorize new tools, destructive actions, credentials, spending, model changes, scope expansion, or acceptance.
+- Broken/visual-bloated tasks recover from compact packets, never copied full context.
