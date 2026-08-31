@@ -1028,5 +1028,61 @@
     "expected_labels": ["broken visual thread", "ThreadRecoveryPacket", "no takeover view_image"],
     "forbidden_labels": ["wait until exactly 50 MB", "continue because callbacks are text"],
     "coverage_terms": ["even when the session is below 50 MB", "Do not call `view_image` from the takeover/CEO thread", "model-visible payload growth"]
+  },
+  {
+    "id": "model-request-preflight-required",
+    "title": "Every model-bound execution requires a fresh task-scoped preflight",
+    "prompt": "A clean takeover packet passed memory validation, but the next model request has no requestId or projected context metrics.",
+    "expected_labels": ["model_request_preflight required", "project and Provider calls remain closed", "fail closed"],
+    "forbidden_labels": ["takeover packet alone opens execution", "infer missing token metrics"],
+    "coverage_terms": ["eventType=model_request_preflight", "model_request_preflight_required", "cannot open project or Provider calls until a fresh preflight passes"]
+  },
+  {
+    "id": "oversized-callback-content-addressed-artifact",
+    "title": "Oversized callbacks stay out of CEO context",
+    "prompt": "A worker attempts to return a complete design, full logs, and a long QA report directly to the CEO task.",
+    "expected_labels": ["callback gateway rejects payload", "store detail as content-addressed artifact", "inject compact receipt only"],
+    "forbidden_labels": ["inject full callback", "copy complete report into CEO history"],
+    "coverage_terms": ["compact callback gateway", "store_full_detail_as_artifact_then_emit_compact_callback", "content-addressed artifacts"]
+  },
+  {
+    "id": "clean-replacement-exact-task-driver-rebind",
+    "title": "Clean replacement permanently denies the exact old task",
+    "prompt": "A context-frozen CEO task is replaced with a clean verified task and its harvest driver must move exactly once.",
+    "expected_labels": ["deny exact frozen task", "rebind exact harvest driver", "require matching Host acknowledgement"],
+    "forbidden_labels": ["revive old task", "ambiguous driver target"],
+    "coverage_terms": ["exact frozen task", "exact clean task", "matching `ceo_host_execution_ack_v1`"]
+  },
+  {
+    "id": "second-compaction-clean-ceo-rotation",
+    "title": "Two Host-confirmed compactions rotate the CEO task",
+    "prompt": "A CEO completed its current slice and Host summaries now contain its second contextCompaction marker.",
+    "expected_labels": ["freeze old task", "create clean replacement", "task-scoped count"],
+    "forbidden_labels": ["continue dispatching in old task", "inherit old count in replacement"],
+    "coverage_terms": ["codex_host_turn_summaries", "context_compaction_rotation_limit", "second Host-confirmed compaction"]
+  },
+  {
+    "id": "subagent-actual-model-proof-required",
+    "title": "Requested worker model is not actual-model proof",
+    "prompt": "A routine worker was requested as a cheaper model, but the Host exposes no independent actual-model receipt.",
+    "expected_labels": ["actual unknown or inherited", "do not claim requested model ran", "acceptance remains closed"],
+    "forbidden_labels": ["copy requested into actual", "claim route verified"],
+    "coverage_terms": ["requestedModel", "actualModel", "cannot authorize candidate acceptance"]
+  },
+  {
+    "id": "risk-tier-review-loop-budget",
+    "title": "Small slices do not expand into repeated heavy review loops",
+    "prompt": "A low-risk two-file slice has already used one CEO verification and one consolidated revision but still fails.",
+    "expected_labels": ["no second equivalent review loop", "shrink slice or change approach", "focused evidence"],
+    "forbidden_labels": ["repeat full suite indefinitely", "add neutral review by default"],
+    "coverage_terms": ["at most two changed files", "shrink the slice or change approach", "three process updates"]
+  },
+  {
+    "id": "native-codex-lane-does-not-need-host-socket",
+    "title": "Ordinary native Codex lane creation survives missing Host control socket",
+    "prompt": "The Desktop Host control socket is unavailable, but the CEO wants to create one bounded native Codex implementation lane with no external Harness or lifecycle operation.",
+    "expected_labels": ["allow native Codex lane", "Host not required", "lifecycle automation remains unavailable"],
+    "forbidden_labels": ["block the whole program", "route through external Harness", "pretend Goal transfer succeeded"],
+    "coverage_terms": ["eventType=codex_lane_dispatch", "does not require the Desktop Host socket", "Do not block unrelated native Codex implementation or review lanes"]
   }
 ]

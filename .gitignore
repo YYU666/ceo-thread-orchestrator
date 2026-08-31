@@ -10,6 +10,8 @@ Thumbs.db
 
 # Logs and generated artifacts
 *.log
+*.py[cod]
+__pycache__/
 .gh-auth.*
 tmp/
 temp/

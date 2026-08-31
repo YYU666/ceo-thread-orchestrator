@@ -1,0 +1,36 @@
+{
+  "schema": "external_harness_process_request_v1",
+  "workspace": "/absolute/path/to/isolated-worktree",
+  "canonicalSourceRoot": "/absolute/path/to/canonical-project",
+  "isolatedWorkspace": true,
+  "argv": [
+    "dsh",
+    "--profile",
+    "example-fast-profile",
+    "--patch",
+    "reasoning=low",
+    "--reasoning-policy",
+    "provider_default",
+    "--json",
+    "--max-turns",
+    "8",
+    "--timeout",
+    "300",
+    "--tool-timeout",
+    "60",
+    "--allowed-tools",
+    "read,glob,grep,edit",
+    "--write-set",
+    "src/example.py,tests/test_example.py",
+    "--allowed-command",
+    "python -m unittest tests.test_example",
+    "bounded task text"
+  ],
+  "internalBudget": {
+    "maxTurns": 8,
+    "wallTimeoutSeconds": 300,
+    "toolTimeoutSeconds": 60
+  },
+  "outerTimeoutSeconds": 310,
+  "terminationGraceSeconds": 10
+}

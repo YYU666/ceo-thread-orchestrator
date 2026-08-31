@@ -319,9 +319,13 @@ Public, reproducible checks:
 python -m pip install -r requirements-dev.txt
 python scripts\smoke_eval.py
 python -m unittest discover -s tests -v
+python -m unittest discover -s skills\ceo-thread-orchestrator\tests -v
+python -m py_compile skills\ceo-thread-orchestrator\scripts\*.py
+python scripts\source_manifest.py . --verify-self --require-clean-git --expected-head <candidate-commit>
 python skills\ceo-thread-orchestrator\scripts\validate_pipeline.py skills\ceo-thread-orchestrator\templates\pipeline.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\typed_handoff.yaml --json
 python skills\ceo-thread-orchestrator\scripts\scorecard_handoff.py skills\ceo-thread-orchestrator\templates\review_handoff.yaml --json
+python skills\ceo-thread-orchestrator\scripts\validate_external_harness_route.py --adapter skills\ceo-thread-orchestrator\templates\external-harness-adapter.json --dispatch skills\ceo-thread-orchestrator\templates\external-harness-dispatch.json --receipt skills\ceo-thread-orchestrator\templates\external-harness-receipt.json --json
 python scripts\check_release_state.py
 ```
 
@@ -332,6 +336,10 @@ node scripts\zhixia_memory_core_recovery_probe.cjs <zhixia-app-root> <ceo-flow-r
 ```
 
 `smoke_eval.py` is a static documentation coverage check. It verifies that smoke cases are well formed and that policy terms exist in the skill/reference corpus; it is not an LLM behavior evaluation. The adversarial validator tests in `tests/` check executable guardrails for typed handoffs and pipeline contracts.
+
+The skill tests cover governor, callback gateway, lifecycle driver, refresh reconciliation, atomic state, cross-project bootstrap, and strict Host-adapter contracts. The lifecycle suite uses a fake shared Host to prove the full event -> telemetry -> governor -> replacement -> Goal transfer -> ACK -> state-commit path. Ordinary native Codex worker/reviewer creation uses the built-in task/subagent surface and the strict `codex_lane_dispatch` contract, so it does not require this low-level Host socket. Production lifecycle control defaults to `codex app-server proxy` and never starts a second writer; `--standalone-test-server` is disposable-test-only. A real Desktop acceptance for automatic context rotation, replacement, Goal transfer, context replacement, and takeover archiving still requires that the running Desktop Host expose a control socket and current-context telemetry snapshot. Missing transport or snapshot disables those lifecycle actions with a typed lane-local recoverable block; it neither proves the actions ran nor blocks unrelated native Codex lanes. CI runs the atomic-state suite on a native Windows runner, but a result is evidence only for the exact committed candidate that produced it.
+
+The candidate manifest command is intentionally stricter than a directory hash. It accepts only the Git top-level of a clean checkout, rejects modified or untracked files and an unexpected HEAD, and binds the exact commit, tree, tracked-file set, and file bytes into one digest. CI uploads that manifest from its fresh checkout; a dirty local postimage cannot claim this gate until it is committed through the normal review flow.
 
 Optional Codex-internal checks, when you have the corresponding local validator skills installed:
 

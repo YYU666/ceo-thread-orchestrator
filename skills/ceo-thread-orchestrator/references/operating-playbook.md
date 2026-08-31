@@ -53,7 +53,7 @@ Before creating/updating/completing/blocking a Goal:
 3. Keep module/wave/lane state in the Program Goal Brief, not separate host Goals.
 4. Treat host Goal collisions as tool-state issues and use the Program Goal Brief plus another harvest driver when safe.
 
-Mark a runtime Goal complete only when Program Goal done criteria and evidence are satisfied. Mark it blocked only when the whole Program Goal has the same real repeated blocker and no safe implementation, review, audit, docs, rerouting, or portfolio wave can continue. Module pauses, stale lanes, approval stalls, MVP transitions, and single failed attempts are not program blockers.
+Mark a runtime Goal complete only when Program Goal done criteria and evidence are satisfied. Mark it blocked only when the whole Program Goal has the same real blocker on at least three bounded audits, no safe ready lane remains, rerouting is unavailable, and an external state change is required. Module pauses, stale lanes, approval stalls, MVP transitions, one failed refresh, and one failed worker/runtime attempt are not program blockers. A fresh verified replacement generation or verified binding refresh clears a historical Host Goal block and resumes the current clean CEO task without reviving the unsafe old execution surface.
 
 ## One Primary Harvest Driver
 
@@ -163,7 +163,7 @@ Do not final after dispatch without a driver. Stop harvest/heartbeat prompts tar
 
 ## Approval, Completion, And Simplification
 
-Routine in-scope approval stalls are lane-local: report to CEO, compare with the approved command profile, continue other safe work, and escalate only when host UI or authority truly requires the user.
+Routine in-scope approval stalls are lane-local: report to CEO, compare with the approved command profile, use an already-approved bounded fallback or continue other safe work, and escalate only when host UI or authority truly requires the user. Ask the user only for credentials, new spending, destructive/irreversible actions, legal/security/product-scope choices, explicit risk acceptance, or missing business facts. Batch related authority into one compact request instead of serial per-step approvals.
 
 Close only when the newest request and done criteria are satisfied, evidence matches risk, lanes are accepted or properly terminated, program/dashboard state is current, and any runtime Goal completion is justified.
 

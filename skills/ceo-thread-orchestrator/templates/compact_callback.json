@@ -1,0 +1,41 @@
+{
+  "schema": "ceo_compact_callback_v1",
+  "taskId": "implementation-lane-001",
+  "status": "review_ready",
+  "summary": "Bounded implementation completed; detailed design and logs are stored as artifacts.",
+  "handoffRef": "artifacts/handoffs/implementation-lane-001.json",
+  "artifactRef": "artifacts/reports/implementation-lane-001.md",
+  "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "changedPaths": [
+    "src/example.py",
+    "tests/test_example.py"
+  ],
+  "commands": [
+    "python -m unittest tests.test_example"
+  ],
+  "evidenceRefs": [
+    "artifacts/tests/implementation-lane-001.txt#sha256=dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+  ],
+  "risks": [],
+  "nextAction": "CEO inspects diff, tests, and handoff before accept or revise.",
+  "needsCeoDecision": true,
+  "requestedModel": "example-balanced-model",
+  "requestedThinking": "medium",
+  "actualModel": "example-balanced-model",
+  "actualThinking": "medium",
+  "routingResult": "verified",
+  "routingProofSource": "codex_host",
+  "routingReceiptId": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "riskTier": "low",
+  "verificationProfile": "focused",
+  "ceoVerificationCount": 0,
+  "neutralReviewCount": 0,
+  "revisionCount": 0,
+  "processUpdateCount": 2,
+  "sliceId": "slice-001",
+  "sliceBasisSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "callbackSequence": 1,
+  "priorCallbackSha256": null,
+  "verificationEvidenceReceiptId": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "declaredTokenEstimate": 700
+}

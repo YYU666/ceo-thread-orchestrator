@@ -26,6 +26,22 @@ jobs:
       - name: Validator adversarial tests
         run: python -m unittest discover -s tests -v
 
+      - name: CEO Flow control and recovery tests
+        run: python -m unittest discover -s skills/ceo-thread-orchestrator/tests -v
+
+      - name: Compile control scripts
+        run: python -m py_compile skills/ceo-thread-orchestrator/scripts/*.py
+
+      - name: Freeze clean Git candidate manifest
+        run: python scripts/source_manifest.py . --verify-self --require-clean-git --expected-head "$GITHUB_SHA" --output "$RUNNER_TEMP/ceo-flow-source-manifest.json"
+
+      - name: Upload candidate source manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: ceo-flow-source-manifest-${{ github.sha }}
+          path: ${{ runner.temp }}/ceo-flow-source-manifest.json
+          if-no-files-found: error
+
       - name: Validate bundled pipeline template
         run: python skills/ceo-thread-orchestrator/scripts/validate_pipeline.py skills/ceo-thread-orchestrator/templates/pipeline.yaml --json
 
@@ -34,5 +50,32 @@ jobs:
           python skills/ceo-thread-orchestrator/scripts/scorecard_handoff.py skills/ceo-thread-orchestrator/templates/typed_handoff.yaml --json
           python skills/ceo-thread-orchestrator/scripts/scorecard_handoff.py skills/ceo-thread-orchestrator/templates/review_handoff.yaml --json
 
+      - name: Validate external Harness routing templates
+        run: python skills/ceo-thread-orchestrator/scripts/validate_external_harness_route.py --adapter skills/ceo-thread-orchestrator/templates/external-harness-adapter.json --dispatch skills/ceo-thread-orchestrator/templates/external-harness-dispatch.json --receipt skills/ceo-thread-orchestrator/templates/external-harness-receipt.json --json
+
       - name: Release state check
         run: python scripts/check_release_state.py
+
+  windows-portability:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Import and compile cross-platform controls
+        shell: pwsh
+        run: |
+          python -m py_compile skills/ceo-thread-orchestrator/scripts/*.py
+          python -c "import sys; sys.path.insert(0, 'skills/ceo-thread-orchestrator/scripts'); import atomic_state; assert atomic_state.msvcrt is not None"
+
+      - name: Run Windows atomic-state and platform-independent control tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s skills/ceo-thread-orchestrator/tests -p 'test_atomic_state.py' -v
+          python -m unittest discover -s skills/ceo-thread-orchestrator/tests -p 'test_context_governor.py' -v
+          python -m unittest discover -s skills/ceo-thread-orchestrator/tests -p 'test_host_control_adapter.py' -v

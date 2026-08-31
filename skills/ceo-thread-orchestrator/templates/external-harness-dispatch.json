@@ -1,0 +1,44 @@
+{
+  "schema": "external_harness_dispatch_v1",
+  "dispatchId": "example-dispatch-fast-001",
+  "adapterPolicyId": "example-provider-policy-v1",
+  "adapterPolicyDigest": "557fb5421615fbe7f64293115f1b063a03f04b15f0fdcfe08be6c62b9dae3873",
+  "requestedCapabilityClass": "fast",
+  "requestedModel": "example-fast-model",
+  "requestedReasoning": "provider_default",
+  "selectionSurface": "cli_profile",
+  "selector": {
+    "profile": "example-fast-profile",
+    "patch": "reasoning=low"
+  },
+  "explicitRoute": true,
+  "allowGlobalDefaultInheritance": false,
+  "retryCount": 0,
+  "guard": {
+    "allowedTools": [
+      "read",
+      "glob",
+      "grep",
+      "edit"
+    ],
+    "exactWriteSet": [
+      "src/example.py",
+      "tests/test_example.py"
+    ],
+    "allowedCommands": [
+      "python -m unittest tests.test_example"
+    ],
+    "isolatedWorkspace": true,
+    "independentCodexReviewRequired": true
+  },
+  "fallback": {
+    "declared": true,
+    "routeId": "project-declared-codex-fallback",
+    "owner": "ceo"
+  },
+  "ceoInvariant": {
+    "model": "opaque-ceo-model-snapshot",
+    "reasoning": "opaque-ceo-reasoning-snapshot",
+    "permissionsDigest": "opaque-permissions-digest"
+  }
+}

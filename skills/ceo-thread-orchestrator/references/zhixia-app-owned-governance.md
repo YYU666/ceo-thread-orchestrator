@@ -2,6 +2,8 @@
 
 Use this reference when CEO Flow coordinates with the formally installed `/Applications/知匣.app` app-owned Memory Runtime for bootstrap, resume, direction switching, worker dispatch, takeover, or context-pressure recovery.
 
+For cross-project tasks, use `scripts/cross_project_bootstrap_driver.py` to call the Runtime separately with each exact `projectWorkspaces[].workspace`. A neutral cwd/artifact root is never a Zhixia workspace. Keep verify, retrieve/prepare, generation, checkpoint, acceptance receipt, source refs, refresh, and writeback project-scoped; never request or accept a combined cross-project authority packet.
+
 ## Design Card
 
 Goal: make each CEO/worker task verify and refresh its own project memory binding with the app-owned Runtime, replacing long thread context with one bounded generation packet and keeping ordinary memory traffic out of Codex task delegation.
@@ -33,8 +35,8 @@ At task start, resume, direction switch, and before worker/reviewer dispatch:
 2. Accept injection only when all strict fields hold: `memoryMode=app_owned_memory_core`, `authorityVerification=app_owned_verified`, `current=true`, `recoveryReady=true`, `returnedCount>0`, and `takeover.shouldInject=true`.
 3. If all fields hold, inject exactly one `contextGenerationId` for that Codex task using `replace_long_thread_context`.
 4. If any field fails, block dispatch/provider calls and run a read-only exact scan.
-5. If exact scan is unchanged and verification still fails, freeze with `authority_defect`.
-6. If exact scan changed without a formal QA/accept receipt, freeze with `unaccepted_project_change`.
+5. If exact scan is unchanged and verification still fails, pause the affected lane as recoverable `authority_defect`; run one bounded local repair check and continue unrelated lanes.
+6. If exact scan changed without a formal QA/accept receipt, pause only the affected lane as `unaccepted_project_change`; never authorize dirty/unaccepted source automatically.
 7. If exact scan changed with a formal receipt, run the local direct refresh driver. It executes `refresh_binding`, validates a new receipt/checkpoint/generation, performs bounded `verify`, and resumes only the affected lane after `matched/current/recoveryReady` are true.
 
 Fail closed for: `fallback_stale`, `authorityVerification!=app_owned_verified`, `current=false`, `recoveryReady=false`, `returnedCount=0`, `takeover.shouldInject=false`, changed HEAD, changed scan, changed project identity, or changed postimage.
@@ -75,7 +77,7 @@ Zhixia exposes high-level app-owned `refresh_binding`. The current CEO/worker ca
 
 The idempotency key binds workspace, project identity, scan, and receipt; changed paths and the previous checkpoint are immutable evidence attached to that attempt, not ways to create another attempt. The driver executes one refresh at most once per scan/receipt key, makes no model or paid Provider call, and never retries a failed refresh automatically. A full seed is not a substitute for refresh binding.
 
-After a valid refresh receipt advances the checkpoint and generation, the driver calls `verify` locally up to the bounded verification limit. Resume the related lane only when `memoryMode=app_owned_memory_core`, `authorityVerification=app_owned_verified`, `scanBinding.matched=true`, `current=true`, `recoveryReady=true`, the scan matches, and the new checkpoint is authorized. Until then Provider calls remain zero. Failure pauses only that lane/module; `programGoalBlocked=false` and unrelated lanes may continue.
+After a valid refresh receipt advances the checkpoint and generation, the driver calls `verify` locally up to the bounded verification limit. The refresh or queried outcome must also bind the exact v2 refresh key, app-owned accepted-receipt digest, lane, sorted-path digest, 64-hex outcome digest, and `outcomeVerification=app_owned_authenticated`. Resume the related lane automatically only when `memoryMode=app_owned_memory_core`, `authorityVerification=app_owned_verified`, `scanBinding.matched=true`, `current=true`, `recoveryReady=true`, the scan matches, the new checkpoint is authorized, and the exact generation/scan/checkpoint/authority receipt is committed to that task/project governor ledger. A cached verified driver attempt without this commit fails closed for local reconciliation and never repeats refresh. Until then Provider calls remain zero. Failure pauses only that lane/module; `programGoalBlocked=false` and unrelated lanes may continue. A fresh verified generation may clear a stale historical Host Goal block, but never revives an unsafe frozen old task.
 
 ## Message Policy
 

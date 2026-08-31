@@ -28,6 +28,8 @@ When task coordination is requested, search for relevant thread tools such as li
 
 Before creating/reusing a visible lane, decide role, stable lane id/title, workspace, write-set, stop condition, expected report, callback, and lifecycle policy.
 
+Ordinary Codex implementation/review lane creation uses the built-in task/subagent surface directly and does not depend on the low-level Desktop Host control socket. Record it as a strict native `codex_lane_dispatch` (`executionBackend=codex_native`, `routingSurface=visible_thread|subagent`). Missing Host telemetry may disable automatic CEO rotation or Goal transfer, but it is not a reason to stop an otherwise safe native lane. Do not use this exception for an external Harness, paid Provider, context replacement, Goal transfer, takeover, or archive action.
+
 Suggested titles:
 
 ```text
@@ -123,6 +125,8 @@ Needs CEO decision / next action
 
 Workers remain responsible for integration inside their write-set. CEO harvests the lane/handoff, current diff/tests/artifacts, and source refs before deciding.
 
+Before callback text enters the CEO task, run `scripts/callback_gateway.py`. The compact callback has a 16 KiB serialized hard ceiling, a conservative 2200-token ceiling, a 2000-byte summary ceiling, bounded lists, safe relative changed paths, and a field allowlist. It also carries requested/actual model and thinking, out-of-band route proof/result, risk tier, verification profile, registered slice identity, callback chain, and cumulative review/update counters. Unknown or inherited actual routing may be inspected but cannot authorize acceptance. A caller-supplied digest without a trusted adapter receipt is unverified. Unknown full-design/report/log/chat fields, understated token estimates, raw/base64/credential bodies, oversized content, risk/evidence mismatch, counter reset, broken callback chain, or exhausted review loops fail closed for acceptance. Use `store_full_detail_as_artifact_then_emit_compact_callback`; detailed design, diffs, QA output, and logs live in content-addressed artifacts.
+
 Visual callbacks include paths, hashes, dimensions, summaries, transport receipt, and decision only. Memory callbacks use compact result envelopes, never raw provider/runtime JSON.
 
 ## Harvest Driver Freshness
@@ -139,13 +143,15 @@ Treat a CEO/project-main/heartbeat target as broken when it is stream-broken, re
 
 Recovery sequence:
 
-1. Stop/pause the old heartbeat, automation, or Goal binding and emit no more than one freeze receipt.
+1. Stop/pause the old heartbeat, automation, or Goal binding and emit no more than one freeze receipt; bind the action to the exact frozen task and driver.
 2. Keep the old task read-only; do not fork/copy its full context.
 3. Build a compact `ThreadRecoveryPacket` using the schema in `state-schema.md` from Program Goal state, accepted decisions/evidence, current lane ids, canonical docs/source refs, and vault pointers.
 4. Run app-owned verify, exact scan, Context Governor, and Project Continuity through `context-governance.md` and `project-continuity.md`.
-5. Request a strict <=3000-token `prepare_takeover` packet.
-6. Create/designate a clean CEO task and inject the verified generation once with context replacement.
-7. Rebind the roster/driver, observe `thread_takeover` when supported, and continue only from current accepted state.
+5. Request `prepare_takeover` with a 2200-token preferred budget and a 10000-token hard ceiling; use strict mode only when a fixed cap is required.
+6. Create/designate a clean CEO task and inject the verified generation once with context replacement. Before its first model turn, require verified Host telemetry plus `context_ingress_gateway.py`: retained context <=30000 tokens, one focused reference at most, no repeated reference SHA, no full `read_thread` history, and bounded/artifact-backed tool output.
+7. Use `codex_app_server_executor.py` to pause the old runtime Goal, create the empty replacement, inject only the compact packet, clear the old Goal, activate the same objective/token budget on the replacement, archive the old task, and rebind the unique Goal/harvest driver. Continue only after digest-bound per-action Host receipts prove exactly one active Goal and no old-task wakeup.
+
+Run this lifecycle through the existing Desktop Host, not a second app-server writer. The production CLI defaults to `codex app-server proxy`; a missing Host control socket is a scoped recoverable Host-integration blocker. Do not start a managed daemon and claim it owns a task that the Desktop Host already owns. An idle task requires a Host telemetry snapshot; `thread/resume` without a token notification is not evidence. Keep `--standalone-test-server` limited to disposable tasks that are not loaded by Desktop.
 
 Raw sessions and original image bodies remain Cold evidence behind their normal gates.
 

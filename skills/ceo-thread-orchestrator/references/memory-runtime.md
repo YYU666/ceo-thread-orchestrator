@@ -92,10 +92,10 @@ tool_skill_lookup  workflow_reuse  handoff  memory_writeback
 
 Default budgets:
 
-- `project_resume`: 1500-3000 tokens;
-- `task_dispatch` and `review_gate`: 800-1500;
+- `project_resume`: prefer 1500-3000 tokens, adaptive ceiling 10000;
+- ordinary `task_dispatch` and `review_gate`: prefer about 1200, bounded range 800-1500;
 - precedent: 800-1200;
-- `thread_recovery`: 1500-3000, higher only after an explicit hard gate.
+- `thread_recovery`: prefer 2200, adapt through bounded steps only when minimum Hot/Warm/continuity anchors do not fit, hard ceiling 10000.
 
 Stop when source-backed context is sufficient; do not increase limits merely for completeness. Put only the triggered Memory Runtime, continuity, Warm Anchor, and writeback fields into the task card; use `state-schema.md` for their exact record shape.
 

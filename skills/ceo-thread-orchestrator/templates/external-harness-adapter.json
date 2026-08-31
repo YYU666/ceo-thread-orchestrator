@@ -1,0 +1,54 @@
+{
+  "schema": "external_harness_adapter_v1",
+  "adapterPolicyId": "example-provider-policy-v1",
+  "mappingSource": "accepted-project-policy",
+  "globalDefaultModel": "provider-global-default",
+  "routes": {
+    "fast": {
+      "selectionSurface": "cli_profile",
+      "selector": {
+        "profile": "example-fast-profile",
+        "patch": "reasoning=low"
+      },
+      "model": "example-fast-model",
+      "reasoning": "provider_default",
+      "directModelOverride": false,
+      "identityProofMethods": [
+        "cli_dispatch_receipt"
+      ]
+    },
+    "balanced": {
+      "selectionSurface": "cli_patch",
+      "selector": {
+        "config": "example-balanced-config",
+        "patch": "reasoning=medium"
+      },
+      "model": "example-balanced-model",
+      "reasoning": "medium",
+      "directModelOverride": false,
+      "identityProofMethods": [
+        "cli_dispatch_receipt"
+      ]
+    },
+    "frontier": {
+      "selectionSurface": "web_session",
+      "selector": {
+        "modelSelector": "example-frontier-option",
+        "reasoningSelector": "high"
+      },
+      "model": "example-frontier-model",
+      "reasoning": "high",
+      "directModelOverride": true,
+      "identityProofMethods": [
+        "web_session_metadata"
+      ]
+    }
+  },
+  "retryPolicy": {
+    "defaultRetries": 0,
+    "authorizedMaxRetries": 0
+  },
+  "pricing": {
+    "status": "unavailable"
+  }
+}

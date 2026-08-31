@@ -19,6 +19,8 @@ Use this reference when CEO Flow needs a compact, durable state contract for Pro
 
 ## Program Goal Brief
 
+For a cross-project task, pair the brief with the workspace-set record below instead of treating its cwd as a canonical project root.
+
 ```text
 Program goal:
 Canonical project root:
@@ -90,6 +92,22 @@ Lightweight state discipline:
 Last updated:
 ```
 
+## Cross-Project Workspace Set
+
+```text
+Artifact root: absolute output path; not a project identity
+Project workspaces, ordered:
+  - projectKey: stable task-local key
+    workspace: exact absolute project root
+    projectId: known id or null until that root verifies
+Active projectKey:
+Bootstrap mode: lazy_ordered
+Per-project status: pending | ready | stale | blocked
+Per-project ledger ref:
+```
+
+Freeze the ordered list at task start. `projectId=null` on the host task is neutral and never authorizes repo inference from cwd. Verify, retrieve/prepare, generation, authority, checkpoint, receipt, source refs, refresh, and writeback remain independent per `projectKey`; never merge or compare them across projects. Bootstrap one project at a time, inject only its compact packet, and then advance lazily. A stale project pauses only its lanes while other verified projects and neutral artifact work continue.
+
 ## Completion Dashboard
 
 ```text
@@ -152,6 +170,14 @@ Dispatch/candidate attempt budget:
 Actual model/reasoning used:
 Model routing result: applied | inherited | degraded | unavailable
 Model routing reason code: none | model_route_unavailable | reasoning_route_unavailable | spending_not_authorized | mapping_insufficient
+External Harness adapter policy id/digest:
+External Harness selection surface: web_session | cli_profile | cli_patch | unsupported
+External Harness selector / requested capability class:
+External Harness requested/actual model and reasoning:
+External Harness identity proof / route applied / route verified / global-default inherited:
+External Harness usage / elapsed / cost availability and source-backed price observation:
+External Harness stop reason / task success / changed paths / commands / diff / tests:
+External Harness fallback receipt / CEO invariant receipt:
 Callback policy:
 Stop condition:
 Status: planned | dispatched | running | waitingOnApproval | review | accepted | revise | blocked | superseded | stale | role_contamination | stale_lane_reference | stale_no_evidence
@@ -246,6 +272,100 @@ Rules:
 - Do not fork the broken thread.
 - Do not copy the full old chat.
 - New takeover thread reads compact packet/project docs first; raw/vault session remains cold evidence under gate.
+
+## Model Request Preflight
+
+```text
+Event type: model_request_preflight
+Task/thread id:
+Unique request id:
+Host telemetry schema/source/scope: ceo_host_context_telemetry_v1 / codex_host / current_post_compaction_context
+Captured at / content-addressed Host telemetry receipt id:
+Host transport mode: existing_host_proxy | standalone_test_server
+Host connection state: connected | desktop_host_connection_unavailable
+Host telemetry state: current_snapshot | host_telemetry_snapshot_unavailable | host_telemetry_snapshot_invalid
+Last real request input tokens:
+Current post-compaction context tokens / bytes:
+Projected next-request input tokens:
+Model context window tokens / reserved output tokens:
+Cumulative input tokens: accounting/advisory only; never current-context input
+Context compaction count / source: non-negative integer / codex_host_turn_summaries
+Task compaction rotation limit: 2; count is task-scoped and never inherited by replacement
+Effective preflight limit: min(90% configured threshold, model window - reserved output)
+Consumed request id ledger:
+Decision / freeze reason:
+```
+
+One request id authorizes at most one Host-measured current-task model execution or lifecycle transition. Missing or invalid telemetry cannot open replacement, Goal-transfer, context-replacement, takeover-archive, or external Provider execution. Takeover validation alone is not model-execution authorization.
+
+## Native Codex Lane Dispatch
+
+```text
+Event type: codex_lane_dispatch
+Dispatch requested: true
+Execution backend: codex_native
+Routing surface: visible_thread | subagent
+Parent CEO task / bounded lane role / exact write-set:
+External Harness / paid Provider / lifecycle controls: false
+Decision / allowLaneDispatch / Host required=false:
+```
+
+This event authorizes only creation of a bounded native Codex implementation or review lane through the built-in task/subagent surface. It does not authorize a model request inside the current CEO, an external Harness, paid Provider, takeover/replacement, Goal transfer, context replacement, or archive operation. Frozen-task, sticky-global-block, source-authority, and forbidden-payload gates still apply. Ambiguous legacy dispatch events remain on the strict preflight path.
+
+## Clean Context Ingress Receipt
+
+```text
+Schema: ceo_context_ingress_receipt_v1
+Task id / receipt SHA-256:
+Retained context tokens: <=30000
+Thread history mode: none | compact_wait_threads | recovery_packet_only
+Full thread history loaded: false
+New focused references: <=1 / path / SHA-256
+Previously loaded reference SHA ledger: task-scoped; duplicates denied
+Tool outputs: summary tokens / serialized bytes / rawBytesIncluded=false / artifact SHA when oversized
+Decision / typed blocker:
+```
+
+## Host Lifecycle ACK
+
+```text
+Schema: ceo_host_execution_ack_v1
+Plan SHA-256 / actionReceiptsSha256:
+Frozen task / replacement task:
+Old execution stopped / old Goal paused / old Goal cleared / wakeups stopped:
+Replacement created / compact packet injected / contextMode=replace:
+Replacement Goal bound and active / activeGoalCount=1:
+Old task archived / harvest driver transferred:
+Retained context tokens: <=30000
+Host replacement ledger: frozen task / replacement task / creation plan SHA-256 / action receipt SHA-256
+```
+
+All lifecycle booleans are backed by actual App Server responses and postcondition reads. `actionsApplied=true` without the complete digest-bound action receipt is invalid.
+
+## Compact Callback Receipt
+
+```text
+Schema: ceo_compact_callback_v1
+Task/status/summary:
+Handoff and content-addressed artifact refs:
+Changed paths / commands / evidence refs / risks:
+Requested model/thinking / actual model/thinking:
+Routing result / proof source / content-addressed receipt id:
+Trusted route receipt schema / selection surface / process-local validation:
+Risk tier / verification profile:
+CEO verification / neutral review / revision / process update counts:
+Registered slice id / slice basis SHA-256:
+Registered callback worker task id:
+Callback sequence / prior callback SHA-256 / durable cumulative ledger:
+Verification evidence receipt id / command receipt refs and SHA-256:
+Next action / needs CEO decision:
+Declared and conservative token estimate:
+Serialized bytes / callback SHA-256:
+Allow callback injection: yes/no
+Allow candidate acceptance / acceptance gaps / slice budget exhausted:
+```
+
+Use `scripts/callback_gateway.py`; detailed reports and logs remain artifacts and never enter the CEO callback body.
 
 ## Evidence / Memory Candidate
 
@@ -351,6 +471,17 @@ Context Injection Ledger:
   injectedGenerationIds:
   lastGenerationBasis:
   invalidatedGenerationIds:
+  legacyInjectionOwnerKey: compatibility owner; migrate top-level fields only on matching task/thread
+  taskRuntimeLedger: task-scoped turn and cumulative-token counters
+  frozenTaskKeys: unsafe old execution surfaces; never remove to resume them
+  freezeReceiptsByTask: at most one compact freeze receipt per task
+  freezeByTask: task-scoped immutable freeze reason and receipt state
+  recoveryTransitions: replacementForTaskId / fresh generation / replacement task / verified_replacement_ready
+  programBlockAuditLedger: workspace+blocker key / exact authority tuple / fully replayed source-backed envelopes / three consecutive verified receipts / last qualifying assessment
+  programGlobalBlock: sticky active / ledgerKey / workspace / blocker / authority tuple / proof digest / activation / known generations / trusted recovery evidence
+  Global blocker authority registry: authorityId / issuer / auditSeriesId / sourceRoot; configured outside untrusted event JSON
+  Global blocker receipt: trusted control entry / authorityId+issuer+explicit sourceRoot / in-workspace JSON sourceRef path+sha256+auditSeriesId / workspace / strict RFC3339 observedAt / scope=program_goal / blockerCode / exact integer safeReadyLaneCount=0 / exact boolean reroute+external-state fields / sequence / previousReceiptSha256 / receiptSha256
+  Global blocker recovery: trusted process-local entry / exact proof+workspace+blocker+replacement task / fresh verified contextGenerationId / recoveryReceiptSha256 / clear only after task-ledger commit
 Direct Refresh Binding:
   driver: scripts/refresh_binding_driver.py
   workspace / lane or module:
@@ -358,12 +489,41 @@ Direct Refresh Binding:
   expectedProjectIdentitySha256:
   expectedScanSha256:
   acceptedEvidenceReceipt:
-  acceptedChangedPaths / exact sourceRefs:
-  refresh idempotency key / call count:
+  acceptedEvidenceReceiptDigest: app-owned 64-hex digest; persist before Runtime call
+  acceptedChangedPaths / acceptedPathDigest / exact sourceRefs:
+  lane:
+  refresh idempotency key: sha256(canonical workspace + identity + scan + prior checkpoint + receipt ID + receipt digest + sorted-path digest + lane)
+  outcome: refreshKey / outcomeDigest 64-hex / outcomeVerification=app_owned_authenticated
+  refresh call count:
+  refresh namespace: registered projectWorkspaces key or single-project sha256(canonical workspace + verified identity); never caller label
   receiptId / authorizedCheckpointId / contextGenerationId:
+  verifiedRefresh governor commit: refreshKey / generation / scan / checkpoint / authorityReceiptId
+  durability confirmation: ceo_refresh_durability_v1 / refreshKey / exact driver+governor commitDigest / status=confirmed
+  transaction receipts per governor/driver/confirmation file: pending .uncertain v1 -> persistent .confirmed v2 / outcome=committed_postimage / target / previousSha256 / intendedSha256 / committedSha256=intendedSha256 / transactionId; previousSha256 is never an authorized completed outcome; all authorization reads require exact committed target bytes, and only target+sidecars all absent means empty initial state
+  restart reconciliation: marker preimage-or-postimage confirmation / blocked turn / zero Runtime refresh / exact three-ledger coherence before resume
+  started-at-Runtime-boundary: one exact read-only query_refresh_outcome / never replay refresh / absent or invalid query remains lane-local no-poll
   verify matched / current / recoveryReady:
+  lifecycleState: active | lane_paused_recoverable | lane_paused_pending_acceptance | lane_paused_user_authorization | task_context_frozen_replace_required | program_blocked_global
+  userAuthorizationRequired / autoRecoveryEligible / resumeProgramGoal / clearHistoricalGoalBlocked:
   lane status / programGoalBlocked / unrelated lanes:
   knowledge task messages / paid Provider calls / retry:
+  allowToolCalls: legacy conservative aggregate; false while blocked
+  allowProjectToolCalls / allowProviderCalls:
+  allowRecoveryControlTools / recoveryControlToolAllowlist:
+  state persistence: advisory lock / unique temp / file fsync / durable uncertainty marker / atomic replace / directory fsync / CAS digest / explicit fail-closed durability error
+  state privacy: new file 0600 / preserve existing owner-only mode / reject group-or-other access / native ACL verification required per platform
+  control payload limits: actual serialized bytes / max depth / nodes / width / aggregate string bytes / sourceRefs; inspect before deepcopy
+Host Control Receipt:
+  adapter: scripts/host_control_adapter.py
+  known typed booleans / lifecycle / decision / recovery tool allowlist:
+  projectTools / providerCalls / recoveryTools:
+  programGoal: no_change | keep_blocked | clear_and_resume
+  context: no_change | replace
+  currentTask: exact task id / allow-or-deny
+  frozenTask: exact task id / deny only
+  harvestDriver: keep | unbind | rebind / exact fromTaskId / exact toTaskId
+  lifecycle driver: scripts/task_lifecycle_driver.py / action-plan SHA-256 / exact Host ACK
+  governorControlSha256:
 Visual evidence policy:
 Visual transport mode: zero-payload-local-analysis | bounded-model-vision
 Model-visible image budget:
@@ -399,6 +559,8 @@ Operating consequence:
 Project scale:
 Task scale:
 Canonical project root:
+Artifact root (cross-project only):
+Ordered projectWorkspaces / active projectKey (cross-project only):
 Program Goal Brief:
 Runtime Goal:
 Memory Runtime result:

@@ -45,6 +45,20 @@ Worker reports must include changed files, exact commands, tests, failures, resi
 
 ## CEO Review
 
+Scale verification to the accepted slice risk:
+
+| Risk | Default evidence | Review budget |
+| --- | --- | --- |
+| `low` | at most two changed files, diff plus focused test | one CEO verification, no neutral review |
+| `medium` | focused evidence plus typecheck/build | one CEO verification; neutral review only when a separate trigger applies |
+| `high` | full affected suite/build and risk-specific evidence | one CEO verification plus exactly one neutral review |
+
+Per slice, permit at most one CEO verification, one neutral review, one consolidated revision, and three process updates (`start`, exceptional blocker, result). After the first revision, batch the fixes. If the revised slice still fails, shrink the slice or change approach instead of repeating equivalent review loops. Store long test/build/browser output as a content-addressed artifact; callbacks carry only command, result, path, hash, and compact findings. Acceptance requires exactly one CEO verification plus non-empty command and evidence refs; high risk also requires exactly one neutral review. These are hard acceptance budgets enforced by `scripts/callback_gateway.py`, not permission to omit evidence required by a genuinely higher risk tier.
+
+Register the worker `callbackTaskId`, `sliceId`, and `sliceBasisSha256` in the trusted task event before the first callback. Persist callback sequence, prior callback digest, and cumulative review/update counters in the atomically committed task state. Each later callback must preserve all three registered identities, increment sequence by one, bind the prior digest, and use non-decreasing counters. A task-id/slice alias, unregistered slice, broken chain, or counter reset may be inspected as untrusted evidence but cannot advance the ledger or authorize acceptance.
+
+Each acceptance evidence ref is `safe/relative/path#sha256=<64-hex>` and points to a bounded `ceo_verification_command_receipt_v1`, not a free-form log. The production Host hashes the file below the canonical workspace, rejects symlink/path escape and forbidden stores, parses a strict receipt binding worker task, slice, basis, verification profile, exact command, `exitCode=0`, and `status=passed`, and requires coverage of every declared command. It then supplies a compact `ceo_verification_evidence_receipt_v1` through a process-local capability. A placeholder path, caller digest, or non-existent artifact cannot authorize acceptance.
+
 The CEO checks more than "does it run":
 
 - diff size and touched files match the change budget;

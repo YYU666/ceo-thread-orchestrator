@@ -1,0 +1,78 @@
+{
+  "schema": "external_harness_receipt_v1",
+  "dispatchId": "example-dispatch-fast-001",
+  "adapterPolicyId": "example-provider-policy-v1",
+  "adapterPolicyDigest": "557fb5421615fbe7f64293115f1b063a03f04b15f0fdcfe08be6c62b9dae3873",
+  "requestedCapabilityClass": "fast",
+  "requestedModel": "example-fast-model",
+  "actualModel": "example-fast-model",
+  "requestedReasoning": "provider_default",
+  "actualReasoning": "unavailable",
+  "reasoningPolicyProof": {
+    "status": "verified",
+    "method": "request_header_reasoning_effort_omitted",
+    "requestedReasoning": "provider_default",
+    "defaultPolicyApplied": true,
+    "concreteEffortKnown": false
+  },
+  "selectionSurface": "cli_profile",
+  "appliedSelector": {
+    "profile": "example-fast-profile",
+    "patch": "reasoning=low"
+  },
+  "routeApplied": true,
+  "routeVerified": true,
+  "globalDefaultInherited": false,
+  "modelIdentityProof": {
+    "status": "verified",
+    "method": "cli_dispatch_receipt",
+    "selectionSurface": "cli_profile",
+    "model": "example-fast-model",
+    "evidenceRef": "artifacts/example-harness-route.json"
+  },
+  "usage": {
+    "status": "unavailable"
+  },
+  "elapsed": {
+    "status": "unavailable"
+  },
+  "cost": {
+    "status": "unavailable"
+  },
+  "processExitCode": 0,
+  "cliExit": 0,
+  "taskCompleted": true,
+  "stopReason": "completed",
+  "taskSuccess": true,
+  "timedOut": false,
+  "turns": 1,
+  "modelCalls": 1,
+  "toolPolicyCompliant": true,
+  "changedPaths": [
+    "src/example.py",
+    "tests/test_example.py"
+  ],
+  "commandsExecuted": [
+    "python -m unittest tests.test_example"
+  ],
+  "writeSetCompliant": true,
+  "commandGuardCompliant": true,
+  "diffEvidence": [
+    "artifacts/example.diff"
+  ],
+  "tests": [
+    "python -m unittest tests.test_example: pass"
+  ],
+  "independentReview": {
+    "reviewer": "codex",
+    "status": "accepted",
+    "evidenceRef": "artifacts/example-codex-review.json"
+  },
+  "retryCount": 0,
+  "ceoInvariantAfter": {
+    "model": "opaque-ceo-model-snapshot",
+    "reasoning": "opaque-ceo-reasoning-snapshot",
+    "permissionsDigest": "opaque-permissions-digest"
+  },
+  "fallbackReceipt": null
+}
