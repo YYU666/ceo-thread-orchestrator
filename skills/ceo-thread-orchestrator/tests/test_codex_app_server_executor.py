@@ -542,6 +542,7 @@ class CodexAppServerExecutorTests(unittest.TestCase):
 
     def test_full_entry_rotates_after_two_host_compactions(self) -> None:
         transport = FakeTransport(compaction_count=2)
+        transport.token_usage["last"]["inputTokens"] = 110_000
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             executor = app_executor.CodexAppServerExecutor(transport, root / "journal")
@@ -565,12 +566,13 @@ class CodexAppServerExecutorTests(unittest.TestCase):
                 executor,
             )
         self.assertEqual(result["decision"], "freeze", result)
-        self.assertEqual(result["governor"]["reason"], "context_compaction_rotation_limit")
+        self.assertEqual(result["governor"]["reason"], "projected_context_pressure_limit")
         self.assertTrue(result["hostAcknowledged"], result)
         self.assertEqual([method for method, _ in transport.calls].count("thread/start"), 1)
 
     def test_production_executor_activates_verified_existing_replacement(self) -> None:
         transport = FakeTransport(compaction_count=2)
+        transport.token_usage["last"]["inputTokens"] = 110_000
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             state_path = root / "state.json"

@@ -365,11 +365,16 @@ def validate_slice_governance(
         gaps.append(f"{risk}_risk_requires_{expected_profile}_verification")
     if risk == "low" and len(changed_paths) > 2:
         gaps.append("low_risk_slice_exceeds_two_changed_paths")
-    if risk == "low" and counts["neutralReviewCount"] != 0:
+    evidence_changed = (
+        isinstance(prior_slice, dict)
+        and isinstance(prior_slice.get("verificationBasis"), str)
+        and prior_slice["verificationBasis"] != verification_basis(callback)
+    )
+    if risk == "low" and counts["neutralReviewCount"] != 0 and not evidence_changed:
         gaps.append("low_risk_slice_neutral_review_over_budget")
-    if risk == "high" and counts["neutralReviewCount"] != 1:
+    if risk == "high" and counts["neutralReviewCount"] < 1:
         gaps.append("high_risk_slice_requires_exactly_one_neutral_review")
-    if counts["ceoVerificationCount"] != 1:
+    if counts["ceoVerificationCount"] < 1:
         gaps.append("slice_requires_exactly_one_ceo_verification")
     if not commands:
         gaps.append("slice_verification_commands_required")
@@ -385,10 +390,18 @@ def validate_slice_governance(
         ("revisionCount", 1),
         ("processUpdateCount", 3),
     ):
-        if counts[field] > maximum:
+        prior_count = (prior_slice or {}).get("counts", {}).get(field, 0)
+        justified_recheck = evidence_changed and counts[field] <= max(maximum, prior_count + 1)
+        if counts[field] > maximum and not justified_recheck:
             gaps.append(f"{field}_budget_exceeded")
             budget_exhausted = True
     return gaps, budget_exhausted
+
+
+def verification_basis(callback: dict[str, Any]) -> str:
+    return hashlib.sha256(canonical_bytes({
+        key: callback.get(key) for key in ("changedPaths", "commands", "evidenceRefs")
+    })).hexdigest()
 
 
 def block(reason: str, errors: list[str], *, serialized_bytes: int, estimated_tokens: int) -> dict[str, Any]:
@@ -418,6 +431,8 @@ def validate(
     expected_task_id: str | None = None,
     expected_slice_id: str | None = None,
     expected_slice_basis_sha256: str | None = None,
+    native_codex_review: bool = False,
+    exact_model_required: bool = True,
 ) -> dict[str, Any]:
     if not isinstance(callback, dict):
         return block("callback_schema_invalid", ["callback must be an object"], serialized_bytes=0, estimated_tokens=0)
@@ -496,7 +511,17 @@ def validate(
     evidence_verified, evidence_gaps = validate_evidence_receipt(
         callback, trusted_evidence_receipt, evidence_proof_capability
     )
-    acceptance_gaps = routing_gaps + evidence_gaps + acceptance_gaps
+    # Only an explicitly selected local Codex review can tolerate missing
+    # route telemetry. Mismatches and claimed-but-unproven receipts stay closed.
+    observational_route = (
+        native_codex_review is True
+        and exact_model_required is False
+        and routing_result in {"unknown", "inherited"}
+        and callback.get("routingProofSource") == "unavailable"
+        and callback.get("routingReceiptId") is None
+    )
+    route_acceptable = model_route_verified or observational_route
+    acceptance_gaps = ([] if observational_route else routing_gaps) + evidence_gaps + acceptance_gaps
     if errors:
         reason = (
             "callback_payload_exceeded"
@@ -523,6 +548,7 @@ def validate(
         "callbackSequence": callback["callbackSequence"],
         "lastCallbackSha256": digest,
         "counts": counts,
+        "verificationBasis": verification_basis(callback),
     }
     slice_ledger_advance_allowed = not any(
         gap.startswith("callback_slice_") for gap in acceptance_gaps
@@ -535,11 +561,12 @@ def validate(
         "allowCallbackInjection": True,
         "allowCandidateAcceptance": (
             callback.get("status") in {"complete", "review_ready"}
-            and model_route_verified
+            and route_acceptable
             and evidence_verified
             and not acceptance_gaps
         ),
         "modelRouteVerified": model_route_verified,
+        "modelRouteObservational": observational_route,
         "verificationEvidenceVerified": evidence_verified,
         "routingResult": routing_result,
         "acceptanceGaps": acceptance_gaps,
@@ -551,7 +578,7 @@ def validate(
             "shrink_slice_or_change_approach"
             if slice_budget_exhausted
             else "complete_risk_tier_evidence_before_acceptance"
-            if acceptance_gaps or not model_route_verified
+            if acceptance_gaps or not route_acceptable
             else "ceo_inspect_compact_evidence"
         ),
         "callbackSha256": digest,
@@ -564,6 +591,12 @@ def validate(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate a compact CEO Flow callback.")
     parser.add_argument("callback", type=Path)
+    parser.add_argument("--native-review-workspace", type=Path,
+                        help="Review local Codex evidence without a Desktop connection")
+    parser.add_argument("--task-id")
+    parser.add_argument("--slice-id")
+    parser.add_argument("--slice-basis")
+    parser.add_argument("--exact-model-required", action="store_true")
     args = parser.parse_args()
     try:
         raw = args.callback.read_bytes()
@@ -575,7 +608,24 @@ def main() -> int:
                 estimated_tokens=(len(raw) + 2) // 3,
             )
         else:
-            result = validate(json.loads(raw.decode("utf-8")))
+            callback = json.loads(raw.decode("utf-8"))
+            if args.native_review_workspace:
+                from codex_app_server_executor import CodexAppServerExecutor
+                evidence = CodexAppServerExecutor.capture_verification_evidence_receipt(
+                    callback, {"workspace": str(args.native_review_workspace)}
+                ) if isinstance(callback, dict) else None
+                result = validate(
+                    callback,
+                    native_codex_review=True,
+                    exact_model_required=args.exact_model_required,
+                    trusted_evidence_receipt=evidence,
+                    evidence_proof_capability=EVIDENCE_PROOF_CAPABILITY,
+                    expected_task_id=args.task_id,
+                    expected_slice_id=args.slice_id,
+                    expected_slice_basis_sha256=args.slice_basis,
+                )
+            else:
+                result = validate(callback)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         result = block("callback_unreadable", [str(exc)], serialized_bytes=0, estimated_tokens=0)
     print(json.dumps(result, indent=2, sort_keys=True))

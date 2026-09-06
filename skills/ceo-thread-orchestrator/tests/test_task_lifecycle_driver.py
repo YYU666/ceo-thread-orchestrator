@@ -250,13 +250,13 @@ class TaskLifecycleDriverTests(unittest.TestCase):
     def test_second_compaction_automatically_creates_clean_replacement(self) -> None:
         host = FakeHost()
         result = driver.run(
-            preflight("old-ceo", "rotate-after-two", compaction_count=2),
+            preflight("old-ceo", "rotate-after-two", projected=110_000, compaction_count=2),
             {},
             limits(),
             host,
         )
         self.assertEqual(result["decision"], "freeze", result)
-        self.assertEqual(result["governor"]["reason"], "context_compaction_rotation_limit")
+        self.assertEqual(result["governor"]["reason"], "projected_context_pressure_limit")
         self.assertTrue(result["hostAcknowledged"], result)
         self.assertEqual(len(host.plans), 1)
         self.assertEqual(host.plans[0]["replacement"]["action"], "create_clean_replacement")

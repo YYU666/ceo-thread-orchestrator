@@ -835,11 +835,6 @@ def pressure_reasons(
         and preflight["estimatedContextTokens"] > DEFAULT_CLEAN_TAKEOVER_RETAINED_CONTEXT_LIMIT
     ):
         reasons.insert(0, "clean_takeover_retained_context_limit")
-    if (
-        isinstance(preflight, dict)
-        and preflight["contextCompactionCount"] >= DEFAULT_CONTEXT_COMPACTION_ROTATION_LIMIT
-    ):
-        reasons.insert(0, "context_compaction_rotation_limit")
     return reasons
 
 
@@ -1895,6 +1890,13 @@ def evaluate(event: dict[str, Any], previous_state: dict[str, Any], limits: dict
     preflight, preflight_reason = model_request_preflight(event, task_runtime, limits)
     if preflight is not None:
         event["_validatedPressurePreflight"] = preflight
+        task_runtime["rotationRecommended"] = (
+            preflight["contextCompactionCount"] >= DEFAULT_CONTEXT_COMPACTION_ROTATION_LIMIT
+        )
+        task_runtime["rotationNextAction"] = (
+            "finish_current_slice_then_prepare_verified_takeover"
+            if task_runtime["rotationRecommended"] else None
+        )
 
     # Migrate the legacy single sticky-freeze bit into a task-scoped freeze.
     # A different clean task may recover with a fresh verified generation, but
@@ -1958,6 +1960,8 @@ def evaluate(event: dict[str, Any], previous_state: dict[str, Any], limits: dict
         "pressurePreflight": preflight,
         "contextCompactionCount": preflight["contextCompactionCount"] if isinstance(preflight, dict) else 0,
         "contextCompactionRotationLimit": DEFAULT_CONTEXT_COMPACTION_ROTATION_LIMIT,
+        "rotationRecommended": task_runtime.get("rotationRecommended", False),
+        "rotationNextAction": task_runtime.get("rotationNextAction"),
     }
     if multi_project:
         metrics.update(

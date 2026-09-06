@@ -1055,11 +1055,11 @@
   },
   {
     "id": "second-compaction-clean-ceo-rotation",
-    "title": "Two Host-confirmed compactions rotate the CEO task",
+    "title": "Two Host-confirmed compactions prepare safe CEO rotation",
     "prompt": "A CEO completed its current slice and Host summaries now contain its second contextCompaction marker.",
-    "expected_labels": ["freeze old task", "create clean replacement", "task-scoped count"],
-    "forbidden_labels": ["continue dispatching in old task", "inherit old count in replacement"],
-    "coverage_terms": ["codex_host_turn_summaries", "context_compaction_rotation_limit", "second Host-confirmed compaction"]
+    "expected_labels": ["prepare verified takeover", "finish bounded slice", "task-scoped count"],
+    "forbidden_labels": ["freeze solely on compaction count", "inherit old count in replacement"],
+    "coverage_terms": ["rotationRecommended", "rotationNextAction", "Host-confirmed compactions"]
   },
   {
     "id": "subagent-actual-model-proof-required",

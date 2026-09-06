@@ -16,11 +16,12 @@ class VisualTransportPolicyTests(unittest.TestCase):
         self.assertIn("Do not call `view_image`", reference)
         self.assertIn("Never batch or loop multiple `view_image`/`image(...)` results", reference)
         self.assertIn("Visual transport mode: zero-payload-local-analysis | bounded-model-vision", reference)
-        self.assertIn("Model-visible image budget: 0 by default", reference)
+        self.assertIn("Model-visible image budget: 0 for memory/callback transport", reference)
 
-    def test_bounded_model_vision_is_short_lived_non_forked_and_one_image(self):
+    def test_bounded_model_vision_allows_current_reviewer_and_one_image(self):
         reference = REFERENCE.read_text(encoding="utf-8")
-        self.assertIn("fresh short-lived visual worker with no forked parent context", reference)
+        self.assertIn("current implementer or reviewer may inspect bounded screenshots", reference)
+        self.assertIn("do not fork full image-bearing history", reference)
         self.assertIn("recommended below 800 KB", reference)
         self.assertIn("Use at most one model-visible image per turn", reference)
         self.assertIn("Do not forward them to subagents", reference)

@@ -84,6 +84,73 @@ class CallbackGatewayTests(unittest.TestCase):
         self.assertTrue(result["allowCandidateAcceptance"])
         self.assertTrue(result["modelRouteVerified"])
 
+    def test_native_unknown_route_accepts_only_verified_evidence_and_nonexact_policy(self):
+        callback = self.valid_callback()
+        callback.update(actualModel="unknown", actualThinking="unknown",
+                        routingResult="unknown", routingProofSource="unavailable",
+                        routingReceiptId=None, ceoVerificationCount=1)
+        evidence = self.evidence_receipt(callback)
+        kwargs = dict(native_codex_review=True, exact_model_required=False,
+                      trusted_evidence_receipt=evidence,
+                      evidence_proof_capability=gateway.EVIDENCE_PROOF_CAPABILITY,
+                      expected_task_id=callback["taskId"], expected_slice_id=callback["sliceId"],
+                      expected_slice_basis_sha256=callback["sliceBasisSha256"])
+        result = gateway.validate(callback, **kwargs)
+        self.assertTrue(result["allowCandidateAcceptance"], result)
+        self.assertFalse(result["modelRouteVerified"])
+        self.assertFalse(gateway.validate(callback, **(kwargs | {"exact_model_required": True}))["allowCandidateAcceptance"])
+        self.assertFalse(gateway.validate(callback, **(kwargs | {"trusted_evidence_receipt": None}))["allowCandidateAcceptance"])
+        self.assertFalse(gateway.validate(callback, **(kwargs | {"native_codex_review": False}))["allowCandidateAcceptance"])
+
+    def test_new_verified_evidence_allows_one_recheck_but_same_evidence_does_not(self):
+        callback = self.valid_callback()
+        callback["ceoVerificationCount"] = 1
+        route = self.routing_receipt(callback)
+        evidence = self.evidence_receipt(callback)
+        kwargs = dict(trusted_routing_receipt=route, routing_proof_capability=gateway.ROUTING_PROOF_CAPABILITY,
+                      trusted_evidence_receipt=evidence, evidence_proof_capability=gateway.EVIDENCE_PROOF_CAPABILITY,
+                      expected_task_id=callback["taskId"], expected_slice_id=callback["sliceId"],
+                      expected_slice_basis_sha256=callback["sliceBasisSha256"])
+        first = gateway.validate(callback, **kwargs)
+        callback.update(callbackSequence=2, priorCallbackSha256=first["sliceLedgerEntry"]["lastCallbackSha256"], ceoVerificationCount=2)
+        kwargs["slice_ledger"] = {first["sliceLedgerKey"]: first["sliceLedgerEntry"]}
+        callback["declaredTokenEstimate"] = gateway.compact_token_estimate(callback) + 20
+        self.assertFalse(gateway.validate(callback, **kwargs)["allowCandidateAcceptance"])
+        callback["evidenceRefs"] = ["artifacts/recheck.json#sha256=" + "a" * 64]
+        kwargs["trusted_evidence_receipt"] = self.evidence_receipt(callback)
+        self.assertTrue(gateway.validate(callback, **kwargs)["allowCandidateAcceptance"])
+
+    def test_native_cli_checks_local_evidence_without_host(self):
+        import hashlib
+        callback = self.valid_callback()
+        callback.update(actualModel="unknown", actualThinking="unknown", routingResult="unknown",
+                        routingProofSource="unavailable", routingReceiptId=None, ceoVerificationCount=1)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            refs = []
+            for index, command in enumerate(callback["commands"]):
+                command_receipt = {key: callback[key] for key in
+                                   ("taskId", "sliceId", "sliceBasisSha256", "verificationProfile")}
+                command_receipt.update(schema="ceo_verification_command_receipt_v1", command=command,
+                                       exitCode=0, status="passed", summary="Focused tests passed")
+                raw = json.dumps(command_receipt).encode()
+                (root / f"test-{index}.json").write_bytes(raw)
+                refs.append(f"test-{index}.json#sha256=" + hashlib.sha256(raw).hexdigest())
+            callback["evidenceRefs"] = refs
+            self.evidence_receipt(callback)
+            callback_path = root / "callback.json"
+            callback_path.write_text(json.dumps(callback))
+            command = [sys.executable, str(SCRIPT), str(callback_path), "--native-review-workspace", tmp,
+                       "--task-id", callback["taskId"], "--slice-id", callback["sliceId"],
+                       "--slice-basis", callback["sliceBasisSha256"]]
+            def run(extra=()):
+                result = subprocess.run(command + list(extra), capture_output=True, text=True, check=True)
+                return json.loads(result.stdout)
+            self.assertTrue(run()["allowCandidateAcceptance"])
+            self.assertFalse(run(["--exact-model-required"])["allowCandidateAcceptance"])
+            (root / "test-0.json").write_text("{}")
+            self.assertFalse(run()["allowCandidateAcceptance"])
+
     def test_unbound_or_forged_routing_digest_never_authorizes_acceptance(self) -> None:
         callback = self.valid_callback()
         callback["ceoVerificationCount"] = 1

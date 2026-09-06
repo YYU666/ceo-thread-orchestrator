@@ -53,7 +53,9 @@ Scale verification to the accepted slice risk:
 | `medium` | focused evidence plus typecheck/build | one CEO verification; neutral review only when a separate trigger applies |
 | `high` | full affected suite/build and risk-specific evidence | one CEO verification plus exactly one neutral review |
 
-Per slice, permit at most one CEO verification, one neutral review, one consolidated revision, and three process updates (`start`, exceptional blocker, result). After the first revision, batch the fixes. If the revised slice still fails, shrink the slice or change approach instead of repeating equivalent review loops. Store long test/build/browser output as a content-addressed artifact; callbacks carry only command, result, path, hash, and compact findings. Acceptance requires exactly one CEO verification plus non-empty command and evidence refs; high risk also requires exactly one neutral review. These are hard acceptance budgets enforced by `scripts/callback_gateway.py`, not permission to omit evidence required by a genuinely higher risk tier.
+Default to one CEO verification, one risk-triggered neutral review, one consolidated revision, and three process updates for milestones. New content-addressed verification evidence permits one additional check/revision per chained callback; unchanged evidence does not reset the budget. Acceptance requires at least one CEO verification and high risk requires at least one neutral review. Complete required checks, then broaden or repeat only for changed code, failures, or unresolved concerns. If equivalent failures persist, shrink the slice or change approach. Store long outputs in artifacts and return compact findings.
+
+For ordinary native Codex review, use `callback_gateway.py CALLBACK --native-review-workspace WORKSPACE --task-id TASK --slice-id SLICE --slice-basis SHA`. The caller supplies the registered task/slice identity and independently inspects diff and command results. This local path verifies the same bounded content-addressed command receipts without a Desktop socket. Missing actual model telemetry remains unknown and does not prevent evidence-based acceptance. Add `--exact-model-required` for explicit model requirements; external Harnesses and model evaluations always use the strict route. The CLI reviews one callback; continuing workflows must persist the returned slice ledger through their confirmed state writer. A worker must never self-approve by selecting this caller policy or fabricating evidence.
 
 Register the worker `callbackTaskId`, `sliceId`, and `sliceBasisSha256` in the trusted task event before the first callback. Persist callback sequence, prior callback digest, and cumulative review/update counters in the atomically committed task state. Each later callback must preserve all three registered identities, increment sequence by one, bind the prior digest, and use non-decreasing counters. A task-id/slice alias, unregistered slice, broken chain, or counter reset may be inspected as untrusted evidence but cannot advance the ledger or authorize acceptance.
 
@@ -84,7 +86,7 @@ Reviewer posture:
 - report missed acceptance criteria, regressions, unclear evidence, and test gaps;
 - do not flatter or reassure weak work.
 
-Reviewer starts from task card, diff, tests, local artifacts/screenshots by path, relevant docs, and compact evidence refs. A path is not permission to call `view_image`: zero-payload review uses local OCR/metadata/hash/diff summaries, while model-visible inspection requires a fresh bounded visual worker with no forked history. Do not send image attachments/base64/data:image/input_image, full screenshot JSON, or the implementation thread's long conversation unless a specific unresolved claim requires bounded model vision and CEO records reason and byte budget.
+Reviewer starts from task card, diff, tests, relevant artifacts and compact evidence. Authorized UI review may inspect bounded screenshots in the current task under `visual-evidence.md`; respect explicit no-image constraints. Do not forward image bodies, complete logs, or long implementation conversations into callbacks or memory.
 
 ## Doom Loop Recovery
 
@@ -111,14 +113,15 @@ When doom-loop signs appear:
 
 ## Direct CEO Coding Boundaries
 
-Allowed only for:
+Direct execution is appropriate for:
 
 - explicit user request for direct execution;
 - orchestration skill, project memory, PRD, strategy, or docs edits;
 - emergency unblock when delegation is unavailable or failed repeatedly;
 - tiny local fixes where creating a worker costs more than the fix.
+- tightly coupled critical-path work where the CEO already has the necessary context and delegation would add serial handoff overhead.
 
-Not appropriate for broad user-facing implementation such as page rewrites, UI skeleton rebuilds, database/schema changes, Electron IPC, provider/generation flows, payment/auth, installer/deploy changes, or tasks requiring screenshots, runtime smoke tests, or independent review.
+For broad work, delegate independent modules when useful. Implementation ownership does not remove risk-specific review or testing requirements; a screenshot or build requirement alone is not a reason to force a new worker.
 
 ## Decision Template
 

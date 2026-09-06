@@ -426,8 +426,9 @@ class CodexAppServerExecutor:
             return None
         return matched.group(1), matched.group(2)
 
+    @staticmethod
     def capture_verification_evidence_receipt(
-        self, callback: dict[str, Any], event: dict[str, Any]
+        callback: dict[str, Any], event: dict[str, Any]
     ) -> dict[str, Any] | None:
         workspace = event.get("workspace")
         refs = callback.get("evidenceRefs")
@@ -447,7 +448,7 @@ class CodexAppServerExecutor:
             return None
         verified_commands: set[str] = set()
         for value in refs:
-            parsed = self._content_addressed_ref(value)
+            parsed = CodexAppServerExecutor._content_addressed_ref(value)
             if parsed is None:
                 return None
             relative_path, expected_sha256 = parsed

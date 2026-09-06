@@ -663,7 +663,7 @@ class ContextGovernorTest(unittest.TestCase):
         self.assertEqual(result["decision"], "block")
         self.assertEqual(result["reason"], "host_context_compaction_source_invalid")
 
-    def test_second_host_compaction_rotates_old_task(self) -> None:
+    def test_second_host_compaction_recommends_rotation_without_freezing(self) -> None:
         first = context_governor.evaluate(
             preflight_fields("ceo", "after-first-compaction", compaction_count=1),
             {},
@@ -677,10 +677,9 @@ class ContextGovernorTest(unittest.TestCase):
             first["state"],
             limits(),
         )
-        self.assertEqual(second["decision"], "freeze", second)
-        self.assertEqual(second["reason"], "context_compaction_rotation_limit")
-        self.assertIn("ceo", second["state"]["frozenTaskKeys"])
-        self.assertFalse(second["allowOldThreadExecution"])
+        self.assertEqual(second["decision"], "allow", second)
+        self.assertNotIn("ceo", second["state"]["frozenTaskKeys"])
+        self.assertTrue(second["state"]["taskRuntimeLedger"]["ceo"]["rotationRecommended"])
 
     def test_host_compaction_count_cannot_regress_within_task(self) -> None:
         first = context_governor.evaluate(
@@ -698,7 +697,7 @@ class ContextGovernorTest(unittest.TestCase):
 
     def test_clean_replacement_has_task_scoped_compaction_count(self) -> None:
         frozen = context_governor.evaluate(
-            preflight_fields("old", "old-second-compaction", compaction_count=2),
+            preflight_fields("old", "old-second-compaction", projected=110_000, compaction_count=2),
             {},
             limits(),
         )

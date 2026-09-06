@@ -22,7 +22,7 @@ Reference input: local paths/folders only
 Screenshot output: artifacts/visual-checks/<task-id>/
 Manifest required: artifacts/visual-checks/<task-id>/visual-evidence-manifest.json
 Thread return format: evidence card only
-Model-visible image budget: 0 by default
+Model-visible image budget: 0 for memory/callback transport; bounded pixels for authorized UI inspection
 Forbidden in zero-payload mode: view_image, image(...), input_image, screenshot/image tool blocks returned to the model
 Artifact return policy: paths+hash+dimensions+bytes+summary+decision only
 Forbidden payloads: image attachments, base64, data:image, input_image, full OCR, full screenshot JSON, full request/response bodies, large per-image descriptions
@@ -40,7 +40,7 @@ Before any visual task, choose and record exactly one transport mode.
 
 ### Zero-Payload Local Analysis (default)
 
-Use this mode when the user says not to send images, when many images are involved, when the CEO/project-main or a reusable worker would otherwise receive pixels, or when request/session size is a concern.
+Use this mode when the user says not to send images, when many images are involved, or when request/session size is a concern. Ordinary authorized UI implementation and review may use bounded model vision directly.
 
 - Save screenshots and references to local artifacts without returning image blocks to the model.
 - Use local commands or libraries for dimensions, file bytes, hashes, OCR, text extraction, pixel metrics, perceptual hashes, contact-sheet generation, and deterministic diffs.
@@ -55,13 +55,13 @@ Use this mode when the user says not to send images, when many images are involv
 
 Use only when qualitative visual judgment genuinely requires model-visible pixels and the user or accepted project policy permits it.
 
-- Create a fresh short-lived visual worker with no forked parent context and no inherited image-bearing history.
+- The current implementer or reviewer may inspect bounded screenshots for authorized UI work. Create a separate visual worker only when isolation or context pressure warrants it; do not fork full image-bearing history.
 - Bind it to one page/module and normally one preprocessed image.
 - Pre-compress/downscale locally before the call: recommended below 800 KB, hard default below 2 MB.
 - Use at most one model-visible image per turn and do not use `detail="original"` unless the already-compressed file is below the budget.
 - Never batch or loop multiple `view_image`/`image(...)` results into one tool output.
 - Return only the evidence card; never relay the image block to CEO, another worker, memory, FlowSkill, or a later task.
-- End the visual worker after the bounded inspection. Do not reuse it as a durable project or CEO lane.
+- Close a disposable visual worker after inspection; a current implementation task may continue without reloading the same images.
 - Record `modelVisibleImagesUsed`, `modelVisibleImageBytes`, worker/thread ID, source artifact hash, and why zero-payload analysis was insufficient.
 
 User-supplied images remain user input to the current turn. Do not forward them to subagents or copy them into a new thread. If delegation is required, pass a local path plus bounded text summary under zero-payload mode, or use one explicitly admitted bounded visual worker.

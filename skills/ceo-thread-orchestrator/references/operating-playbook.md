@@ -70,9 +70,9 @@ When Context Pressure or Memory Recovery Freeze fires, emit one freeze receipt, 
 
 ## Direct CEO Fallback Lease
 
-Under an active Program Goal, direct CEO coding is a one-slice lease only for explicit direct execution, tiny/non-app-code work, emergency unblock, or documented routing failure.
+Under an active Program Goal, choose ownership per slice. Direct CEO coding is appropriate for explicit direct execution, tiny/non-app-code work, emergency unblock, documented routing failure, or tightly coupled critical-path work whose delegation would duplicate context.
 
-Record reason, write-set, stop condition, routing limitation, restoration plan, and next review/lane. End the lease after the patch/unblock/evidence collection; update program state, request neutral review when needed, and route the next substantial app-code slice. Do not chain substantial direct fallback turns without fresh explicit authority or routing-failure evidence.
+Record scope, reason and required evidence. At the slice boundary reassess useful parallel work and route independent tasks when it saves time. Preserve risk-specific review; an active Goal alone neither forces delegation nor removes review requirements.
 
 ## Product And Portfolio Steering
 
