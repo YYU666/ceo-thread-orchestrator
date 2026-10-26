@@ -23,7 +23,9 @@ class VisualTransportPolicyTests(unittest.TestCase):
         self.assertIn("current implementer or reviewer may inspect bounded screenshots", reference)
         self.assertIn("do not fork full image-bearing history", reference)
         self.assertIn("recommended below 800 KB", reference)
-        self.assertIn("Use at most one model-visible image per turn", reference)
+        self.assertIn("bounded sequential observations", reference)
+        self.assertIn("6 images and 8 MB", reference)
+        self.assertIn("Do not reload an unchanged artifact SHA", reference)
         self.assertIn("Do not forward them to subagents", reference)
         self.assertIn("even when the session is below 50 MB", reference)
 

@@ -351,6 +351,7 @@ def run(
             expected_task_id=event.get("callbackTaskId"),
             expected_slice_id=event.get("sliceId"),
             expected_slice_basis_sha256=event.get("sliceBasisSha256"),
+            verification_policy=event.get("verificationPolicy"),
         )
         if not callback_receipt["allowCallbackInjection"]:
             return {
@@ -403,6 +404,31 @@ def run(
             "stateCommitted": True,
             "state": governor["state"],
             "governor": {key: value for key, value in governor.items() if key != "state"},
+        }
+    if event.get("eventType") == context_governor.CURRENT_SOURCE_WORK_EVENT:
+        allowed = (
+            governor.get("decision") == "allow"
+            and governor.get("executionClass") == context_governor.CURRENT_SOURCE_WORK_EVENT
+            and governor.get("allowScopedSourceWork") is True
+            and governor.get("allowProviderCalls") is False
+            and governor.get("allowMemoryInjection") is False
+        )
+        return {
+            "schema": SCHEMA,
+            "ok": allowed,
+            "decision": "allow" if allowed else governor.get("decision", "block"),
+            "reason": governor.get("reason"),
+            "executionClass": context_governor.CURRENT_SOURCE_WORK_EVENT,
+            "allowScopedSourceWork": allowed,
+            "allowedWritePaths": governor.get("allowedWritePaths", []) if allowed else [],
+            "allowMemoryInjection": False,
+            "allowModelRequest": False,
+            "allowProjectToolCalls": False,
+            "allowProviderCalls": False,
+            "hostRequired": False,
+            "stateCommitted": True,
+            "state": governor["state"],
+            "governor": {field: value for field, value in governor.items() if field != "state"},
         }
     plan = build_plan(event, governor)
     if not plan["controlReceipt"].get("ok"):

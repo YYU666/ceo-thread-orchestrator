@@ -38,7 +38,7 @@ Legacy shorthand `paths+hash+summary` remains valid, but the preferred evidence 
 
 Before any visual task, choose and record exactly one transport mode.
 
-### Zero-Payload Local Analysis (default)
+### Zero-Payload Local Analysis
 
 Use this mode when the user says not to send images, when many images are involved, or when request/session size is a concern. Ordinary authorized UI implementation and review may use bounded model vision directly.
 
@@ -51,14 +51,14 @@ Use this mode when the user says not to send images, when many images are involv
 - A path in the prompt is not proof of zero payload if the worker later calls `view_image` on it.
 - If qualitative visual judgment cannot be supported by local metrics/OCR and bounded text evidence, return `insufficient_visual_evidence` or request the bounded mode below. Do not silently escalate.
 
-### Bounded Model Vision (exception)
+### Bounded Model Vision (authorized UI work)
 
 Use only when qualitative visual judgment genuinely requires model-visible pixels and the user or accepted project policy permits it.
 
 - The current implementer or reviewer may inspect bounded screenshots for authorized UI work. Create a separate visual worker only when isolation or context pressure warrants it; do not fork full image-bearing history.
 - Bind it to one page/module and normally one preprocessed image.
 - Pre-compress/downscale locally before the call: recommended below 800 KB, hard default below 2 MB.
-- Use at most one model-visible image per turn and do not use `detail="original"` unless the already-compressed file is below the budget.
+- Use bounded sequential observations for the same interaction, including before/after frames. Default to at most 6 images and 8 MB cumulative model-visible image bytes per interaction checkpoint, each below 2 MB; project policy may set a different explicit budget. Do not reload an unchanged artifact SHA. At the checkpoint summarize and reassess the next observation budget; never reset budgets merely by changing tools. Use `detail="original"` only when detail is necessary and the compressed file fits the budget.
 - Never batch or loop multiple `view_image`/`image(...)` results into one tool output.
 - Return only the evidence card; never relay the image block to CEO, another worker, memory, FlowSkill, or a later task.
 - Close a disposable visual worker after inspection; a current implementation task may continue without reloading the same images.
@@ -152,16 +152,37 @@ For UI, game screens, design restoration, animation/motion, and generated-image 
 
 - workers may use Playwright or project tools to capture screenshots;
 - zero-payload workers may use local OCR, image metadata, perceptual hashes, pixel/layout metrics, and deterministic comparison tools without returning pixels to the model;
-- model-visible image inspection is allowed only through the bounded exception above, never in the CEO/project-main or a durable reusable lane;
+- model-visible image inspection is allowed in the current authorized implementer/reviewer, including the CEO acting as owner, within the bounded mode above;
 - workers may compare reference and actual screenshots through local metrics or a separately admitted bounded visual worker;
 - reviewers should inspect visual artifacts when visual quality is part of acceptance;
 - CEO accepts from text evidence plus artifact paths/hashes, not from embedded image bodies.
 
-If a task cannot be judged from zero-payload evidence, do not quietly call `view_image`. Return `insufficient_visual_evidence` or route one bounded visual worker. Do not paste or relay the image into the CEO thread as an attachment, `input_image`, base64, data URL, or tool image block.
+For authorized UI work that needs pixels, choose bounded model vision directly; do not force a separate worker. With an explicit no-image restriction, return `insufficient_visual_evidence` when local analysis cannot establish the result. Never relay image bodies between tasks or into callbacks/memory.
+
+### Motion And Interaction Evidence
+
+AX text and successful key dispatch do not prove motion, animation, canvas state,
+or gameplay. Capture a bounded before/after comparison on the same target, with
+timestamps and an observed player/object displacement or state change. A contact
+sheet may hold both frames within one image budget. A generic pixel difference
+alone is insufficient if a cursor, timer, or unrelated animation could explain it.
+Verify play/save/reopen when those are the accepted scenario. Report unobserved
+effects as unverified, not passed.
+
+### UI Action Boundary
+
+Before acting, bind the allowed app/window and project/document identity, action
+set, and stop condition. Inspect live identity before navigation, edits, or play;
+use exact observed controls, not guessed coordinates. Example/gallery navigation
+is forbidden unless explicitly in scope. On mismatch, unexpected navigation, or
+unknown control, stop UI actions, retain bounded evidence, and report the deviation.
+Re-identify the intended target before any further action; do not click around to
+repair the test. `delivery_policy.py` operation `ui` checks caller-observed identity
+and action eligibility, not the actual UI tool or OS permissions.
 
 ## Image Budget
 
-Default model-visible image budget is zero. This budget covers chat attachments, `view_image`, `image(...)`, browser/screenshot tool image blocks, `input_image`, base64, and data URLs; changing the tool name does not reset the budget.
+Memory/callback image budget is zero. Authorized visual inspection uses the bounded budget; explicit no-image requests use zero-payload mode. This budget covers chat attachments, `view_image`, `image(...)`, browser/screenshot tool image blocks, `input_image`, base64, and data URLs; changing the tool name does not reset the budget.
 
 If the user must provide an image directly in chat:
 
@@ -172,9 +193,9 @@ hard maxBytesPerImage: 2 MB
 maxTotalBytes: 2 MB unless explicitly approved
 ```
 
-The direct-image allowance applies only to a user-supplied image in the current turn or an explicitly admitted bounded visual worker. It does not authorize relaying that image to a subagent.
+The direct-image allowance applies to user input or the current authorized bounded visual inspection. It does not authorize relaying that image to a subagent.
 
-For multiple images, keep local paths or folder paths and run zero-payload analysis first. If model vision remains necessary, split into independent short-lived visual workers, one page/module and normally one compressed image per worker, and return path/hash/summary only. Never run a loop that returns many original images to one model turn.
+For multiple images, keep local paths and reduce to a bounded relevant comparison or contact sheet. Do not create one worker per image. Inspect only the necessary target states and return path/hash/summary only. Never run a loop that returns many original images to one model turn.
 
 OCR and visible-text budgets:
 

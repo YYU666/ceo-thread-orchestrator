@@ -81,7 +81,7 @@ Avoid permanent org charts. Create lanes by demand, not because the role map nam
 
 ## Dispatch Rules
 
-- Dispatch all ready tasks in the current wave, then harvest before starting dependent tasks.
+- Dispatch only the smallest ready set that shortens the current delivery loop within the concurrency budget; harvest before starting dependent tasks. Ready does not mean simultaneous.
 - If a worker finishes early and the next task is independent with the same write-set, queue it to that lane.
 - If the next task is independent but the lane is busy, create or reuse another implementation lane only when the write-set is non-overlapping and speed gain justifies coordination cost.
 - If two lanes need the same file/module/contract, serialize them or make one lane the integration owner.

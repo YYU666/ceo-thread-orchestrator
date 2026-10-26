@@ -110,8 +110,16 @@ Freeze the ordered list at task start. `projectId=null` on the host task is neut
 
 ## Completion Dashboard
 
+Keep one current row per outcome, updated in place. Separate historical evidence
+from this table; superseded failures and later passes must not remain competing
+current statuses. Percentages, if used, derive from verified outcomes rather than
+messages or completed internal subtasks. See `delivery-loop.md`.
+
 ```text
 Phase:
+Outcome ID / user-observable scenario:
+Current status / candidate digest / environment:
+First runnable checkpoint / time budget / running handle:
 Percent complete:
 Active lanes:
 Blocked lanes:
@@ -407,6 +415,11 @@ User contact policy: CEO-mediated
 Escalation route: callback-to-CEO
 Worktree readiness:
 Contractor/subagent policy:
+Optional project-domain context (only when configured and relevant):
+  domain / workKind / selected topics:
+  ruleRefs: path / section / fileSha256 / excerptSha256
+  specRefs: path / section / fileSha256 / excerptSha256
+  pending specification decisions:
 Model routing mode:
 Routing surface / mapping source:
 Available class candidates / reasoning levels / unsupported controls:
@@ -584,11 +597,11 @@ Bootstrap exit decision:
 ## Bootstrap Exit Decision
 
 ```text
-Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | memory repair / fresh takeover | direct CEO fallback
+Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | current source work | memory repair / fresh takeover | direct CEO fallback
 Why not continue CEO-only:
 If CEO-only continues, reason:
 Memory readiness:
-If memory is stale/unresolved, freeze action:
+If memory is stale/unresolved, affected lane and recovery/scoped-work action:
 Staffing check required:
 Next routed lane/review:
 Stop condition:
@@ -617,10 +630,10 @@ Exit condition:
 
 Rules:
 
-- For large/program continuation, takeover, recovery, or major direction correction, stale/unresolved memory is an execution-routing event, not a soft warning.
-- Do not continue product implementation, polling, or old-thread harvest loops from a bloated CEO/project-main thread while this gate is triggered.
+- For large/program continuation, takeover, recovery, or major direction correction, stale/unresolved memory is an execution-routing event, not a soft warning. It denies memory-backed claims and injection; it is not itself a context freeze.
+- Do not continue memory-backed product implementation, polling, or old-thread harvest loops from a bloated or actually frozen CEO/project-main thread. An otherwise healthy current task may execute only a separately verified and persisted `current_source_work` scope with exact source hashes and write-set, as defined in `context-governance.md`.
 - Emit one freeze receipt only; subsequent wakeups must stop, unbind, or route to the clean takeover instead of repeating pause status.
-- If execution must proceed before repair, limit it to one bounded source-backed slice and do not claim current memory or recovery readiness.
+- Before repair, a bounded source slice requires `allowScopedSourceWork=true`; it never grants memory injection, general project tools, Provider calls, writeback, or takeover. A frozen old task cannot use this exception.
 
 ## Context Governor Record
 

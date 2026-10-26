@@ -102,7 +102,9 @@ Bootstrap may do:
 - verify canonical project root and current evidence;
 - identify next safe execution options.
 
-If required Memory Runtime or Project Continuity returns `fallback_stale`, `current=false`, `recoveryReady=false`, `project_unresolved`, `project_scope_mismatch`, or app-authority unavailable for a claim that needs current memory, bootstrap must not exit directly into product implementation from the old CEO thread. First enter Memory Recovery Freeze, produce a compact handoff/recovery packet, route memory repair, or designate a clean takeover thread.
+If required Memory Runtime or Project Continuity returns `fallback_stale`, `current=false`, `recoveryReady=false`, `project_unresolved`, `project_scope_mismatch`, or app-authority unavailable for a claim that needs current memory, pause memory-backed continuation and reject stale-memory injection or authority claims. Follow the lifecycle classification in `context-governance.md`: a binding or continuity defect alone is a recoverable lane pause, not a sticky task freeze or a program-wide development ban.
+
+A healthy, already-running single-project task may exit bootstrap into `current source work` only through the separately persisted, exact-source and exact-write-set contract in `context-governance.md`. This does not authorize general dispatch, Provider calls, refresh, writeback, takeover, or replacement. If that scoped contract cannot be satisfied, produce one bounded recovery/blocker report for the affected lane. A proven task freeze or global block remains closed; do not clear it through a source-work receipt or repeated bootstrap.
 
 If `scripts/context_governor.py` returns `decision=freeze`, bootstrap must stop after one freeze receipt in the old task, unbind/supersede the old harvest driver, and move execution to a clean takeover task or structured blocker. Do not let the runtime Goal or heartbeat keep waking the frozen task merely to restate that it is paused.
 
@@ -110,12 +112,12 @@ After bootstrap, output:
 
 ```text
 Bootstrap Exit Decision:
-  Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | memory repair / fresh takeover | direct CEO fallback
+  Next mode: Core Team execution | Core Team harvest | CEO-only bounded | configured workflow | current source work | memory repair / fresh takeover | direct CEO fallback
   Why not continue CEO-only:
   If CEO-only continues, reason:
   Memory readiness:
   Context governor decision:
-  If memory is stale/unresolved, freeze action:
+  If memory is stale/unresolved, affected lane and recovery/scoped-work action:
   Staffing check required:
   Next routed lane/review:
   Stop condition:
@@ -147,11 +149,16 @@ Staffing Plan:
 
 Lane count guide:
 
+One accountable owner is not one mandatory executor. Reassess bounded staffing
+at slice boundaries, expanded scope and completed CEO takeovers using
+`delivery-loop.md`. Default child concurrency is two including review, subject
+to project limits and actual tool authorization; this is a ceiling, not a target.
+
 - `0 lanes`: strategy, state recovery, tiny edit, read-only audit, or user explicitly asks single-thread.
 - `1 lane`: one coherent write-set or one safe implementation owner.
 - `2 lanes`: one implementation lane plus one independent review lane.
 - `3 lanes`: one canonical single writer plus read-only QA/Test and Product/UX review.
-- `3-5 lanes`: multiple independent modules with non-overlapping write-sets and enough harvest/review capacity.
+- More lanes only within the explicit project concurrency limit for independent work that shortens the delivery loop; the guide is not a target lane count.
 - `pipeline`: broad PRD, dependency graph, fan-out/fan-in, typed handoffs, or scorecard needed.
 
 Hard rule: `worktree blocked != no lanes`. If worktree implementation is unsafe, consider one canonical single-writer lane plus parallel read-only review, QA, UX/Product, architecture/preflight, or repo-baseline lanes. If dirty budget is red or critical untracked source/config/test exists, enter baseline mode before new feature worktree writers.
@@ -181,7 +188,7 @@ Proof Loop Fuse:
   neutral review needed:
 ```
 
-After the fuse, CEO must either restore Core Team routing, dispatch/read a neutral review, return to a product-facing wave, or record why only one more bounded CEO-only slice is safe.
+After the fuse, return to the next runnable product-facing checkpoint with the existing owner, or record the exact evidence gap preventing it. Adding another reviewer or updating proof documents alone does not clear the fuse. Use `delivery-loop.md`; do not expand staffing to cure process overhead.
 
 CEO-only continuation requires:
 

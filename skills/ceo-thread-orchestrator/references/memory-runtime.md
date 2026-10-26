@@ -1,5 +1,11 @@
 # Memory Runtime Lifecycle
 
+Current Zhixia ordinary continuity uses `sync_context` at startup, before dispatch,
+and after accepted refresh/reverify; follow `context-sync.md`. The retrieve hooks
+below describe semantic needs and fallback capability discovery, not a requirement
+to retrieve again after a successful sync. No silent retrieve fallback after stale
+sync; preserve the existing authority gate. Takeover/refresh remain separate.
+
 Use this reference for provider triggers, compact retrieval, query budgets, precedents, large-file handling, and evidence writeback. Use `context-governance.md` for freeze/takeover authority and `project-continuity.md` for ProjectBrain continuity.
 
 ## Contents

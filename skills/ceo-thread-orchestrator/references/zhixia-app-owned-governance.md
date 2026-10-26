@@ -39,7 +39,7 @@ At task start, resume, direction switch, and before worker/reviewer dispatch:
 6. If exact scan changed without a formal QA/accept receipt, pause only the affected lane as `unaccepted_project_change`; never authorize dirty/unaccepted source automatically.
 7. If exact scan changed with a formal receipt, run the local direct refresh driver. It executes `refresh_binding`, validates a new receipt/checkpoint/generation, performs bounded `verify`, and resumes only the affected lane after `matched/current/recoveryReady` are true.
 
-Fail closed for: `fallback_stale`, `authorityVerification!=app_owned_verified`, `current=false`, `recoveryReady=false`, `returnedCount=0`, `takeover.shouldInject=false`, changed HEAD, changed scan, changed project identity, or changed postimage.
+Fail closed for memory injection and memory-backed dispatch claims when: `fallback_stale`, `authorityVerification!=app_owned_verified`, `current=false`, `recoveryReady=false`, `returnedCount=0`, `takeover.shouldInject=false`, changed HEAD, changed scan, changed project identity, or changed postimage. These states do not alone freeze an otherwise healthy current task. A narrow current-source slice requires the separate `current_source_work_driver.py` receipt and retains all memory/Provider/takeover denials; see `context-governance.md`.
 
 ## Durable Injection Ledger
 

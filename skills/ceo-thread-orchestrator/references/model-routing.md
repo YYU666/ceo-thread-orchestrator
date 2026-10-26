@@ -154,7 +154,7 @@ If the reasoning requirement is `exact`, do not use this fallback table. Return 
 
 If the spawn tool says omitted model/reasoning inherits the parent, treat omission as an explicit `inherit` route. For a high-capability CEO, routine fan-out should normally use an explicit `fast` or `balanced` mapping so every contractor does not inherit the CEO's most expensive profile.
 
-Subagent model overrides require a clear task-specific reason. Role classification, preventing accidental frontier inheritance, and fan-out cost containment are sufficient task-specific reasons. Record the reason in the task card.
+Subagent model overrides require permission under the actual tool contract and must preserve explicit user choices. Role or cost classification alone is not authorization. When overrides require an explicit user request, omit model/reasoning overrides otherwise; permitted inherited execution may continue within existing spending policy. Record the observed limitation without inventing an actual model or blocking delegation merely because remapping is unavailable.
 
 ### Visible Threads
 

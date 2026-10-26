@@ -31,7 +31,7 @@ Implementation workers must:
 - follow accepted reference patterns where relevant, but do not cargo-cult unrelated architecture or copy licensed/private code;
 - make the smallest behavior-preserving change that satisfies the task;
 - keep one coherent editing unit at a time;
-- for large work, land one function/component/route/module slice, verify it, then continue;
+- for large work, reach a thin runnable user path early, then expand coherent changes with affected checks; internal function boundaries are not mandatory handoffs;
 - avoid broad rewrites, dependency churn, generated boilerplate dumps, speculative abstractions, and style-only refactors;
 - avoid copy-paste logic, tight coupling, unclear names, unexplained magic numbers, and hidden single-use shortcuts;
 - avoid masking errors with catch-all fallbacks, disabled tests, relaxed types, removed assertions, or swallowed exceptions;
@@ -51,9 +51,15 @@ Scale verification to the accepted slice risk:
 | --- | --- | --- |
 | `low` | at most two changed files, diff plus focused test | one CEO verification, no neutral review |
 | `medium` | focused evidence plus typecheck/build | one CEO verification; neutral review only when a separate trigger applies |
-| `high` | full affected suite/build and risk-specific evidence | one CEO verification plus exactly one neutral review |
+| `high` | full affected suite/build and risk-specific evidence | one CEO verification plus one independent review by default |
 
-Default to one CEO verification, one risk-triggered neutral review, one consolidated revision, and three process updates for milestones. New content-addressed verification evidence permits one additional check/revision per chained callback; unchanged evidence does not reset the budget. Acceptance requires at least one CEO verification and high risk requires at least one neutral review. Complete required checks, then broaden or repeat only for changed code, failures, or unresolved concerns. If equivalent failures persist, shrink the slice or change approach. Store long outputs in artifacts and return compact findings.
+For delegated work default to one CEO verification, one risk-triggered neutral review and one consolidated revision. Verification means inspecting evidence, not automatically rerunning the worker's tests. New content-addressed verification evidence permits one additional check/revision per chained callback; unchanged evidence does not reset the budget. Acceptance requires at least one CEO verification and high risk requires at least one neutral review. Process-update counts are advisory, never a reason to reject correct code or suppress required progress updates. Complete required checks, then broaden or repeat only for changed code, failures, or unresolved concerns. If equivalent failures persist, shrink the slice or change approach. Store long outputs in artifacts and return compact findings. Direct quick-path edits use `delivery-loop.md` without a synthetic callback chain.
+
+Low risk does not prohibit one requested or useful independent review. For low/medium risk, a trusted caller may select an applicable verification profile with a rationale (for example no build/typechecker in this project); the worker cannot self-select an exemption. The CLI accepts `--verification-profile` and `--verification-rationale` on the native review path. Evidence must still cover every declared check; high risk retains the full affected profile and independent review.
+
+`build` or `full` profiles describe affected check coverage, not a requirement to
+package, sign, or install on every slice. Use `artifact-lifecycle.md` to select the
+needed build stage, reuse exact verified artifacts, and run uncovered current checks.
 
 For ordinary native Codex review, use `callback_gateway.py CALLBACK --native-review-workspace WORKSPACE --task-id TASK --slice-id SLICE --slice-basis SHA`. The caller supplies the registered task/slice identity and independently inspects diff and command results. This local path verifies the same bounded content-addressed command receipts without a Desktop socket. Missing actual model telemetry remains unknown and does not prevent evidence-based acceptance. Add `--exact-model-required` for explicit model requirements; external Harnesses and model evaluations always use the strict route. The CLI reviews one callback; continuing workflows must persist the returned slice ledger through their confirmed state writer. A worker must never self-approve by selecting this caller policy or fabricating evidence.
 
@@ -70,13 +76,13 @@ The CEO checks more than "does it run":
 - edge cases and failure paths are preserved;
 - tests or smoke checks cover changed behavior;
 - UI/workflow/game/design changes are verified through user-visible behavior and local screenshot/artifact inspection where possible; callbacks and memory keep only paths, hashes, dimensions, summaries, and decisions;
-- static checks/lint/type/build were run when available;
+- checks match the affected behavior and dependencies; availability alone does not require running every lint/type/build command;
 - no unrelated cleanup, formatting churn, dependency changes, or hidden product decisions are bundled;
 - residual risk is explicit.
 
 ## Independent Review Gate
 
-Use a separate reviewer for high-risk code, subtle tests, UI quality, generation/provider behavior, install/deploy, security, benchmark fairness, payment/auth, migrations, or expensive rollback risk.
+Use a separate reviewer for high-risk code, unresolved subtle correctness risks, security, benchmark fairness, payment/auth, migrations, risky install/deploy, or expensive rollback. Ordinary UI quality is verified by its owner; use an independent UI reviewer when risk or the accepted project policy calls for one, not for every prompt/style change.
 
 Reviewer posture:
 

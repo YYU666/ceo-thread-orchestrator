@@ -290,6 +290,7 @@ def validate_slice_governance(
     expected_slice_id: str | None,
     expected_slice_basis_sha256: str | None,
     expected_task_id: str | None,
+    verification_policy: dict[str, str] | None = None,
 ) -> tuple[list[str], bool]:
     gaps: list[str] = []
     risk = callback.get("riskTier")
@@ -361,6 +362,13 @@ def validate_slice_governance(
             gaps.append("callback_slice_counts_regressed")
 
     expected_profile = {"low": "focused", "medium": "typecheck_build", "high": "full"}[risk]
+    if verification_policy is not None:
+        if (not isinstance(verification_policy, dict)
+                or verification_policy.get("profile") not in VERIFICATION_PROFILES
+                or not nonempty_string(verification_policy.get("rationale"))):
+            gaps.append("invalid_verification_policy")
+        elif risk != "high":
+            expected_profile = verification_policy["profile"]
     if profile != expected_profile:
         gaps.append(f"{risk}_risk_requires_{expected_profile}_verification")
     if risk == "low" and len(changed_paths) > 2:
@@ -370,8 +378,6 @@ def validate_slice_governance(
         and isinstance(prior_slice.get("verificationBasis"), str)
         and prior_slice["verificationBasis"] != verification_basis(callback)
     )
-    if risk == "low" and counts["neutralReviewCount"] != 0 and not evidence_changed:
-        gaps.append("low_risk_slice_neutral_review_over_budget")
     if risk == "high" and counts["neutralReviewCount"] < 1:
         gaps.append("high_risk_slice_requires_exactly_one_neutral_review")
     if counts["ceoVerificationCount"] < 1:
@@ -388,7 +394,6 @@ def validate_slice_governance(
         ("ceoVerificationCount", 1),
         ("neutralReviewCount", 1),
         ("revisionCount", 1),
-        ("processUpdateCount", 3),
     ):
         prior_count = (prior_slice or {}).get("counts", {}).get(field, 0)
         justified_recheck = evidence_changed and counts[field] <= max(maximum, prior_count + 1)
@@ -433,6 +438,7 @@ def validate(
     expected_slice_basis_sha256: str | None = None,
     native_codex_review: bool = False,
     exact_model_required: bool = True,
+    verification_policy: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     if not isinstance(callback, dict):
         return block("callback_schema_invalid", ["callback must be an object"], serialized_bytes=0, estimated_tokens=0)
@@ -507,6 +513,7 @@ def validate(
         expected_slice_id=expected_slice_id,
         expected_slice_basis_sha256=expected_slice_basis_sha256,
         expected_task_id=expected_task_id,
+        verification_policy=verification_policy,
     )
     evidence_verified, evidence_gaps = validate_evidence_receipt(
         callback, trusted_evidence_receipt, evidence_proof_capability
@@ -567,6 +574,10 @@ def validate(
         ),
         "modelRouteVerified": model_route_verified,
         "modelRouteObservational": observational_route,
+        "processWarnings": (
+            ["process_updates_exceed_default_budget"]
+            if callback["processUpdateCount"] > 3 else []
+        ),
         "verificationEvidenceVerified": evidence_verified,
         "routingResult": routing_result,
         "acceptanceGaps": acceptance_gaps,
@@ -597,6 +608,8 @@ def main() -> int:
     parser.add_argument("--slice-id")
     parser.add_argument("--slice-basis")
     parser.add_argument("--exact-model-required", action="store_true")
+    parser.add_argument("--verification-profile", choices=sorted(VERIFICATION_PROFILES))
+    parser.add_argument("--verification-rationale")
     args = parser.parse_args()
     try:
         raw = args.callback.read_bytes()
@@ -623,6 +636,9 @@ def main() -> int:
                     expected_task_id=args.task_id,
                     expected_slice_id=args.slice_id,
                     expected_slice_basis_sha256=args.slice_basis,
+                    verification_policy=({"profile": args.verification_profile,
+                                          "rationale": args.verification_rationale}
+                                         if args.verification_profile or args.verification_rationale else None),
                 )
             else:
                 result = validate(callback)

@@ -27,6 +27,24 @@ gateway = load_module()
 
 
 class CallbackGatewayTests(unittest.TestCase):
+    def test_low_review_allowed_and_medium_profile_is_caller_controlled(self):
+        for risk, review, policy, expected in (
+            ("low", 1, None, True),
+            ("medium", 0, None, False),
+            ("medium", 0, {"profile": "focused", "rationale": "No build/typechecker; focused runtime tests"}, True),
+            ("medium", 0, {"profile": "focused", "rationale": ""}, False),
+            ("high", 1, {"profile": "focused", "rationale": "cannot downgrade high risk"}, False),
+        ):
+            c = self.valid_callback()
+            c.update(riskTier=risk, neutralReviewCount=review, ceoVerificationCount=1, verificationProfile="focused")
+            route, evidence = self.routing_receipt(c), self.evidence_receipt(c)
+            r = gateway.validate(c, verification_policy=policy,
+                                 trusted_routing_receipt=route, routing_proof_capability=gateway.ROUTING_PROOF_CAPABILITY,
+                                 trusted_evidence_receipt=evidence, evidence_proof_capability=gateway.EVIDENCE_PROOF_CAPABILITY,
+                                 expected_task_id=c["taskId"], expected_slice_id=c["sliceId"],
+                                 expected_slice_basis_sha256=c["sliceBasisSha256"])
+            self.assertEqual(r["allowCandidateAcceptance"], expected, r)
+
     def valid_callback(self) -> dict:
         value = json.loads((ROOT / "templates" / "compact_callback.json").read_text())
         value["declaredTokenEstimate"] = gateway.compact_token_estimate(value) + 20
@@ -101,6 +119,22 @@ class CallbackGatewayTests(unittest.TestCase):
         self.assertFalse(gateway.validate(callback, **(kwargs | {"exact_model_required": True}))["allowCandidateAcceptance"])
         self.assertFalse(gateway.validate(callback, **(kwargs | {"trusted_evidence_receipt": None}))["allowCandidateAcceptance"])
         self.assertFalse(gateway.validate(callback, **(kwargs | {"native_codex_review": False}))["allowCandidateAcceptance"])
+
+    def test_required_progress_updates_warn_without_rejecting_verified_work(self):
+        callback = self.valid_callback()
+        callback.update(ceoVerificationCount=1, processUpdateCount=8)
+        route = self.routing_receipt(callback)
+        evidence = self.evidence_receipt(callback)
+        result = gateway.validate(
+            callback, trusted_routing_receipt=route,
+            routing_proof_capability=gateway.ROUTING_PROOF_CAPABILITY,
+            trusted_evidence_receipt=evidence,
+            evidence_proof_capability=gateway.EVIDENCE_PROOF_CAPABILITY,
+            expected_task_id=callback["taskId"], expected_slice_id=callback["sliceId"],
+            expected_slice_basis_sha256=callback["sliceBasisSha256"])
+        self.assertTrue(result["allowCandidateAcceptance"], result)
+        self.assertFalse(result["sliceBudgetExhausted"])
+        self.assertEqual(result["processWarnings"], ["process_updates_exceed_default_budget"])
 
     def test_new_verified_evidence_allows_one_recheck_but_same_evidence_does_not(self):
         callback = self.valid_callback()

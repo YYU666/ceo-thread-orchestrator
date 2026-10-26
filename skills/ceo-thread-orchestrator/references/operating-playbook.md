@@ -17,8 +17,9 @@ Use this playbook to choose execution shape, runtime Goal/harvest behavior, comm
 | --- | --- |
 | Casual explanation or tiny Q&A | direct answer |
 | Small docs/skill/memory edit or audit | `CEO-only` |
-| One coherent implementation write-set | one implementation lane; review if substantial/risky |
-| Risky or user-facing implementation | implementation plus neutral review |
+| Small local reversible edit | direct quick path; diff and focused check |
+| One coherent implementation write-set | one end-to-end owner, local or delegated |
+| High-risk implementation | one owner plus independent review |
 | Accepted multi-module PRD | Program Goal plus safe parallel waves and review |
 | Complete/multi-phase product | CEO Autopilot, Program Goal, runtime Goal when available, waves and review |
 | Broad unattended dependency graph | add a pipeline contract |
@@ -72,7 +73,7 @@ When Context Pressure or Memory Recovery Freeze fires, emit one freeze receipt, 
 
 Under an active Program Goal, choose ownership per slice. Direct CEO coding is appropriate for explicit direct execution, tiny/non-app-code work, emergency unblock, documented routing failure, or tightly coupled critical-path work whose delegation would duplicate context.
 
-Record scope, reason and required evidence. At the slice boundary reassess useful parallel work and route independent tasks when it saves time. Preserve risk-specific review; an active Goal alone neither forces delegation nor removes review requirements.
+Record scope, reason and required evidence. At the slice boundary, scope expansion, or completion of a takeover, use the staffing checkpoint in `delivery-loop.md`. Direct ownership expires with the slice and must not silently become indefinite project-wide solo execution. Preserve risk-specific review; an active Goal alone neither forces delegation nor removes review requirements.
 
 ## Product And Portfolio Steering
 
@@ -80,7 +81,7 @@ MVP is a checkpoint unless the accepted goal is MVP-only. After MVP acceptance:
 
 1. update the Completion Dashboard with what MVP proves and does not prove;
 2. select the next full-version wave such as hardening, UX, reliability, tests, packaging, docs, release, memory, or performance;
-3. dispatch every safe ready task or record its dependency/serialization reason;
+3. choose the next observable delivery loop within the concurrency budget;
 4. keep the runtime Goal active until final done criteria are met.
 
 After every terminal lane/module result, classify it as lane/module-local, project-wide, or external. A local pause does not stop the program when another safe product-facing wave exists. Check remaining dashboard work, highest-value wave, lane states, Goal scope, stale drivers, and the next dispatch/review/harvest/user-decision action.
@@ -95,7 +96,7 @@ Choose the smallest safe shape:
 tiny/direct -> direct answer or CEO-only
 planning/audit without accepted implementation -> CEO-only
 one coherent write-set -> one implementation lane
-risky/user-facing/substantial app-code -> add neutral review
+high-risk app-code or explicit review requirement -> add neutral review
 multiple independent ready write-sets -> parallel wave after gates
 broad unattended graph -> add pipeline contract
 ```
@@ -114,17 +115,17 @@ Classify a worker/reviewer that starts routing, delegating, waiting on other lan
 
 ## Neutral Review
 
-Require neutral review before final acceptance for substantial app-code, accepted PRD execution, runtime Goal implementation, direct fallback output, user-facing behavior, high-risk data/security/payment/migration/release work, and repeated-fix recovery.
+Require neutral review for high-risk data/security/payment/migration/release work, unresolved repeated-fix risk, or an explicit project/user requirement. A runtime Goal, direct implementation, PRD, or user-facing copy change alone is not a review trigger. Use `delivery-loop.md` for quick-path eligibility and outcome acceptance.
 
 Review from task card, diff, tests, artifacts/screenshots, relevant docs, and compact source-backed memory. Challenge scope, missing evidence, regressions, edge cases, duplicate/brittle logic, workspace drift, and untested paths. Return `accept | revise | block` plus residual risk.
 
-If no independent review surface exists, record `review_unavailable`, perform a documented neutral self-review, and do not final-accept non-tiny risky work unless the user accepts the limitation.
+If required independent review is unavailable, record `review_unavailable`; self-review does not satisfy independence. Do not accept high-risk work, even a one-file change, unless the user explicitly accepts the review limitation and no stricter policy forbids it.
 
 ## Parallel And Pipeline Gates
 
 Parallelize only with independent dependencies, isolated write-sets/owners, reproducible baseline/worktrees, stable shared contracts, isolated verification, known process/resources, approval readiness, rollback/stop conditions, and CEO harvest/review capacity. Otherwise serialize or use one integration owner.
 
-Do not leave safe ready tasks undispatched without a recorded dependency, write/resource conflict, baseline failure, approval/tool limit, missing review capacity, or explicit single-thread instruction.
+Ready work need not all run at once. Keep one main writer by default; add a lane only for independent work that shortens the current delivery loop within the configured concurrency limit. Do not create reviewers or diagnostic lanes simply to keep them busy.
 
 Use a pipeline contract only when dependency/write-set/fan-out complexity justifies it. Minimum fields are pipeline id, goal brief, nodes, dependencies/parallelism, write-set owners, environment profile, typed handoff, required verification, review/scorecard gate, and stop condition.
 
@@ -150,6 +151,8 @@ Visual callbacks carry paths, hashes, dimensions, summaries, and decisions only.
 ## Harvest
 
 At harvest:
+
+Apply the bounded-wait and evidence-reuse policy in `delivery-loop.md`. A still-running handle retains ownership; time expiry does not authorize a duplicate writer.
 
 1. read callbacks and typed handoffs;
 2. inspect current diff/files/tests/artifacts and visual evidence as risk requires;

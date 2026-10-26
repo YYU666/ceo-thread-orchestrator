@@ -1,0 +1,58 @@
+{
+  "schema": "ceoflow_game_skill_compatibility_receipt_v1",
+  "date": "2026-10-08",
+  "decision": "accept",
+  "decisionScope": "existing_interface_with_synthetic_fixtures",
+  "candidateAccepted": false,
+  "productTrialVerified": false,
+  "hostDeliveryVerified": false,
+  "productionSourceChanged": false,
+  "installationChanged": false,
+  "canonicalBasis": {
+    "branch": "codex/audit-remediation-20260813",
+    "head": "a8fd4c8863b487fcc0a05a8dd091fbc90e29ef55",
+    "preexistingDirtyWorkPreserved": true,
+    "skillFileCountExcludingCache": 73,
+    "canonicalInstalledEquivalent": true,
+    "canonicalManifestSha256": "9dbffe890f2dcb4b2d9d3f8e3004e7863d8eb5ea3fb11ca0ac7dd146bbe6ca8e",
+    "installedManifestSha256": "9dbffe890f2dcb4b2d9d3f8e3004e7863d8eb5ea3fb11ca0ac7dd146bbe6ca8e",
+    "loaderSha256": "15c9f50af57b72aa23c677b939485ec260c1f6137acf3d996b6416933df4473a"
+  },
+  "tests": {
+    "repositoryIncludingSnapshotCompatibility": {"passed": 22, "failed": 0},
+    "snapshotCasesExecutedAgainstBothCopies": {"passed": 6, "failed": 0},
+    "canonicalSkillSuite": {"passed": 289, "failed": 0},
+    "installedSkillSuite": {"passed": 289, "failed": 0},
+    "quickValidate": "pass",
+    "diffCheck": "pass"
+  },
+  "supportedContract": {
+    "schema": "ceo_project_domain_v1",
+    "selection": "workKinds_and_topics_exact_markdown_sections",
+    "rulesAndSpecsSeparate": true,
+    "workKinds": ["game_production", "engine_development"],
+    "maxSelectedSections": 8,
+    "maxContextBytes": 12288,
+    "deduplicationScope": "task_workspace_excerpt_content",
+    "externalRules": "project_local_regular_file_snapshot_with_reviewed_import_manifest",
+    "versionProvenance": "caller_owned_task_card_attachment_checked_against_file_hashes",
+    "versionManifestAutomaticallyVerifiedByLoader": false,
+    "parentPreparationIsChildDelivery": false,
+    "authorityScope": "domain_guidance_only"
+  },
+  "candidateEvidence": {
+    "rulesAvailableForReview": false,
+    "workAndOutputsEmptyAtInspection": true,
+    "routeMismatch": "reported_by_delegation_and_candidate_summary",
+    "modelTelemetryIndependentlyVerified": false,
+    "boundary": "application_task_creation_and_execution_not_domain_loader",
+    "exactHostCause": "unverified"
+  },
+  "changedFiles": [
+    "tests/test_domain_snapshot_compatibility.py",
+    "docs/CEOFLOW_GAME_SKILL_COMPATIBILITY_2026-10-08.md",
+    "docs/evidence/ceoflow-game-skill-compatibility-2026-10-08.json"
+  ],
+  "commitPerformed": false,
+  "pushPerformed": false
+}

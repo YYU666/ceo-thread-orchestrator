@@ -1,0 +1,21 @@
+{
+  "schema": "ceo_project_domain_v1",
+  "domain": "game",
+  "entries": [
+    {"id": "core-loop", "kind": "rules", "path": "docs/game-production-rules.md", "section": "Core loop", "workKinds": ["game_production"], "topics": ["core_loop"], "required": false},
+    {"id": "region-layout", "kind": "rules", "path": "docs/game-production-rules.md", "section": "Region layout", "workKinds": ["game_production"], "topics": ["layout"], "required": false},
+    {"id": "assets-audio", "kind": "rules", "path": "docs/game-production-rules.md", "section": "Assets and audio", "workKinds": ["game_production"], "topics": ["assets"], "required": false},
+    {"id": "integration", "kind": "rules", "path": "docs/game-production-rules.md", "section": "Integration and delivery", "workKinds": ["game_production"], "topics": ["integration"], "required": false},
+    {"id": "verification", "kind": "rules", "path": "docs/game-production-rules.md", "section": "Verification and preservation", "workKinds": ["game_production"], "topics": ["qa"], "required": false},
+    {"id": "game-intent", "kind": "spec", "path": "docs/game-spec.md", "section": "Intent", "workKinds": ["game_production"], "topics": ["core_loop"], "required": true},
+    {"id": "game-areas", "kind": "spec", "path": "docs/game-spec.md", "section": "Areas", "workKinds": ["game_production"], "topics": ["layout"], "required": true},
+    {"id": "game-assets", "kind": "spec", "path": "docs/game-spec.md", "section": "Assets", "workKinds": ["game_production"], "topics": ["assets"], "required": true},
+    {"id": "game-acceptance", "kind": "spec", "path": "docs/game-spec.md", "section": "Acceptance", "workKinds": ["game_production"], "topics": ["integration", "qa"], "required": true},
+    {"id": "engine-scope", "kind": "spec", "path": "docs/game-spec.md", "section": "Engine scope", "workKinds": ["engine_development"], "topics": ["tools", "implementation", "qa"], "required": false},
+    {"id": "design-role", "kind": "rules", "path": "docs/game-roles.md", "section": "Design", "workKinds": ["game_production"], "topics": ["design_role"], "required": false},
+    {"id": "level-role", "kind": "rules", "path": "docs/game-roles.md", "section": "Level", "workKinds": ["game_production"], "topics": ["level_role"], "required": false},
+    {"id": "gameplay-role", "kind": "rules", "path": "docs/game-roles.md", "section": "Gameplay", "workKinds": ["game_production", "engine_development"], "topics": ["gameplay_role"], "required": false},
+    {"id": "art-audio-role", "kind": "rules", "path": "docs/game-roles.md", "section": "Art and audio", "workKinds": ["game_production"], "topics": ["art_audio_role"], "required": false},
+    {"id": "qa-role", "kind": "rules", "path": "docs/game-roles.md", "section": "QA", "workKinds": ["game_production", "engine_development"], "topics": ["qa_role"], "required": false}
+  ]
+}

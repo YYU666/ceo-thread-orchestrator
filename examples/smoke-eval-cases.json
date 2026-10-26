@@ -1011,7 +1011,7 @@
     "prompt": "Qualitative UI judgment genuinely needs pixels after local OCR and metrics are insufficient.",
     "expected_labels": ["bounded-model-vision", "fresh short-lived visual worker", "one compressed image"],
     "forbidden_labels": ["reuse CEO thread", "fork image history", "batch originals"],
-    "coverage_terms": ["fresh short-lived visual worker", "recommended below 800 KB", "Use at most one model-visible image per turn"]
+    "coverage_terms": ["fresh short-lived visual worker", "recommended below 800 KB", "bounded sequential observations"]
   },
   {
     "id": "user-image-not-relayed-to-subagent",
@@ -1031,7 +1031,7 @@
   },
   {
     "id": "model-request-preflight-required",
-    "title": "Every model-bound execution requires a fresh task-scoped preflight",
+    "title": "Executor-managed takeover requires a fresh task-scoped preflight",
     "prompt": "A clean takeover packet passed memory validation, but the next model request has no requestId or projected context metrics.",
     "expected_labels": ["model_request_preflight required", "project and Provider calls remain closed", "fail closed"],
     "forbidden_labels": ["takeover packet alone opens execution", "infer missing token metrics"],
@@ -1075,7 +1075,7 @@
     "prompt": "A low-risk two-file slice has already used one CEO verification and one consolidated revision but still fails.",
     "expected_labels": ["no second equivalent review loop", "shrink slice or change approach", "focused evidence"],
     "forbidden_labels": ["repeat full suite indefinitely", "add neutral review by default"],
-    "coverage_terms": ["at most two changed files", "shrink the slice or change approach", "three process updates"]
+    "coverage_terms": ["at most two changed files", "shrink the slice or change approach", "Process-update counts are advisory"]
   },
   {
     "id": "native-codex-lane-does-not-need-host-socket",

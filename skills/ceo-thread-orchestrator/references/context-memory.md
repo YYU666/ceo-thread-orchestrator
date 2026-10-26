@@ -13,6 +13,11 @@ Use this router when a task involves project continuity, context pressure, `.cod
 
 ## Trigger Summary
 
+With current Zhixia, use `sync_context` through `context-sync.md` at startup,
+before dispatch and after accepted refresh/reverify. Persist generation/query pairs
+per canonical project and task. No per-response polling or background push is implied.
+Keep takeover and formal refresh on their existing paths; sync grants no authority.
+
 Use compact project memory when `.codex-knowledge` exists or the request depends on continuation, recovery, accepted decisions, blockers, prior failures, release state, or old-task evidence. Do not claim remembered project state if the configured provider was skipped or failed.
 
 For large/program continuation, takeover, recovery, direction switch, active runtime Goal, or pre-dispatch checks:
@@ -20,8 +25,8 @@ For large/program continuation, takeover, recovery, direction switch, active run
 1. Run app-owned `verify` and a read-only exact scan when required.
 2. Run `scripts/context_governor.py` on compact metrics/state.
 3. On takeover/recovery, run Project Continuity and request `prepare_takeover`.
-4. Inject one verified bounded generation into a clean task with `replace_long_thread_context`.
-5. Fail closed and stop the old driver when pressure, authority, identity, freshness, content, budget, or generation checks fail.
+4. Only on takeover/recovery, inject one verified bounded generation into a clean task with `replace_long_thread_context`. Ordinary native dispatch does not replace the CEO or require a lifecycle Host connection.
+5. Deny invalid memory injection. Authority/identity/freshness failures pause only the affected lane under `context-governance.md`; pressure or forbidden-payload freezes stop the exact old execution surface and driver. Do not convert every memory/pre-dispatch check into a global freeze.
 
 Heartbeat, tool-result, commentary, and unchanged status wakeups do not re-query memory or re-inject context.
 

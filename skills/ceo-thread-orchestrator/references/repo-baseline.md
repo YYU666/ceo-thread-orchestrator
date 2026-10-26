@@ -128,7 +128,7 @@ File ownership:
   baseline incorporation plan:
 ```
 
-No implementation dispatch when the write-set is vague for a dirty repo. If package/config changes are allowed, neutral review is mandatory before acceptance.
+No implementation dispatch when the write-set is vague for a dirty repo. Package/config changes require independent review when they affect dependency trust, permissions, shared runtime/build contracts, deployment, or another high-risk boundary. Merely allowing a config file in the write-set does not trigger review for unrelated low-risk edits.
 
 ## Controlled Repo Baseline Task Template
 

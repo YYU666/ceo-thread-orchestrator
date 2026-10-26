@@ -62,6 +62,7 @@ APP_OWNED_BOOTSTRAP_DRIVER_CAPABILITY = _DriverCapability()
 GLOBAL_BLOCK_AUDIT_CAPABILITY = _DriverCapability()
 GLOBAL_BLOCK_RECOVERY_CAPABILITY = _DriverCapability()
 HOST_TELEMETRY_CAPABILITY = _DriverCapability()
+CURRENT_SOURCE_WORK_CAPABILITY = _DriverCapability()
 
 FAIL_CLOSED_MEMORY_MODES = {"fallback_stale"}
 REQUIRED_TAKEOVER_MEMORY_MODE = "app_owned_memory_core"
@@ -70,6 +71,7 @@ NON_MEMORY_EVENT_TYPES = {"heartbeat", "tool_result", "commentary", "wake_check"
 DISPATCH_EVENT_TYPES = {"task_start", "resume", "direction_switch", "pre_dispatch", "dispatch"}
 MODEL_REQUEST_PREFLIGHT_EVENT = "model_request_preflight"
 ORDINARY_CODEX_LANE_DISPATCH_EVENT = "codex_lane_dispatch"
+CURRENT_SOURCE_WORK_EVENT = "current_source_work"
 ORDINARY_CODEX_ROUTING_SURFACES = {"visible_thread", "subagent"}
 USER_AUTHORIZATION_FLAGS = {
     "credentialAccessRequested",
@@ -326,6 +328,7 @@ def default_state(event: dict[str, Any]) -> dict[str, Any]:
         "recoveryTransitions": [],
         "programBlockAuditLedger": {},
         "programGlobalBlock": {"active": False},
+        "currentSourceWorkLedger": {},
         "freeze": {
             "triggered": False,
             "receiptEmitted": False,
@@ -935,6 +938,64 @@ def ordinary_codex_lane_dispatch_contract(event: dict[str, Any]) -> tuple[bool, 
     if event.get("takeoverPacket") not in (None, {}):
         return False, "codex_lane_dispatch_scope_invalid"
     return True, None
+
+
+def current_source_work_contract(event: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
+    """Accept only a locally inspected source scope, never memory authority."""
+    if event.get("eventType") != CURRENT_SOURCE_WORK_EVENT:
+        return None, None
+    if event.get("_currentSourceWorkCapability") is not CURRENT_SOURCE_WORK_CAPABILITY:
+        return None, "current_source_receipt_unverified"
+    receipt = event.get("currentSourceWorkReceipt")
+    if not isinstance(receipt, dict):
+        return None, "current_source_receipt_missing"
+    workspace = event.get("workspace")
+    if not isinstance(workspace, str) or not workspace or not Path(workspace).is_absolute():
+        return None, "current_source_workspace_invalid"
+    if str(Path(workspace).resolve()) != workspace or receipt.get("workspace") != workspace:
+        return None, "current_source_workspace_mismatch"
+    task_id = event.get("taskId")
+    if not isinstance(task_id, str) or not task_id or receipt.get("taskId") != task_id:
+        return None, "current_source_task_mismatch"
+    if receipt.get("schema") != "ceo_current_source_work_receipt_v1":
+        return None, "current_source_receipt_schema_invalid"
+    if receipt.get("scopeId") != event.get("scopeId") or not receipt.get("scopeId"):
+        return None, "current_source_scope_mismatch"
+    if receipt.get("taskGoal") != event.get("taskGoal") or not receipt.get("taskGoal"):
+        return None, "current_source_goal_mismatch"
+    if receipt.get("writePaths") != event.get("allowedWritePaths"):
+        return None, "current_source_write_set_mismatch"
+    sources = receipt.get("sourceRefs")
+    if not isinstance(sources, list) or not 1 <= len(sources) <= 8:
+        return None, "current_source_refs_invalid"
+    if not isinstance(receipt.get("writePaths"), list) or not 1 <= len(receipt["writePaths"]) <= 16:
+        return None, "current_source_write_set_invalid"
+    forbidden = (
+        "takeoverPacket", "writebackEvidence", "acceptedEvidence", "refreshBindingRequest",
+        "projectWorkspaces", "projectWorkspaceScopeRequired",
+    )
+    if any(event.get(field) not in (None, False, [], {}) for field in forbidden):
+        return None, "current_source_forbidden_operation"
+    if any(event.get(field) is True for field in (
+        "dispatchRequested", "providerCallRequested", "paidProviderRequested",
+        "externalHarnessRequested", "recoveryRequested", "takeoverRequired",
+        "goalTransferRequested", "contextReplacementRequested", "archiveRequested",
+    )) or event.get("replacementForTaskId") not in (None, ""):
+        return None, "current_source_forbidden_operation"
+    if event.get("memory") not in (None, {}):
+        memory = event["memory"]
+        if not isinstance(memory, dict) or memory_fail_reason(memory) is None:
+            return None, "current_source_memory_not_stale"
+    if receipt.get("sourceSha256") != atomic_state.state_sha256({
+        "taskId": task_id,
+        "workspace": workspace,
+        "scopeId": receipt["scopeId"],
+        "taskGoal": receipt["taskGoal"],
+        "writePaths": receipt["writePaths"],
+        "sourceRefs": sources,
+    }):
+        return None, "current_source_receipt_digest_mismatch"
+    return receipt, None
 
 
 def user_authorization_reason(event: dict[str, Any]) -> str | None:
@@ -1874,6 +1935,7 @@ def evaluate(event: dict[str, Any], previous_state: dict[str, Any], limits: dict
     state.setdefault("recoveryTransitions", [])
     state.setdefault("programBlockAuditLedger", {})
     state.setdefault("programGlobalBlock", {"active": False})
+    state.setdefault("currentSourceWorkLedger", {})
     state.setdefault("freeze", default_state(event)["freeze"])
     key = task_key(event, state)
     projects, active_project, project_config_error = project_workspace_context(state, event, key)
@@ -2101,6 +2163,57 @@ def evaluate(event: dict[str, Any], previous_state: dict[str, Any], limits: dict
 
     if as_bool(event.get("approvalRequested")) is True:
         metrics["approvalDisposition"] = "routine_in_scope_no_user_authorization"
+
+    if event.get("eventType") == CURRENT_SOURCE_WORK_EVENT:
+        if multi_project:
+            return block_result(
+                state, "current_source_single_project_required", metrics,
+                next_action="select_one_registered_project_scope",
+                scope="current_source_work",
+            )
+        receipt, source_reason = current_source_work_contract(event)
+        if source_reason:
+            return block_result(
+                state, source_reason, metrics,
+                next_action="verify_current_source_scope_before_work",
+                scope="current_source_work",
+            )
+        assert receipt is not None
+        scopes = state["currentSourceWorkLedger"].setdefault(key, {})
+        scope_id = receipt["scopeId"]
+        prior = scopes.get(scope_id)
+        if (prior is not None and prior != receipt["sourceSha256"]) or (
+            prior is None and len(scopes) >= 32
+        ):
+            return block_result(
+                state, "current_source_scope_changed_or_full", metrics,
+                next_action="start_new_bounded_source_scope_after_review",
+                scope="current_source_work",
+            )
+        scopes[scope_id] = receipt["sourceSha256"]
+        metrics["memoryRuntimeAction"] = "deny_stale_memory_use"
+        metrics["currentSourceSha256"] = receipt["sourceSha256"]
+        return {
+            "schema": SCHEMA,
+            "ok": True,
+            "decision": "allow",
+            "reason": "current_source_work_scoped",
+            "executionClass": CURRENT_SOURCE_WORK_EVENT,
+            "allowOldThreadExecution": True,
+            "allowToolCalls": False,
+            "allowProjectToolCalls": False,
+            "allowScopedSourceWork": True,
+            "allowedWritePaths": receipt["writePaths"],
+            "allowMemoryInjection": False,
+            "allowProviderCalls": False,
+            "allowRecoveryControlTools": False,
+            "programGoalBlocked": False,
+            "lifecycleState": "active",
+            "nextAction": "execute_only_verified_current_source_scope",
+            "sourceWorkReceipt": receipt,
+            "metrics": metrics,
+            "state": state,
+        }
 
     if is_non_memory_event(event) and not isinstance(packet, dict) and not isinstance(memory, dict):
         metrics["memoryRuntimeAction"] = "skip"
