@@ -721,7 +721,7 @@
       "max or ultra by default"
     ],
     "coverage_terms": [
-      "Neutral review/audit",
+      "consequential architecture, data, or release decision",
       "never default",
       "top-down"
     ]
@@ -1075,7 +1075,7 @@
     "prompt": "A low-risk two-file slice has already used one CEO verification and one consolidated revision but still fails.",
     "expected_labels": ["no second equivalent review loop", "shrink slice or change approach", "focused evidence"],
     "forbidden_labels": ["repeat full suite indefinitely", "add neutral review by default"],
-    "coverage_terms": ["at most two changed files", "shrink the slice or change approach", "Process-update counts are advisory"]
+    "coverage_terms": ["at most two changed files", "shrink the slice or change approach", "Process-update counts are advisory", "one independent pass per checkpoint", "Skip repeat review of an unchanged baseline or evidence set"]
   },
   {
     "id": "native-codex-lane-does-not-need-host-socket",

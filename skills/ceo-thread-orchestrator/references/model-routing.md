@@ -8,6 +8,7 @@ Use this reference when CEO Flow can choose a model or reasoning effort for a vi
 - Capability Discovery
 - Routing Modes
 - Capability Classes
+- Native Codex mapping
 - Default Role Policy
 - Reasoning Policy
 - Surface-Specific Rules
@@ -77,7 +78,7 @@ Use abstract classes in public task cards and durable project memory. Resolve th
 
 | Class | Use for | Default posture |
 | --- | --- | --- |
-| `frontier` | CEO architecture, ambiguous cross-system decisions, security/data/release risk, neutral final audit | highest available general/agentic capability that the surface supports |
+| `frontier` | CEO architecture, ambiguous cross-system decisions, consequential security/data/release decisions and materially conflicting evidence | highest available general/agentic capability that the surface supports |
 | `balanced` | ordinary implementation, product/UX reasoning, integration, normal research and documentation | capable general coding/agent model with moderate cost/latency |
 | `fast` | deterministic edits, tests, indexing, search, formatting, compact summaries, disposable verification | fastest adequate model that preserves the task contract |
 | `inherit` | CEO lane, established specialist thread, explicit baseline/eval, or surfaces without safe override | current/parent/default profile |
@@ -106,15 +107,27 @@ When multiple candidates qualify, use this deterministic tie-break order:
 
 Do not invent cost, latency, or quality rankings when the host does not provide them. If the requested priority cannot be evaluated, use a documented host default or advertised order only for supervised/non-spending-heavy work and record `mapping_insufficient` plus `degraded`. For unattended spending-heavy work, missing required cost/latency evidence fails closed.
 
+## Native Codex mapping
+
+Resolve the mapping against models and reasoning levels supported by the current dispatch surface. GPT-6.2 Sol is the `balanced` starting point and GPT-6.2 Astra is the `frontier` candidate when each is available. Use these as current mappings, with live host support and explicit user/project requirements taking precedence. [OpenAI model guide](https://learn.chatgpt.com/docs/models)
+
+For ordinary independent review, start at Sol High when supported. Prefer Astra High for a bounded question only when at least one of these conditions applies:
+
+- The root cause is ambiguous and spans modules or services, with competing explanations that would lead to different fixes.
+- A consequential architecture, data, or release decision needs an independent judgment and a wrong call would be expensive to reverse.
+- Reliable evidence or independent findings disagree on something that changes the fix or acceptance. First rule out missing sources, a stale baseline, or an incomplete check.
+
+Record the unresolved question, why escalation can change the outcome, and the requested and actual route separately. Escalate only the affected lane. For a complexity-driven `preferred` Astra route, use Sol High if supported and sufficient, or follow the existing fallback policy. Keep exact requests strict. If the host only supports inheritance, report that limitation with the existing route status. Carry the same evidence and acceptance requirements into any fallback.
+
 ## Default Role Policy
 
 | Lane/task | Capability class | Starting reasoning |
 | --- | --- | --- |
-| CEO / PM / Architect | `inherit` or `frontier` | preserve current CEO setting; do not mutate automatically |
+| CEO / PM / Architect | `inherit` | preserve current CEO setting; do not mutate automatically |
 | Routine implementation | `balanced` | `medium` |
 | Small mechanical implementation | `fast` | `low` or `medium` |
 | Complex architecture/data/security implementation | `frontier` | `high` |
-| Neutral review/audit | `frontier` | `high`; use `xhigh` only when risk justifies it |
+| Ordinary independent review/audit | `balanced` | high |
 | Product/UX direction | `balanced` | `high` when user-facing direction is material |
 | Research/docs | `balanced` | `medium` or `high` based on ambiguity/freshness risk |
 | Test/verification sidecar | `fast` | `low` or `medium` |
@@ -188,7 +201,7 @@ Cost/latency priority:
 
 Defaults:
 
-- reserve frontier capacity for CEO decisions, integration, and neutral review;
+- reserve frontier capacity for individually justified decisions, integration risks, or review escalation;
 - route routine parallel implementation to balanced;
 - route deterministic sidecars to fast;
 - do not let every lane inherit a frontier/high CEO profile accidentally;

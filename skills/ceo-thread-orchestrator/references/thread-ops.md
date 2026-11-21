@@ -24,6 +24,14 @@ When task coordination is requested, search for relevant thread tools such as li
 - Fork only when completed history is required; active unfinished turns are not copied and role contamination can persist.
 - Use handoff between Local/Worktree only when supported and useful.
 
+## Native subagent staffing and reuse
+
+When CEO Flow is active and the host permits delegation, size the team by ready work packages, write boundaries and acceptance risk. Keep bounded work in the main chat. Start one matching specialist for one independently deliverable package. Add a specialist, including a second instance of the same role, only for a distinct ready package with a clear deliverable, a safe write boundary or stable interface, and a useful concurrency slot. Schedule excess packages in waves. Shared writes and final integration have one owner. Use the quality gate to decide when to bring in independent QA.
+
+The CEO main chat keeps a compact roster of role, agent ID, project/workspace, owned package, and status. Check the live roster before spawning. Prefer follow-up to an available agent with the same role, project, workspace, and compatible scope. Return fixes to the original implementer. Reuse the QA agent for a focused recheck when it remains independent. If an agent is gone, its scope is stale, or a clean review is required, start a new instance of the same role. Keep the role stable for the instance. Use native child agents by default for these assignments; use separate user-owned chats only when explicitly requested.
+
+For game work, use the project role catalog. The RGS defaults map the main chat to Game Producer, engine/runtime work to Engine Programmer, art and assets to Art/Visual, spatial work to Level/Map, and independent verification to QA/Playtest. Split gameplay, game design, technical integration, animation/VFX, audio, UI/HUD, or release into specialists only when their work packages warrant it. In RGS, follow the producer skill's design, revision, and registered-tool contracts. Role assignment uses the existing model-routing policy and the live concurrency limit.
+
 ## Sidebar Hygiene
 
 Before creating/reusing a visible lane, decide role, stable lane id/title, workspace, write-set, stop condition, expected report, callback, and lifecycle policy.

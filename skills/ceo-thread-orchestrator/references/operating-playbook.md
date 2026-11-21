@@ -101,7 +101,7 @@ multiple independent ready write-sets -> parallel wave after gates
 broad unattended graph -> add pipeline contract
 ```
 
-Prefer an existing clean worker, then clean creation. Fork only when completed history is necessary and role contamination is controlled; never fork active CEO self-routing context as ordinary worker setup.
+Apply native subagent staffing and same-role reuse from thread-ops.md. Fork only when completed history is necessary and role contamination is controlled; never fork active CEO self-routing context as ordinary worker setup.
 
 ## Lane Roster And Direction
 

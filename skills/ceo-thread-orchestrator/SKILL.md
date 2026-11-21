@@ -93,6 +93,8 @@ Memory update needed:
 
 Accept only when the newest request is satisfied and evidence matches the risk. Block only for a real scoped blocker. Save substantial PRDs, plans, task graphs, audits, handoffs, and acceptance reports to project files; keep chat concise and evidence-backed.
 
+Size native teams by ready work packages. Reuse eligible same-role subagents and batch independent review at major acceptance checkpoints. Consult the thread-ops and quality-gate references for dispatch and review cadence.
+
 ## Reference Routing
 
 Read only the focused reference required by the active gate:
